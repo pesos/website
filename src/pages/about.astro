@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import GuideTabs from '../components/GuideTabs.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ImgPlaceholder from '../components/ImgPlaceholder.astro';
+import { SITE } from '../data/site';
+
+// "Our Standards" — from the club's own Code of Conduct.
+const standards = [
+  { n: '01', t: 'Welcoming, inclusive language', d: 'A positive environment starts with how we talk to each other, online and in person.' },
+  { n: '02', t: 'Help each other grow', d: 'Broaden each other’s knowledge and perspective — no question is a stupid question here.' },
+  { n: '03', t: 'Respect differing viewpoints', d: 'Gracefully accept constructive criticism, and show empathy towards other members.' },
+  { n: '04', t: 'Safety over comfort', d: 'We prioritise the safety of the marginalised over the comfort of the privileged.' },
+];
+
+// Real activities, from the club's "What We Do" mission page.
+const activities = [
+  { t: 'Workshops', d: 'Hands-on sessions on the open-source movement, tools and technologies — from industry guests and community members alike.' },
+  { t: 'Talks', d: 'Presentations from prominent open-source contributors around Bangalore, giving members a glimpse into real-world programming.' },
+  { t: 'Community projects', d: 'Collaborative work on projects hosted under github.com/pesos, reviewed and selected based on community interest.' },
+  { t: 'A Hacktoberfest-style PR challenge', d: 'Members hunt for help-wanted and low-hanging-fruit issues, with a dedicated event to hit a weekly pull-request target.' },
+  { t: 'General meet-ups', d: 'Twice-weekly, casual sessions for coding, lightning talks, code review, elections and planning — our most important activity.' },
+];
+
+// Real organisational structure — from the club's handbook.
+const roles = [
+  { r: 'Club Heads / Benevolent Dictators', d: 'Coordinate all activities and have final say in decisions — expected to be benevolent and serve the community’s needs.' },
+  { r: 'Technical Heads', d: 'Manage technical aspects: the website, group projects, and technical arrangements at events.' },
+  { r: 'Community Relations Head', d: 'Promotes events and reviews Code of Conduct violations and other grievances.' },
+  { r: 'Event Coordinators', d: 'The backbone of every event — registrations, logistics and timing.' },
+];
+
+const stats = [
+  { num: String(SITE.founded), label: 'Founded' },
+  { num: '27', label: 'Public Repositories' },
+  { num: '30+', label: 'Members' },
+  { num: '3', label: 'Active Flagship Projects' },
+];
+---
+
+<BaseLayout title="About" description="PES Open Source is a student-run open-source community from PES University, Bangalore.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Getting Started', href: '/getting-started/' }, { label: 'About PESOS' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">About PESOS</h1>
+    <p class="lead">
+      PES Open Source is a student-run Open Source community from PES University, Bangalore. We
+      aim to create a thriving culture based around Open Source in our campus. Since Feb 2026,
+      our community goes by the nickname <strong>{SITE.communityName}</strong>.
+    </p>
+    <div style="margin-top:22px"><GuideTabs active="About PESOS" /></div>
+  </section>
+
+  <section class="wrap section">
+    <div class="split reveal">
+      <div class="split__media"><ImgPlaceholder label="Club photo 1200×800" style="border:0;height:100%" /></div>
+      <div class="split__body">
+        <span class="eyebrow">Mission Statement</span>
+        <p class="muted" style="font-style:italic">
+          "PES Open Source serves to facilitate technical skills and knowledge by fostering a
+          community around contributing to, creating, critiquing, and advocating for Open Source
+          Projects." In other words — we want to create a culture of open-source collaboration
+          in our college.
+        </p>
+        <ul class="check-list">
+          {activities.map((a) => <li><strong>{a.t}.</strong> {a.d}</li>)}
+        </ul>
+        <a class="btn btn--primary btn--sm" href="/how-to-join/">How to join</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section--tight">
+    <div class="stat-grid">
+      {stats.map((s) => (
+        <div class="stat-card reveal">
+          <div class="stat-card__num" data-count={s.num}>{s.num}</div>
+          <div class="stat-card__label">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <SectionHeader num="01" title="Our Standards" center />
+    <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
+      From our <a class="link-arrow" href="/code-of-conduct/">Code of Conduct</a> — the driving
+      principle behind every meet-up, PR review and Slack thread.
+    </p>
+    <div class="grid-2">
+      {standards.map((v, i) => (
+        <div class="card card--spotlight reveal" style={`--d:${i * 60}ms`}>
+          <span class="mono" style="color:var(--neon);font-size:.85rem">{v.n}</span>
+          <h3 class="h3" style="margin:8px 0 6px">{v.t}</h3>
+          <p class="muted" style="font-size:.92rem">{v.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <SectionHeader num="02" title="How we're organised" center />
+    <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
+      The Core Committee is elected by the community every year by instant-runoff vote. No
+      committee member serves indefinitely.
+    </p>
+    <div class="grid-2">
+      {roles.map((m) => (
+        <div class="card reveal">
+          <div class="h3" style="margin-bottom:6px">{m.r}</div>
+          <p class="muted" style="font-size:.9rem">{m.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section--tight">
+    <div class="panel panel--accent reveal" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <h2 class="h2">Come build with us</h2>
+        <p class="muted" style="margin-top:6px">Open to every branch and every skill level.</p>
+      </div>
+      <a class="btn btn--primary" href="/how-to-join/">Join PESOS</a>
+    </div>
+  </section>
+</BaseLayout>

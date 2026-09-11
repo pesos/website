@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import { PERKS, PERK_CATEGORIES, PERK_STEPS } from '../data/perks';
+
+const featured = PERKS.find((p) => p.featured)!;
+const rest = PERKS.filter((p) => !p.featured);
+---
+
+<BaseLayout title="Member Perks" description="Tools, cloud credits, developer packs and learning materials for active members.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Community' }, { label: 'Perks' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">Member Perks</h1>
+    <p class="lead">
+      Active members and contributors unlock a curated set of tools, server credits, developer
+      packs and learning materials. Perks unlock dynamically based on project participation.
+    </p>
+  </section>
+
+  <section class="wrap section" data-filter-root>
+    <div class="tabs" style="margin-bottom:36px">
+      {PERK_CATEGORIES.map((c, i) => (
+        <button class:list={['chip', i === 0 && 'is-active']} data-filter={c} data-filter-key="cat" type="button">{c}</button>
+      ))}
+    </div>
+
+    <div class="panel panel--accent reveal" style="display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;margin-bottom:56px">
+      <div class="img-ph" style="min-height:150px">Perk logo</div>
+      <div>
+        <span class="tag tag--neon">Featured Perk</span>
+        <h2 class="h2" style="margin:8px 0">{featured.title}</h2>
+        <p class="muted" style="margin-bottom:16px">{featured.blurb}</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn--primary btn--sm" href="#">Claim perk</a>
+          <a class="btn btn--ghost btn--sm" href="#">Learn more</a>
+        </div>
+      </div>
+    </div>
+
+    <SectionHeader num="01" title="All Perks" center />
+    <div class="grid-3">
+      {rest.map((p, i) => (
+        <article class="card card--spotlight reveal" data-item data-cat={p.category} style={`--d:${i * 50}ms`}>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div class="img-ph" style="min-height:44px;width:44px;padding:0">◦</div>
+            <span class="tag">{p.category}</span>
+          </div>
+          <h3 class="h3">{p.title}</h3>
+          <p class="muted" style="font-size:.9rem;margin:6px 0 14px">{p.blurb}</p>
+          <a class="btn btn--ghost btn--sm" href="#">Claim</a>
+        </article>
+      ))}
+    </div>
+
+    <div style="margin-top:60px">
+      <SectionHeader num="02" title="How to claim perks" center />
+      <div class="stat-grid">
+        {PERK_STEPS.map((s) => (
+          <div class="card reveal">
+            <div class="mono muted" style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase">{s.step}</div>
+            <h3 class="h3" style="margin:8px 0 6px">{s.title}</h3>
+            <p class="muted" style="font-size:.88rem">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Crumb from '../../components/Crumb.astro';
+import { PROJECTS } from '../../data/projects';
+
+export function getStaticPaths() {
+  return PROJECTS.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const stats = p.stats ?? [
+  { label: 'Stars', value: '—' },
+  { label: 'Forks', value: '—' },
+  { label: 'Open Issues', value: '—' },
+  { label: 'Contributors', value: String(p.contributors) },
+];
+const info = p.info ?? [
+  { label: 'Language', value: p.stack[0] ?? '—' },
+  { label: 'Status', value: p.status },
+];
+const features = p.features ?? [];
+const install = p.install ?? ['# Clone the repository', `$ git clone ${p.repo}`];
+const related = PROJECTS.filter((x) => x.slug !== p.slug).slice(0, 2);
+const tabPanels = [
+  { label: 'Overview' },
+  { label: 'Contribution Guide', href: `${p.repo}/blob/${p.branch}/CONTRIBUTING.md` },
+  { label: 'Issues', href: `${p.repo}/issues` },
+  { label: 'Pull Requests', href: `${p.repo}/pulls` },
+];
+---
+
+<BaseLayout title={p.name} description={p.blurb}>
+  <section class="wrap section">
+    <Crumb items={[{ label: 'Projects', href: '/projects/' }, { label: p.name }]} />
+
+    <div style="display:flex;gap:18px;align-items:flex-start;margin:18px 0 22px;flex-wrap:wrap">
+      <div class="brand__mark" style="width:56px;height:56px;font-size:1.2rem;border-radius:10px">
+        {p.name.slice(0, 2).toUpperCase()}
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <h1 class="h1">{p.name}</h1>
+          {p.stack.map((t) => <span class="tag">{t}</span>)}
+        </div>
+        <p class="muted" style="margin:10px 0 16px;max-width:70ch">{p.blurb}</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn--primary btn--sm" href={`${p.repo}/issues`} target="_blank" rel="noopener">Contribute</a>
+          <a class="btn btn--ghost btn--sm" href={p.repo} target="_blank" rel="noopener">GitHub →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:26px">
+      {stats.map((s) => (
+        <div class="stat-card" style="text-align:center;padding:16px">
+          <div class="stat-card__num" style="font-size:1.3rem">{s.value}</div>
+          <div class="stat-card__label" style="font-size:.78rem">{s.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="tabs" data-tabs style="margin-bottom:30px">
+      {tabPanels.map((t, i) => (
+        <button class="tab" data-tab={t.label} aria-selected={i === 0 ? 'true' : 'false'} type="button">{t.label}</button>
+      ))}
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start;width:100%;margin-top:24px" class="cal-wrap">
+        <div data-panel="Overview">
+          <h2 class="h3" style="margin-bottom:10px">About {p.name}</h2>
+          <p class="muted">{p.about ?? p.blurb}</p>
+          <hr class="divider" style="margin:26px 0" />
+
+          {features.length > 0 && (
+            <>
+              <h2 class="h3" style="margin-bottom:14px">Features</h2>
+              <div class="steps" style="margin-bottom:26px">
+                {features.map((f, i) => (
+                  <div class="step">
+                    <span class="step__n">{i + 1}</span>
+                    <div><div class="step__t">{f.title}</div><div class="step__d">{f.desc}</div></div>
+                  </div>
+                ))}
+              </div>
+              <hr class="divider" style="margin:26px 0" />
+            </>
+          )}
+
+          {p.learningPath && (
+            <>
+              <h2 class="h3" style="margin-bottom:14px">Learning path</h2>
+              <ul class="check-list" style="margin-bottom:26px">
+                {p.learningPath.map((l) => <li>{l}</li>)}
+              </ul>
+              <hr class="divider" style="margin:26px 0" />
+            </>
+          )}
+
+          <h2 class="h3" style="margin-bottom:14px">Quick Install</h2>
+          <pre class="code">{install.map((l) => (
+            <div class:list={[l.startsWith('#') && 'c']}>{l.startsWith('$') ? <><span class="p">$</span>{l.slice(1)}</> : l}</div>
+          ))}</pre>
+
+          <div class="note" style="margin-top:24px">
+            Screenshots and a full README live on <a class="link-arrow" href={p.repo} target="_blank" rel="noopener">GitHub →</a>
+          </div>
+        </div>
+
+        {tabPanels.slice(1).map((t) => (
+          <div data-panel={t.label} hidden>
+            <div class="note">
+              “{t.label}” lives in the repository — <a class="link-arrow" href={t.href} target="_blank" rel="noopener">open it on GitHub →</a>
+            </div>
+          </div>
+        ))}
+
+        <aside class="stack-sm">
+          <div class="stat-box">
+            <div class="stat-box__row"><span class="stat-box__k">Project Info</span><span></span></div>
+            {info.map((r) => (
+              <div class="stat-box__row"><span class="stat-box__k">{r.label}</span><span class="stat-box__v">{r.value}</span></div>
+            ))}
+          </div>
+
+          {p.goodFirstIssues && (
+            <div class="card">
+              <div class="eyebrow" style="margin-bottom:12px">New here?</div>
+              {p.goodFirstIssues.map((g) => (
+                <p class="muted" style="font-size:.85rem;margin-bottom:10px">
+                  Look for issues labeled <code>{g.id}</code> — {g.title}.
+                </p>
+              ))}
+              <a class="btn btn--ghost btn--sm" href={`${p.repo}/issues`} target="_blank" rel="noopener">View all issues</a>
+            </div>
+          )}
+
+          <div class="card">
+            <div class="eyebrow" style="margin-bottom:12px">Related Projects</div>
+            {related.map((r) => (
+              <a href={`/projects/${r.slug}/`} style="display:block;padding:8px 0">
+                <div style="font-weight:600;font-size:.85rem">{r.name}</div>
+                <div class="muted" style="font-size:.8rem">{r.blurb.slice(0, 60)}…</div>
+              </a>
+            ))}
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

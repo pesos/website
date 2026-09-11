@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+
+const nav = [
+  { label: 'Main Hub', href: '/getting-started/' },
+  { label: '101', href: '/pesos-101/', active: true },
+  { label: 'Why Our Club', href: '/about/' },
+];
+---
+
+<BaseLayout title="PESOS 101" description="Open Source — a beginner's guide, the PESOS way.">
+  <section class="wrap section">
+    <div class="doc">
+      <aside class="doc__nav">
+        {nav.map((n) => <a class:list={[n.active && 'is-active']} href={n.href}>{n.label}</a>)}
+      </aside>
+
+      <div>
+        <Crumb items={[{ label: '← Main Hub', href: '/getting-started/' }]} />
+        <h1 class="h1" style="margin:14px 0 6px">PESOS 101</h1>
+        <p class="lead" style="margin-bottom:6px">Open Source — A Beginner's Guide</p>
+        <div style="width:56px;height:3px;background:var(--neon);margin-bottom:36px"></div>
+
+        <section class="reveal" style="margin-bottom:44px">
+          <h2 class="h3" style="margin-bottom:14px">
+            <span class="mono" style="color:var(--neon);margin-right:8px">1.</span>
+            What does "Open Source" actually mean?
+          </h2>
+          <p class="muted" style="margin-bottom:14px">
+            When a piece of software is Open Source, it means you can see its source code. That
+            opens the door to a lot of awesome things:
+          </p>
+          <ul class="check-list">
+            <li>Anyone can freely read, reuse and modify open-source software — and send their improvements back to the project.</li>
+            <li>Collaboration happens at scale: a whole community of shared ideas and expertise can form around a single project.</li>
+            <li>You get a real chance to work on software the world depends on, and make a real-world impact.</li>
+            <li>You learn best practices straight from the community, through feedback and advice from project collaborators.</li>
+          </ul>
+          <hr class="divider" style="margin-top:28px" />
+        </section>
+
+        <section class="reveal" style="margin-bottom:44px">
+          <h2 class="h3" style="margin-bottom:14px">
+            <span class="mono" style="color:var(--neon);margin-right:8px">2.</span>
+            I'm sold. Now how do I actually contribute?
+          </h2>
+          <p class="muted" style="margin-bottom:12px">
+            Ahh, now that's the tricky part. Contributing to open source can be intimidating,
+            especially for first-timers — you're often dealing with large codebases, and it's
+            hard to know where to even start. Then the doubts creep in: am I good enough? What
+            if I do something wrong?
+          </p>
+          <p class="muted">
+            This is exactly what PES Open Source aims to address. We want to provide a platform
+            where members support each other, until everyone can comfortably and confidently
+            make a real impact through open-source collaboration.
+          </p>
+          <div class="note" style="margin-top:18px">
+            Still not sure <em>why</em> you should bother with open source in the first place?{' '}
+            <a class="link-arrow" href="/getting-started/">Read "Why Should I Care About Open Source?" →</a>
+          </div>
+          <hr class="divider" style="margin-top:28px" />
+        </section>
+
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <a class="btn btn--ghost btn--sm" href="/getting-started/">← Main Hub</a>
+          <a class="btn btn--primary btn--sm" href="/about/">Why Our Club →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

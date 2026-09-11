@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import { LINKS, SITE } from '../data/site';
+
+const socials = [
+  { h: 'Slack', s: 'Our main channel — most members are here', href: LINKS.slack },
+  { h: 'GitHub', s: 'github.com/pesos', href: LINKS.github },
+  { h: 'Instagram', s: '@pes.opensource', href: LINKS.instagram },
+  { h: 'Twitter / X', s: '@pesopensource', href: LINKS.twitter },
+];
+const stats = [
+  { k: 'Founded', v: String(SITE.founded) },
+  { k: 'Members', v: '30+' },
+  { k: 'Public Repos', v: '27' },
+];
+const faqs = [
+  { q: 'What is the fastest way to reach you?', a: 'Slack — that\'s where the community actually lives and where most questions get answered fastest. The form on this page works too, and reaches the team directly.' },
+  { q: 'Where and when are your meet-ups held?', a: 'On campus, twice a week during the semester. The exact day, time and room are announced on Slack each week — join to see what\'s next.' },
+  { q: 'Can I attend a meeting before becoming a member?', a: 'Absolutely. Open work sessions are open to anyone curious. Bring a laptop and introduce yourself.' },
+  { q: 'Do you accept partnership or project proposals?', a: 'Yes — use the form, or reach out on Slack. See the "start your own project" criteria on the Projects page.' },
+];
+---
+
+<BaseLayout title="Contact" description="Get in touch with PES Open Source.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Contact' }]} />
+    <div class="page-head__row" style="margin-top:14px">
+      <div>
+        <h1 class="h1" style="margin-bottom:10px">Get in Touch</h1>
+        <p class="lead">
+          Have a question, proposal, or just want to say hello? Fill in the form below, or reach
+          us directly on Slack — either way, we'll get back to you.
+        </p>
+      </div>
+      <div class="stat-box" style="min-width:280px">
+        {stats.map((s) => (
+          <div class="stat-box__row"><span class="stat-box__k">{s.k}</span><span class="stat-box__v">{s.v}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section cal-wrap" style="display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start">
+    <aside class="stack-sm">
+      <div>
+        <span class="eyebrow" style="margin-bottom:14px">Find Us Online</span>
+        <div class="stack-sm">
+          {socials.map((s) => (
+            <a class="social-row" href={s.href} target="_blank" rel="noopener">
+              <span class="social-row__ico">◦</span>
+              <span><span class="social-row__h">{s.h}</span><br /><span class="social-row__s">{s.s}</span></span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div style="margin-top:26px">
+        <span class="eyebrow" style="margin-bottom:14px">Location</span>
+        <div class="img-ph" style="min-height:150px;margin-bottom:14px">📍 PES University, Bangalore</div>
+        <p class="muted" style="font-size:.86rem">
+          We meet on campus, twice a week during the semester. Exact day, time and room are
+          announced on Slack — <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">join to find out →</a>
+        </p>
+      </div>
+
+      <div style="margin-top:26px">
+        <span class="eyebrow" style="margin-bottom:14px">Code of Conduct</span>
+        <p class="muted" style="font-size:.86rem">
+          To report a Code of Conduct concern, use the form and mark it as such, or reach the
+          Community Relations Head directly on Slack. Read the full{' '}
+          <a class="link-arrow" href="/code-of-conduct/">Code of Conduct →</a>
+        </p>
+      </div>
+    </aside>
+
+    <div class="stack-sm">
+      <form class="panel" data-mock-form action={LINKS.formspree} method="POST" novalidate>
+        <span class="eyebrow" style="margin-bottom:6px">Send a Message</span>
+        <p class="muted" style="font-size:.86rem;margin-bottom:18px">All fields marked with <span style="color:var(--neon)">*</span> are required.</p>
+        <div class="grid-2" style="gap:16px">
+          <label class="field">
+            <span class="field__label">Full Name <span class="req">*</span></span>
+            <input class="input" type="text" name="name" required placeholder="Alex Johnson" />
+            <span class="field__error">Please enter your name.</span>
+          </label>
+          <label class="field">
+            <span class="field__label">Email Address <span class="req">*</span></span>
+            <input class="input" type="email" name="email" required placeholder="alex@example.com" />
+            <span class="field__error">Please enter a valid email.</span>
+          </label>
+        </div>
+        <label class="field" style="margin-top:16px">
+          <span class="field__label">Subject <span class="req">*</span></span>
+          <select class="select" name="subject" required>
+            <option value="">Select a subject…</option>
+            <option>General inquiry</option><option>Join the club</option>
+            <option>Project proposal</option><option>Code of Conduct concern</option>
+          </select>
+          <span class="field__error">Please pick a subject.</span>
+        </label>
+        <label class="field" style="margin-top:16px">
+          <span class="field__label">Message <span class="req">*</span></span>
+          <textarea class="textarea" name="message" required maxlength="1000" placeholder="Tell us what's on your mind — the more detail, the better we can help."></textarea>
+          <div class="mono muted" style="font-size:.74rem;text-align:right;margin-top:4px" data-char-count>0 / 1000</div>
+          <span class="field__error">Please write a message.</span>
+        </label>
+        <div class="note" style="margin:16px 0">
+          <span>ℹ</span>
+          <span>Your details are used solely to respond to your message and are never shared with third parties.</span>
+        </div>
+        <div class="form-success">✓ Thanks — your message is on its way. We'll be in touch soon.</div>
+        <div class="form-error" style="display:none;border:1px solid #ff5c5c;background:rgba(255,92,92,.08);border-radius:var(--r);padding:14px 16px;font-size:.86rem;margin-bottom:14px">
+          Something went wrong sending that — please try again, or reach us on <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">Slack</a> instead.
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" style="margin-top:14px">Send message →</button>
+      </form>
+
+      <div class="panel">
+        <span class="eyebrow" style="margin-bottom:6px">Frequently Asked Questions</span>
+        <p class="muted" style="font-size:.86rem;margin-bottom:12px">Answers to the questions we get most often.</p>
+        <div class="accordion">
+          {faqs.map((f, i) => (
+            <div class="accordion__item">
+              <button class="accordion__btn" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+                {f.q}<span class="accordion__icon">+</span>
+              </button>
+              <div class="accordion__panel" style={i === 0 ? '' : 'max-height:0'}>
+                <div>{f.a}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

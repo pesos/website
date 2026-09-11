@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroGlyphs from '../components/HeroGlyphs.astro';
+import { SITE } from '../data/site';
+
+const sections = [
+  { n: '01', label: 'Start', title: 'Getting Started', desc: 'New here? Learn why open source matters and how to make your first contribution.', href: '/getting-started/', cta: 'Explore' },
+  { n: '02', label: 'About', title: 'About Us', desc: 'Who we are, what we build, and how the club is run by students, for students.', href: '/about/', cta: 'Learn more' },
+  { n: '06', label: 'Blogs', title: 'Blogs & Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
+  { n: '08', label: 'Showcase', title: 'Projects', desc: 'CLI tools, systems programs and libraries — Grofer, Rshark, browser-history and more, all in the open.', href: '/projects/', cta: 'View projects' },
+  { n: '07', label: 'Contact', title: 'Contact', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
+];
+
+const tech = ['Go', 'Rust', 'Python', 'Linux', 'Git', 'GitHub', 'Slack', 'Bash', 'Networking', 'CLI'];
+---
+
+<BaseLayout description="PESOS — the student-run open-source community at PES University.">
+  <section class="wrap hero">
+    <div class="hero__copy">
+      <span class="eyebrow">01 // Open Source</span>
+      <h1 class="display hero__title">Build in the open<br />with <span style="color:var(--neon)">PESOS</span></h1>
+      <p class="lead">
+        {SITE.tagline} We build, contribute to and support software that solves real
+        problems — and we teach you how to do the same.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="/how-to-join/">Join the club</a>
+        <a class="btn btn--ghost" href="/getting-started/">Explore the club</a>
+      </div>
+    </div>
+
+    <div class="hero__art" aria-hidden="true">
+      <HeroGlyphs />
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      {[...tech, ...tech].map((t) => <span>{t}</span>)}
+    </div>
+  </div>
+
+  <section class="wrap section">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:32px">
+      <span class="eyebrow">03 // Club Sections</span>
+      <span class="mono muted" style="font-size:.78rem;letter-spacing:.1em;text-transform:uppercase">Club Sections</span>
+    </div>
+
+    <div class="grid-auto">
+      {sections.map((s, i) => (
+        <a class="card card--spotlight reveal" href={s.href} style={`--d:${i * 60}ms`}>
+          <span class="eyebrow eyebrow--pill" style="margin-bottom:16px">{s.n} // {s.label}</span>
+          <div class="card__body">
+            <h3 class="h3">{s.title}</h3>
+            <p class="muted" style="font-size:.9rem">{s.desc}</p>
+            <span class="link-arrow" style="margin-top:8px">{s.cta} →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section--tight">
+    <div class="panel panel--accent reveal" style="display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap">
+      <div>
+        <h2 class="h2">Want to start your own project?</h2>
+        <p class="muted" style="margin-top:8px;max-width:52ch">
+          Have an idea for a compiler, a tool, or a developer utility? PESOS provides
+          infrastructure, guidance, and peer contributors to help launch your initiative.
+        </p>
+      </div>
+      <a class="btn btn--primary" href="/contact/">Propose a project</a>
+    </div>
+  </section>
+</BaseLayout>

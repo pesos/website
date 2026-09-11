@@ -1,0 +1,26 @@
+---
+import { SITE, FOOTER } from '../data/site';
+---
+
+<footer class="footer">
+  <div class="wrap footer__top">
+    <div>
+      <a href="/" class="brand"><img class="brand__logo" src="/pesos-logo.svg" alt="" width="1361" height="1257" /><span>{SITE.name}</span></a>
+      <p class="footer__blurb">
+        {SITE.tagline}
+      </p>
+    </div>
+    <div class="footer__col">
+      <h4>Club Links</h4>
+      {FOOTER.clubLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    </div>
+    <div class="footer__col">
+      <h4>Social Links</h4>
+      {FOOTER.socialLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    </div>
+  </div>
+  <div class="wrap footer__bar">
+    <span>© {SITE.year} {SITE.name}. All rights reserved.</span>
+    <span>Built by the club · TUI edition coming soon</span>
+  </div>
+</footer>

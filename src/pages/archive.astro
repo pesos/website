@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import { ARCHIVE_ENTRIES, ARCHIVE_STATS, ARCHIVE_YEARS, ARCHIVE_SEMESTERS, ARCHIVE_TABS } from '../data/archive';
+---
+
+<BaseLayout title="Archive" description="A permanent record of past events, completed projects and club history.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Archive' }]} />
+    <div class="page-head__row" style="margin-top:14px">
+      <div>
+        <h1 class="h1" style="margin-bottom:10px">Archive</h1>
+        <p class="lead">
+          A permanent record of past events, completed projects and institutional history.
+          Browse by year and semester or switch between content types.
+        </p>
+      </div>
+      <div class="stat-box" style="min-width:280px">
+        {ARCHIVE_STATS.map((s) => (
+          <div class="stat-box__row">
+            <span class="stat-box__k">{s.k}</span>
+            <span class="stat-box__v" data-count={s.v}>{s.v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" data-filter-root>
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:40px">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <span class="mono muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em">Year</span>
+        <select class="select" style="width:auto" data-filter-select="year" aria-label="Year">
+          <option value="all">All years</option>
+          {ARCHIVE_YEARS.map((y) => <option value={y}>{y}</option>)}
+        </select>
+        <span class="mono muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em">Semester</span>
+        <select class="select" style="width:auto" data-filter-select="semester" aria-label="Semester">
+          {ARCHIVE_SEMESTERS.map((s, i) => <option value={i === 0 ? 'all' : s}>{s}</option>)}
+        </select>
+      </div>
+      <div class="tabs">
+        {ARCHIVE_TABS.map((t, i) => (
+          <button class:list={['tab', i === 0 && 'is-active']} data-filter={t} data-filter-key="type" type="button"
+            aria-selected={i === 0 ? 'true' : 'false'}>{t}</button>
+        ))}
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+      <span class="eyebrow">Entries</span>
+      <span class="mono muted" style="font-size:.76rem;text-transform:uppercase;letter-spacing:.08em">
+        <span data-filter-count>{ARCHIVE_ENTRIES.length}</span> entries shown
+      </span>
+    </div>
+
+    <div class="grid-3">
+      {ARCHIVE_ENTRIES.map((e, i) => (
+        <article class="card card--spotlight reveal" data-item data-type={e.type} data-year={e.year} data-semester={e.semester}
+          style={`--d:${i * 50}ms`}>
+          <div class="img-ph" style="min-height:130px;margin-bottom:14px;position:relative">
+            <span class="tag tag--solid" style="position:absolute;top:10px;right:10px">{e.semester}</span>
+          </div>
+          <div class="tag" style="margin-bottom:8px">📅 {e.date}</div>
+          <span class="tag">{e.category}</span>
+          <h3 class="h3" style="margin:10px 0 6px">{e.title}</h3>
+          <p class="muted" style="font-size:.9rem;margin-bottom:12px">{e.blurb}</p>
+          {e.href
+            ? <a class="link-arrow" href={e.href} target="_blank" rel="noopener">View entry ↗</a>
+            : <span class="muted mono" style="font-size:.78rem">No link available</span>}
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

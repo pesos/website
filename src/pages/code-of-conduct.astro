@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+const positive = [
+  'Using welcoming, friendly and inclusive language',
+  'Helping each other broaden our knowledge and perspective',
+  'Being respectful of differing viewpoints and experiences',
+  'Gracefully accepting constructive criticism',
+  'Showing empathy towards other community members',
+];
+const negative = [
+  'Trolling, insulting or derogatory comments, and personal attacks',
+  'Making fun of people for not knowing something',
+  'Public or private harassment',
+  'Sexualized language or imagery, or unwelcome sexual attention',
+  'Publishing others’ private information without explicit permission',
+  'Other conduct that could reasonably be considered inappropriate in a professional setting',
+];
+---
+
+<BaseLayout title="Code of Conduct" description="The PES Open Source Code of Conduct.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Code of Conduct' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">Code of Conduct</h1>
+    <p class="lead">
+      This outlines what is and is not acceptable behaviour within the PES Open Source
+      community — online and in person.
+    </p>
+  </section>
+
+  <section class="wrap section">
+    <SectionHeader num="01" title="Driving Principle" center />
+    <p class="muted" style="max-width:70ch;margin:0 auto 20px">
+      We want a positive experience for everyone in the community, regardless of gender,
+      ability, age, sexual orientation or identity, ethnicity, religion, appearance,
+      socioeconomic status, native language, or geographic background.
+    </p>
+    <p class="muted" style="max-width:70ch;margin:0 auto 56px;font-weight:600">
+      To ensure a welcoming and inclusive community, we will prioritise the safety of the
+      marginalised over the comfort of the privileged.
+    </p>
+
+    <SectionHeader num="02" title="Our Standards" center />
+    <div class="grid-2" style="margin-bottom:56px">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:14px">Behaviour that helps</div>
+        <ul class="check-list">{positive.map((p) => <li>{p}</li>)}</ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:14px">Behaviour that doesn't</div>
+        <ul class="check-list">{negative.map((n) => <li>{n}</li>)}</ul>
+      </div>
+    </div>
+
+    <SectionHeader num="03" title="Responsibilities & Scope" center />
+    <div class="stack-sm" style="max-width:70ch;margin:0 auto 56px">
+      <p class="muted">
+        The Community Relations Head is responsible for enforcing this Code of Conduct. They,
+        together with the Core Committee, have the right and responsibility to remove or reject
+        any contribution that violates it, and may temporarily or permanently ban an offender
+        whose behaviour is deemed harmful to the community.
+      </p>
+      <p class="muted">
+        This applies within all club interactions, offline and online, and whenever someone is
+        representing the community in public spaces — meet-ups, events, the official Slack
+        channel, and official social media accounts.
+      </p>
+    </div>
+
+    <SectionHeader num="04" title="Enforcement" center />
+    <div class="panel" style="max-width:70ch;margin:0 auto">
+      <p class="muted" style="margin-bottom:14px">
+        Instances of abusive, harassing or otherwise unacceptable behaviour may be reported to
+        the Community Relations Head. All complaints will be reviewed and investigated, and
+        result in a response deemed necessary and appropriate. Reporter confidentiality is
+        maintained throughout.
+      </p>
+      <a class="btn btn--primary btn--sm" href="/contact/">Report a concern</a>
+    </div>
+
+    <p class="muted mono" style="text-align:center;font-size:.76rem;margin-top:56px">
+      Loosely based on the Contributor Covenant, version 1.4.
+    </p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+interface Props { num?: string; title: string; center?: boolean; }
+const { num, title, center = false } = Astro.props;
+---
+<div class:list={['sec-head', center && 'sec-head--center']}>
+  {num && <span class="sec-head__num">{num}</span>}
+  <span class="sec-head__line"></span>
+  <span class="sec-head__title">{title}</span>
+  <span class="sec-head__line"></span>
+</div>

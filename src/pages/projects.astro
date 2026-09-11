@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ImgPlaceholder from '../components/ImgPlaceholder.astro';
+import { PROJECTS, OTHER_PROJECTS, PROJECT_STATS, PROJECT_FILTERS } from '../data/projects';
+
+const featured = PROJECTS.find((p) => p.featured)!;
+const rest = PROJECTS.filter((p) => !p.featured);
+---
+
+<BaseLayout title="Projects" description="Real open-source tools maintained by PES Open Source members — Grofer, Rshark, browser-history and more.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Projects' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">Projects</h1>
+    <p class="lead">
+      We at PES Open Source are building an inclusive community of hackers that make awesome
+      projects together — all run like real-world open-source projects, out in the open under{' '}
+      <a class="link-arrow" href="https://github.com/pesos" target="_blank" rel="noopener">github.com/pesos</a>.
+    </p>
+  </section>
+
+  <section class="wrap section" data-filter-root>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+      <div class="search" style="flex:1;min-width:220px">
+        <span class="search__icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </span>
+        <input class="input" type="search" placeholder="Search projects…" data-filter-search />
+      </div>
+      <select class="select" style="width:auto" data-filter-select="stack" aria-label="Tech stack">
+        {PROJECT_FILTERS.stack.map((s, i) => <option value={i === 0 ? 'all' : s}>{s}</option>)}
+      </select>
+      <select class="select" style="width:auto" data-filter-select="status" aria-label="Status">
+        <option value="all">Status</option>
+        {PROJECT_FILTERS.status.slice(1).map((s) => <option value={s}>{s}</option>)}
+      </select>
+      <select class="select" style="width:auto" data-filter-select="cat" aria-label="Category">
+        {PROJECT_FILTERS.category.map((s, i) => <option value={i === 0 ? 'all' : s}>{s}</option>)}
+      </select>
+    </div>
+
+    <div class="tabs" style="margin-bottom:44px">
+      {PROJECT_FILTERS.status.map((s, i) => (
+        <button class:list={['chip', i === 0 && 'is-active']} data-filter={s} data-filter-key="status" type="button">{s}</button>
+      ))}
+    </div>
+
+    <SectionHeader num="01" title="Featured Project" center />
+    <div class="split reveal" style="margin-bottom:60px">
+      <div class="split__media"><ImgPlaceholder label="Placeholder" style="border:0;height:100%" /></div>
+      <div class="split__body">
+        <div style="display:flex;justify-content:space-between;gap:12px">
+          <span class="tag">{featured.category}</span>
+          <span class="tag tag--solid">{featured.status}</span>
+        </div>
+        <h2 class="h2">{featured.name}</h2>
+        <p class="muted">{featured.blurb}</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          {featured.stack.map((t) => <span class="tag">{t}</span>)}
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="avatars">{Array.from({ length: 5 }).map(() => <span>◦</span>)}</span>
+          <span class="muted" style="font-size:.85rem">{featured.contributors} contributors</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn--primary btn--sm" href={`/projects/${featured.slug}/`}>View project</a>
+          <a class="btn btn--ghost btn--sm" href={`${featured.repo}/issues`} target="_blank" rel="noopener">Contribute</a>
+        </div>
+      </div>
+    </div>
+
+    <SectionHeader num="02" title="All Projects" center />
+    <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:60ch">
+      These are the projects deemed most accessible, well documented and thoroughly vetted —
+      each has its own <code>#project-help</code> Slack channel.
+    </p>
+    <div class="grid-3">
+      {rest.map((p, i) => (
+        <article class="card card--spotlight reveal" data-item data-status={p.status} data-cat={p.category}
+          data-stack={p.stack.join('|')} style={`--d:${i * 50}ms`}>
+          <div class="img-ph" style="min-height:130px;margin-bottom:14px">Placeholder</div>
+          <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:8px">
+            <span class="tag">{p.category}</span>
+            <span class="tag tag--solid">{p.status}</span>
+          </div>
+          <h3 class="h3">{p.name}</h3>
+          <p class="muted" style="font-size:.9rem;margin:6px 0 10px">{p.blurb}</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+            {p.stack.map((t) => <span class="tag">{t}</span>)}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="avatars">{Array.from({ length: 3 }).map(() => <span>◦</span>)}</span>
+            <a class="btn btn--ghost btn--sm" href={`/projects/${p.slug}/`}>View details</a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="stat-grid" style="margin-top:56px">
+      {PROJECT_STATS.map((s) => (
+        <div class="stat-card reveal">
+          <div class="stat-card__num" data-count={s.num}>{s.num}</div>
+          <div class="stat-card__label">{s.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <div style="margin-top:64px">
+      <SectionHeader num="03" title="Other Projects To Contribute To" center />
+      <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
+        Maintained by individual community members. Smaller in scope, no dedicated Slack
+        channel — ask in <code>#projects</code> instead.
+      </p>
+      <div class="grid-3">
+        {OTHER_PROJECTS.map((p) => (
+          <a class="card card--spotlight reveal" href={p.repo} target="_blank" rel="noopener">
+            <h3 class="h3">{p.name}</h3>
+            <p class="muted" style="font-size:.88rem;margin:8px 0 12px">{p.blurb}</p>
+            <span class="link-arrow">View on GitHub →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section--tight">
+    <div class="panel panel--accent reveal">
+      <h2 class="h2" style="margin-bottom:14px">Want to start your own project?</h2>
+      <p class="muted" style="margin-bottom:16px;max-width:70ch">
+        Get to be the maintainer of your very own project under PES Open Source, and leverage
+        the community to get contributions. Here's what we look for:
+      </p>
+      <ul class="check-list" style="margin-bottom:20px;max-width:70ch">
+        <li>Written in any language or framework, as long as it carries an open-source license</li>
+        <li>Accessible enough for new contributors to get involved (an obscure stack is a harder sell)</li>
+        <li>Well documented at all times, and run like an organized open-source project</li>
+        <li>You commit to maintaining it long-term, and stay responsive to questions</li>
+      </ul>
+      <a class="btn btn--primary" href="/contact/">Pitch a project</a>
+    </div>
+  </section>
+</BaseLayout>

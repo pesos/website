@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumb from '../components/Crumb.astro';
+import GuideTabs from '../components/GuideTabs.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ImgPlaceholder from '../components/ImgPlaceholder.astro';
+import { GUIDE_SECTIONS, GUIDE_FILTERS, GUIDE_QUICK_REF } from '../data/guide';
+---
+
+<BaseLayout title="Why Open Source" description="Why you, as a college student, should care about open source.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Getting Started', href: '/getting-started/' }, { label: 'Why Open Source' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">Why Should I Care About Open Source?</h1>
+    <p class="lead">Here we address exactly why you, as a college student, would want to care about Open Source.</p>
+    <div style="margin-top:22px"><GuideTabs active="Why Open Source" /></div>
+  </section>
+
+  <section class="wrap section" data-filter-root>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+      <div class="search" style="flex:1;min-width:220px">
+        <span class="search__icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </span>
+        <input class="input" type="search" placeholder="Search sections…" data-filter-search />
+      </div>
+      <select class="select" style="width:auto" data-filter-select="cat" aria-label="Topic">
+        <option value="all">Topic</option>
+        {GUIDE_FILTERS.slice(1).map((f) => <option value={f}>{f}</option>)}
+      </select>
+      <select class="select" style="width:auto" data-filter-select="level" aria-label="Difficulty">
+        <option value="all">Difficulty</option>
+        <option>Beginner</option><option>Intermediate</option><option>All levels</option>
+      </select>
+    </div>
+    <div class="tabs" style="margin-bottom:40px">
+      {GUIDE_FILTERS.map((f, i) => (
+        <button class:list={['chip', i === 0 && 'is-active']} data-filter={f} data-filter-key="cat" type="button">{f}</button>
+      ))}
+    </div>
+
+    <SectionHeader num="01" title="Because The Industry Cares" center />
+    <div class="split reveal" style="margin-bottom:64px">
+      <div class="split__media"><ImgPlaceholder label="Section image 1200×800" style="border:0;height:100%" /></div>
+      <div class="split__body">
+        <span class="tag">Key Insight</span>
+        <h2 class="h2">94% of employed developers use open source at work</h2>
+        <p class="muted">
+          "Virtually all (94%) of those who are employed use open source at least sometimes in
+          their professional work (81% use it frequently), and 65% of those who contribute back
+          do so as part of their work duties." — GitHub Open Source Survey, 2017
+        </p>
+        <ul class="check-list">
+          <li>Even Microsoft — once open source's "biggest enemy" — now says "Microsoft ❤️ Open Source"</li>
+          <li>The transparency of open development is now often the default way software gets made</li>
+          <li>Industry-wide · All disciplines</li>
+        </ul>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="tag tag--neon">Beginner Friendly</span>
+          <span class="muted mono" style="font-size:.78rem">5 min read</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn--ghost btn--sm" href="/pesos-101/">Read more</a>
+          <a class="btn btn--primary btn--sm" href="/how-to-join/">Get started</a>
+        </div>
+      </div>
+    </div>
+
+    <SectionHeader num="02" title="All Guide Sections" center />
+    <div class="grid-3">
+      {GUIDE_SECTIONS.map((s, i) => (
+        <article class="card card--spotlight reveal" data-item data-cat={s.filter} data-level={s.level} style={`--d:${i * 50}ms`}>
+          <div class="img-ph" style="min-height:120px;margin-bottom:14px">800×500</div>
+          <span class="tag">{s.category}</span>
+          <h3 class="h3" style="margin:10px 0 6px">{s.title}</h3>
+          <p class="muted" style="font-size:.9rem">{s.blurb}</p>
+          <div class="mono muted" style="font-size:.76rem;margin:10px 0 4px">{s.read}</div>
+          <div class="mono muted" style="font-size:.76rem">{s.level}</div>
+          <div class="mono" style="font-size:.76rem;color:var(--text-mute);margin-bottom:12px">{s.reason}</div>
+          <a class="btn btn--ghost btn--sm" href="/pesos-101/">Read more</a>
+        </article>
+      ))}
+    </div>
+
+    <div style="margin-top:64px">
+      <SectionHeader num="03" title="Quick Reference" center />
+      <div class="qref">
+        {GUIDE_QUICK_REF.map((q) => (
+          <div class="qref__row">
+            <span class="qref__n">{q.n}</span>
+            <span class="qref__t">{q.t}</span>
+            <span class="qref__d">{q.d}</span>
+            <a class="btn btn--ghost btn--sm" href="/pesos-101/">Read →</a>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div style="margin-top:64px">
+      <SectionHeader num="04" title="Related Reading" center />
+      <div class="panel" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+        <div>
+          <h3 class="h3">Looking for more context?</h3>
+          <p class="muted" style="margin-top:6px">Browse our curated list of articles, talks, and resources on open source contribution.</p>
+        </div>
+        <a class="btn btn--primary" href="/resources/">View resources</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

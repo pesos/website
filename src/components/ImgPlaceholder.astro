@@ -1,0 +1,12 @@
+---
+interface Props { label?: string; style?: string; class?: string; }
+const { label = 'Image', style, class: cls } = Astro.props;
+---
+<div class:list={['img-ph', cls]} style={style} aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="9" cy="9" r="2" />
+    <path d="m21 15-4.5-4.5L5 22" />
+  </svg>
+  <span>{label}</span>
+</div>

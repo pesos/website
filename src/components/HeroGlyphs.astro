@@ -1,0 +1,120 @@
+---
+/* Animated terminal-glyph field for the hero (right column), in the spirit
+   of the artwork on select.supabase.com — a block "waveform" on the left,
+   bracket/arrow streams in the middle, a letter heatmap on the right.
+   Pure JS value-noise, no deps. Sits on the page background; the left and
+   right edges are feathered in CSS so it dissolves into the layout.
+   Reacts to the pointer: hovering brightens and thickens the field. */
+const COLS = 40;
+const ROWS = 15;
+const cells = Array.from({ length: COLS * ROWS });
+---
+
+<div class="glyphs" data-glyphs aria-hidden="true" style={`--cols:${COLS};--rows:${ROWS}`}>
+  {cells.map(() => <span class="glyphs__c"> </span>)}
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-glyphs]');
+  if (root) {
+    const COLS = parseInt(getComputedStyle(root).getPropertyValue('--cols')) || 54;
+    const ROWS = parseInt(getComputedStyle(root).getPropertyValue('--rows')) || 22;
+    const cells = Array.from(root.querySelectorAll<HTMLElement>('.glyphs__c'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const BLOCKS = ' ▁▂▃▄▅▆▇█';
+    const STREAM = '·:{<([»—+×◆';
+    const LETTERS = 'ABCDEFG';
+
+    // 4-octave sine "value noise" -> 0..1
+    const noise = (x: number, y: number, t: number) => {
+      const n =
+        Math.sin(x * 0.34 + t) +
+        Math.sin(y * 0.6 - t * 0.7) +
+        Math.sin((x + y) * 0.28 + t * 1.25) +
+        Math.sin(Math.hypot(x - COLS * 0.62, y - ROWS / 2) * 0.5 - t * 1.8);
+      return n * 0.25 * 0.5 + 0.5;
+    };
+    const shade = (v: number) =>
+      v < 0.4 ? '' : v < 0.55 ? 'a' : v < 0.68 ? 'b' : v < 0.8 ? 'c' : v < 0.9 ? 'd' : 'e';
+
+    // pointer influence in grid coords; hx < 0 when not hovering
+    let hx = -1;
+    let hy = -1;
+    const host = root.closest<HTMLElement>('.hero__art') || root;
+    const RADIUS = 9;
+    host.addEventListener('pointermove', (e) => {
+      const r = root.getBoundingClientRect();
+      hx = ((e.clientX - r.left) / r.width) * COLS;
+      hy = ((e.clientY - r.top) / r.height) * ROWS;
+      if (reduce) schedule();
+    });
+    host.addEventListener('pointerleave', () => {
+      hx = hy = -1;
+      if (reduce) schedule();
+    });
+    const boostAt = (x: number, y: number) => {
+      if (hx < 0) return 0;
+      const d = Math.hypot(x - hx, (y - hy) * 1.9) / RADIUS;
+      if (d >= 1) return 0;
+      const f = 1 - d;
+      return f * f * 0.55;
+    };
+
+    const set = (el: HTMLElement, cls: string, ch: string) => {
+      if (el.className !== cls) el.className = cls;
+      if (el.textContent !== ch) el.textContent = ch;
+    };
+
+    let t = 0;
+    const frame = () => {
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const el = cells[y * COLS + x];
+          if (!el) continue;
+          const cf = x / COLS;
+          const v = Math.min(1, noise(x, y, t) + boostAt(x, y));
+          let ch: string;
+          let cls = 'glyphs__c';
+          if (cf < 0.3) {
+            ch = BLOCKS[Math.max(0, Math.min(8, Math.floor(v * 9)))];
+            const s = shade(v * 0.92);
+            if (s) cls += ' ' + s;
+          } else if (cf < 0.54) {
+            ch = v < 0.34 ? ' ' : STREAM[Math.min(STREAM.length - 1, Math.floor(v * STREAM.length))];
+            if (v > 0.86) cls += ' a';
+          } else {
+            ch = v < 0.26 ? ' ' : LETTERS[Math.min(6, Math.floor(v * 7))];
+            const s = shade(v);
+            if (s) cls += ' ' + s;
+          }
+          set(el, cls, ch);
+        }
+      }
+    };
+
+    let queued = false;
+    function schedule() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        frame();
+      });
+    }
+
+    frame();
+    if (!reduce) {
+      let last = 0;
+      const loop = (now: number) => {
+        if (now - last > 95) {
+          t += 0.08;
+          frame();
+          last = now;
+        }
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    }
+  }
+</script>

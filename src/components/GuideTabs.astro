@@ -1,0 +1,14 @@
+---
+import { GUIDE_TABS } from '../data/site';
+interface Props { active: string; }
+const { active } = Astro.props;
+---
+<div class="tabs" role="tablist" aria-label="Getting started sections">
+  {GUIDE_TABS.map((t) => (
+    <a
+      class:list={['tab', t.label === active && 'is-active']}
+      href={t.href}
+      aria-selected={t.label === active ? 'true' : 'false'}
+    >{t.label}</a>
+  ))}
+</div>
