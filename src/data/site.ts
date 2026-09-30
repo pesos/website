@@ -46,7 +46,6 @@ export const FOOTER = {
     { label: 'Projects', href: '/projects/' },
     { label: 'Resources', href: '/resources/' },
     { label: 'Blogs', href: '/blogs/' },
-    { label: 'Code of Conduct', href: '/code-of-conduct/' },
   ],
   socialLinks: [
     { label: 'GitHub', href: LINKS.github },

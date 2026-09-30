@@ -1,44 +1,64 @@
-# PESOS — club website
+# PESOS Web
 
-Static marketing/content site for **PESOS** (PES Open Source), built with **Astro SSG**.
-The separate "TUI / Terminal" experience is out of scope here — the header keeps a
-`$ Terminal` button that currently links nowhere.
+## 📚 Documentation
+| | |
+|---|---|
+| [⚙️ Architecture](docs/architecture.md) | System design, components and flow |
+| [📁 Structure](docs/structure.md) | Project organization and responsibilities |
+| [🚀 Installation](docs/installation.md) | Requirements and steps to run the project |
+| [🧠 Technical decisions](docs/decisions.md) | Trade-offs and design justifications |
+| [📖 Usage guide](docs/usage.md) | Editing content, adding projects, wiring filters and forms |
 
-## Develop
+---
+
+## Description
+
+The website for **PESOS (PES Open Source)**, the student-run open-source club at PES University (founded 2012, re-launched as "OSIRIS" in Feb 2026).
+
+- **What it does:** a static site that explains why open source matters, how to join the club (one PR to [`pesos/members-list`](https://github.com/pesos/members-list)), what the club builds (Grofer, Rshark, browser-history), and its history, blog, resources and code of conduct.
+- **What problem it solves:** replaces the old `pesos.github.io` Jekyll site with one place for onboarding. Content lives in typed data files, so updating a project or archive entry doesn't mean editing markup.
+- **Real use case:** a new student lands on `/`, reads `/getting-started/`, follows the five steps on `/how-to-join/`, then picks a "good first issue" from `/projects/grofer/`.
+
+## Quick start
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321
-npm run build      # -> dist/
-npm run preview    # serve dist/
+npm run dev      # http://localhost:4321
 ```
 
-## Stack & structure
+## Technologies used
 
-- Astro 4, `output: 'static'`, zero UI framework.
-- `src/styles/global.css` — all design tokens + component CSS. Dark theme is the default
-  (`:root`); light theme overrides tokens under `:root[data-theme="light"]`.
-- `src/scripts/main.ts` — one guarded module: theme toggle (persisted in `localStorage`),
-  scroll-reveal, sticky nav + mobile drawer, cursor-glow, count-up, tabs, filters,
-  accordion, events calendar, mock form validation.
-- `src/data/*.ts` — all sample content (projects, events, perks, resources, archive,
-  guide sections, nav). Edit these, not the pages.
-- `src/components/` — `Nav`, `Footer`, `SectionHeader`, `ImgPlaceholder`, `Crumb`,
-  `GuideTabs`. `src/layouts/BaseLayout.astro` wraps every page.
+| Category | Tech |
+|---|---|
+| Framework | [Astro](https://astro.build) `^7.3.2`, `output: 'static'` |
+| Language | TypeScript (`astro/tsconfigs/strict`) |
+| Styling | One hand-written stylesheet (`src/styles/global.css`) with CSS custom-property tokens; Inter + JetBrains Mono from Google Fonts |
+| Client JS | Vanilla TS modules, no UI framework |
+| Forms | [Formspree](https://formspree.io) endpoint for the contact form |
 
-## Pages
+## Quick installation
 
-`/` home · `/getting-started/` · `/pesos-101/` · `/how-to-join/` · `/about/` · `/blogs/`
-· `/projects/` + `/projects/<slug>/` · `/events/` · `/perks/` · `/resources/` ·
-`/archive/` · `/contact/` · `404`
+1. Install Node `^20.19.0` or `>=22.12.0`.
+2. `npm install`
+3. `npm run build`: the static output goes to `dist/`.
 
-## Placeholders to replace before launch
+Full steps: [docs/installation.md](docs/installation.md).
 
-- **`[tagline placeholder]`** — appears on the home hero and in `src/data/site.ts`
-  (`SITE.tagline`) and `src/components/Footer.astro`. Search the repo for it.
-- All images are dashed `ImgPlaceholder` boxes.
-- Contact and "join" forms are **front-end only** — they validate and show a fake
-  success message, but nothing is sent. Wire up a form backend (Formspree, a serverless
-  function, etc.) in `src/scripts/main.ts` → `initForms()`.
-- Social / GitHub / Discord / Slack links are `#`.
-- Sample data (project stats, member names, event dates, perks) is illustrative.
+## Architecture (summary)
+
+Astro renders every page at build time from `.astro` templates plus typed arrays in `src/data/*.ts`. Every page is wrapped in `BaseLayout`, which also loads a single client script (`src/scripts/main.ts`). That script adds behavior to elements by looking up `data-*` attributes: theme toggle, filters, tabs, accordion, count-up and form submission. The one dynamic route, `/projects/[slug]/`, is expanded at build time from the `PROJECTS` array. There is no backend. See [docs/architecture.md](docs/architecture.md).
+
+## Project structure
+
+```
+src/
+├── pages/        # one file per route (+ projects/[slug].astro)
+├── layouts/      # BaseLayout: <head>, theme bootstrap, Nav, Footer, main.ts
+├── components/   # Nav, Footer, Crumb, GuideTabs, SectionHeader, ImgPlaceholder, HeroGlyphs
+├── data/         # all content: site, projects, guide, resources, archive, events, perks
+├── scripts/      # main.ts — all shared client behavior
+└── styles/       # global.css — tokens + every component style
+public/           # pesos-logo.svg (served as-is)
+```
+
+Details: [docs/structure.md](docs/structure.md).
