@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'PESOS',
   full: 'PESOS — PES Open Source',
-  tagline: 'An Open Source initiative by the students of PES University.',
+  tagline: 'The Open Source Club of PES University',
   // The community re-launched itself under this nickname in Feb 2026 —
   // see OSIRIS-members-list.md in github.com/pesos/members-list.
   communityName: 'OSIRIS',
@@ -38,6 +38,14 @@ export const LINKS = {
   twitter: 'https://twitter.com/pesopensource',
   formspree: 'https://formspree.io/f/xnqokpre',
 };
+
+export const SECTIONS = [
+  { n: '01', label: 'Start', title: 'Getting Started', desc: 'Learn why open source matters and how to make your first contribution.', href: '/getting-started/', cta: 'Explore' },
+  { n: '02', label: 'About', title: 'About Us', desc: 'Who we are, what we build, and how the club is run by students, for students.', href: '/about/', cta: 'Learn more' },
+  { n: '06', label: 'Blogs', title: 'Blogs & Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
+  { n: '08', label: 'Showcase', title: 'Projects', desc: 'CLI tools, systems programs, libraries and more', href: '/projects/', cta: 'View projects' },
+  { n: '07', label: 'Contact', title: 'Contact', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
+];
 
 export const FOOTER = {
   clubLinks: [

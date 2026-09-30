@@ -1,11 +1,12 @@
 ---
 import { SITE, NAV_LINKS } from '../data/site';
+import Wordmark from './Wordmark.astro';
 ---
 
 <header class="nav">
   <div class="wrap nav__inner">
-    <a href="/" class="brand brand--mark-only" aria-label={SITE.name + ' home'}>
-      <img class="brand__logo" src="/pesos-logo.svg" alt={SITE.name} width="1361" height="1257" />
+    <a href="/" class="brand" aria-label={SITE.name + ' home'}>
+      <Wordmark />
     </a>
 
     <nav class="nav__links" aria-label="Primary">
@@ -19,7 +20,7 @@ import { SITE, NAV_LINKS } from '../data/site';
       </button>
 
       <a class="term-btn" href="#" title="Coming soon" aria-label="Terminal — coming soon">
-        <span aria-hidden="true">$</span><span class="term-btn__label">Terminal</span>
+        <span aria-hidden="true">&gt;_</span><span class="term-btn__label">Terminal</span>
       </a>
 
       <button class="nav__toggle" data-nav-toggle type="button" aria-label="Menu" aria-expanded="false">
@@ -30,6 +31,6 @@ import { SITE, NAV_LINKS } from '../data/site';
 
   <div class="nav__drawer" data-nav-drawer>
     {NAV_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
-    <a href="#" title="Coming soon">$ Terminal</a>
+    <a href="#" title="Coming soon">&gt;_ Terminal</a>
   </div>
 </header>

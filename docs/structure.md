@@ -6,7 +6,7 @@ pesos-web/
 ├── tsconfig.json             # extends astro/tsconfigs/strict; "@/*" → "src/*"
 ├── package.json              # dev / build / preview scripts; only dependency: astro
 ├── public/
-│   └── pesos-logo.svg        # logo + favicon, copied verbatim to dist/
+│   └── pesos-logo.svg        # favicon, copied verbatim to dist/
 └── src/
     ├── env.d.ts              # references .astro/types.d.ts (generated)
     ├── layouts/
@@ -18,7 +18,8 @@ pesos-web/
     │   ├── GuideTabs.astro
     │   ├── SectionHeader.astro
     │   ├── ImgPlaceholder.astro
-    │   └── HeroGlyphs.astro
+    │   ├── HeroGlyphs.astro
+    │   └── Wordmark.astro
     ├── pages/
     │   ├── index.astro
     │   ├── getting-started.astro
@@ -95,12 +96,13 @@ Each file exports a type and one or more arrays. Pages import from here instead 
 
 | Component | Props | Purpose |
 |---|---|---|
-| `Nav` | none | Logo, `NAV_LINKS`, theme toggle, placeholder `$ Terminal` button, mobile drawer |
-| `Footer` | none | Tagline, `FOOTER.clubLinks`, `FOOTER.socialLinks` |
+| `Nav` | none | `Wordmark`, `NAV_LINKS`, theme toggle, placeholder `>_ Terminal` button, mobile drawer |
+| `Footer` | none | `Wordmark`, tagline, `FOOTER.clubLinks`, `FOOTER.socialLinks` |
 | `Crumb` | `items: {label, href?}[]` | Breadcrumb; the last item without an `href` is rendered as the current page |
 | `GuideTabs` | `active: string` | Tab strip shared by the "Getting Started" pages (`GUIDE_TABS`) |
 | `SectionHeader` | `num?`, `title`, `center?` | Numbered section divider |
 | `ImgPlaceholder` | `label?`, `style?`, `class?` | Dashed box standing in for images that don't exist yet |
+| `Wordmark` | none | Text logo "PESOS": green `PES`/`S`, `O` in `--text` (white on dark) |
 | `HeroGlyphs` | none | Animated glyph field on the home hero, with its own inline `<script>` |
 
 **Does not belong here:** data fetching or content arrays. Components get content from props or `src/data`.
@@ -115,4 +117,4 @@ About 1,450 lines: tokens, reset, layout helpers (`.wrap`, `.grid-3`, `.split`, 
 
 ## `public/`
 
-Static files served from the site root. It currently contains only the logo.
+Static files served from the site root. It currently contains only `pesos-logo.svg`, which is used as the favicon.

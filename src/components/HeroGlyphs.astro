@@ -66,13 +66,21 @@ const cells = Array.from({ length: COLS * ROWS });
       if (el.textContent !== ch) el.textContent = ch;
     };
 
+    // stable per-cell hash -> 0..1, used to dither the zone boundaries
+    const hash = (x: number, y: number) => {
+      const h = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+      return h - Math.floor(h);
+    };
+
     let t = 0;
     const frame = () => {
       for (let y = 0; y < ROWS; y++) {
+        // each row's boundaries drift with time so the seams aren't straight lines
+        const wobble = (Math.sin(y * 0.9 + t * 0.6) + Math.sin(y * 0.37 - t * 0.9)) * 0.04;
         for (let x = 0; x < COLS; x++) {
           const el = cells[y * COLS + x];
           if (!el) continue;
-          const cf = x / COLS;
+          const cf = x / COLS + wobble + (hash(x, y) - 0.5) * 0.1;
           const v = Math.min(1, noise(x, y, t) + boostAt(x, y));
           let ch: string;
           let cls = 'glyphs__c';

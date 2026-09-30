@@ -65,4 +65,4 @@ As a result, `initCalendar` in `main.ts`, which was built for a dated events cal
 
 ## Deferred: "Terminal" (TUI) edition
 
-The nav's `$ Terminal` button and the footer's "TUI edition coming soon" refer to a separate terminal-style version of the site that isn't built yet. The button links to `#`.
+The nav's `>_ Terminal` button and the footer's "TUI edition coming soon" refer to a separate terminal-style version of the site that isn't built yet. The button links to `#`.
