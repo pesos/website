@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'PESOS',
   full: 'PESOS | PES Open Source',
-  tagline: 'The Open Source Club of PES University',
+  tagline: 'The Open Source Club of PES University RR Campus',
   // The community re-launched itself under this nickname in Feb 2026;
   // see OSIRIS-members-list.md in github.com/pesos/members-list.
   communityName: 'OSIRIS',
@@ -69,11 +69,11 @@ export const LINKS = {
   membersRepo: 'https://github.com/pesos/members-list',
   whatsapp: 'https://chat.whatsapp.com/EQaaQJFSkU9A3AGgKDNIr4',
   discord: 'https://discord.gg/JkzrNhtGc8',
-  slack:
-    'https://join.slack.com/t/pes-os/shared_invite/enQtNzE3MzI2MjU5NzY2LWNjMjgwMjJkNTJlMTljNzI2MTkxZWM0MTA1NDQ4M2NiNGI0MjA3YTgzYTAzMTkwMzBmZTdmOGQwNjdlNzc5YmY',
-  instagram: 'https://www.instagram.com/pes.opensource/',
+  linkedin: "https://www.linkedin.com/company/pesososiris/",
+  instagram: 'https://www.instagram.com/pes.opensource?igsh=MXhxNHJqanBtcDl2cA==',
+  youtube: "https://youtube.com/@pesopensource4653?si=QhqkZDuvOSg8UpWK",
   twitter: 'https://twitter.com/pesopensource',
-  formspree: 'https://formspree.io/f/xnqokpre',
+  facebook: "https://www.facebook.com/groups/pesosc/",
 };
 
 export const SECTIONS = [
@@ -87,9 +87,11 @@ export const SECTIONS = [
 export const FOOTER = {
   clubLinks: NAV.map((s) => ({ label: s.label, href: s.href })),
   socialLinks: [
-    { label: 'GitHub', href: LINKS.github },
-    { label: 'Slack', href: LINKS.slack },
+    { label: 'Github', href: LINKS.github },
     { label: 'Discord', href: LINKS.discord },
+    { label: 'Whatsapp', href: LINKS.whatsapp },
+    { label: 'LinkedIn', href: LINKS.linkedin },
+    { label: 'Youtube', href: LINKS.youtube },
     { label: 'Instagram', href: LINKS.instagram },
     { label: 'Twitter / X', href: LINKS.twitter },
   ],
