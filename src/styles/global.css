@@ -717,8 +717,9 @@ textarea {
 .wordmark__o {
   color: var(--text);
 }
-.footer .wordmark {
-  font-size: 1.15rem;
+.footer__logo {
+  height: 64px;
+  width: auto;
 }
 .nav__links {
   display: flex;
