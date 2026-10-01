@@ -15,7 +15,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Industry',
     filter: 'Career',
     blurb:
-      'All the big players use open source. Even Microsoft, once its "biggest enemy," now says "Microsoft ❤️ Open Source." If you want a job in this industry, experience in open source is highly valued.',
+      'All the big players use open source. Even Microsoft, once its "biggest enemy," now says "Microsoft ♥︎ Open Source." If you want a job in this industry, experience in open source is highly valued.',
     read: '5 min read',
     level: 'Beginner',
     reason: 'Core reason #1',

@@ -207,6 +207,11 @@ textarea {
 .mono {
   font-family: var(--font-mono);
 }
+/* monochrome heart in the accent colour (replaces the red emoji) */
+.heart {
+  color: var(--neon);
+  font-family: var(--font-sans);
+}
 
 /* ---------- eyebrow ---------- */
 .eyebrow {

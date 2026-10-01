@@ -3,6 +3,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import GuideDoc from '@/components/GuideDoc.astro';
 import DocSection from '@/components/DocSection.astro';
 import { GUIDE_SECTIONS, GUIDE_QUICK_REF } from '@/data/guide';
+
+const HEART = '\u2665\uFE0E';
 ---
 
 <BaseLayout title="Why Open Source" description="Why you, as a college student, should care about open source.">
@@ -23,7 +25,7 @@ import { GUIDE_SECTIONS, GUIDE_QUICK_REF } from '@/data/guide';
         do so as part of their work duties." (GitHub Open Source Survey, 2017)
       </p>
       <ul class="check-list">
-        <li>Even Microsoft, once open source's "biggest enemy", now says "Microsoft ❤️ Open Source"</li>
+        <li><span>Even Microsoft, once open source's "biggest enemy", now says "Microsoft <span class="heart" aria-label="loves">&#9829;&#xFE0E;</span> Open Source"</span></li>
         <li>The transparency of open development is now often the default way software gets made</li>
         <li>Industry-wide · All disciplines</li>
       </ul>
@@ -40,7 +42,7 @@ import { GUIDE_SECTIONS, GUIDE_QUICK_REF } from '@/data/guide';
               <span>{s.reason}</span>
             </div>
             <h3 class="doc__sub">{s.title}</h3>
-            <p class="muted">{s.blurb}</p>
+            <p class="muted">{s.blurb.split(HEART).map((part, j) => (j ? <><span class="heart" aria-label="loves">{HEART}</span>{part}</> : part))}</p>
           </article>
         ))}
       </div>
