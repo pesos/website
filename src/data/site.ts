@@ -67,6 +67,8 @@ export const navSection = (label: string) => NAV.find((s) => s.label === label)!
 export const LINKS = {
   github: 'https://github.com/pesos',
   membersRepo: 'https://github.com/pesos/members-list',
+  whatsapp: 'https://chat.whatsapp.com/EQaaQJFSkU9A3AGgKDNIr4',
+  discord: 'https://discord.gg/JkzrNhtGc8',
   slack:
     'https://join.slack.com/t/pes-os/shared_invite/enQtNzE3MzI2MjU5NzY2LWNjMjgwMjJkNTJlMTljNzI2MTkxZWM0MTA1NDQ4M2NiNGI0MjA3YTgzYTAzMTkwMzBmZTdmOGQwNjdlNzc5YmY',
   instagram: 'https://www.instagram.com/pes.opensource/',
@@ -87,6 +89,7 @@ export const FOOTER = {
   socialLinks: [
     { label: 'GitHub', href: LINKS.github },
     { label: 'Slack', href: LINKS.slack },
+    { label: 'Discord', href: LINKS.discord },
     { label: 'Instagram', href: LINKS.instagram },
     { label: 'Twitter / X', href: LINKS.twitter },
   ],
