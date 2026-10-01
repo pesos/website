@@ -49,9 +49,7 @@ const tags = ['All', ...new Set(posts.map((p) => p.tag))];
               <div class="mono muted" style="font-size:.76rem;margin-bottom:14px">
                 {[p.author, p.dateLabel, p.readMins && `${p.readMins} min read`].filter(Boolean).join(' · ')}
               </div>
-              {p.external
-                ? <a class="link-arrow" href={p.href} target="_blank" rel="noopener">Read on GitHub ↗</a>
-                : <a class="link-arrow" href={p.href}>Read article →</a>}
+              <a class="link-arrow" href={p.href}>Read article →</a>
             </article>
           ))}
         </div>

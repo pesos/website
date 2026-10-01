@@ -43,9 +43,9 @@ export async function GET() {
   for (const p of OTHER_PROJECTS) {
     entries.push({ t: p.name, d: p.blurb, s: 'Projects', u: p.repo, x: 1 });
   }
-  // markdown posts in /blogs plus the legacy GitHub-hosted ones
+  // markdown posts in /blogs
   for (const p of await getAllPosts()) {
-    entries.push({ t: p.title, d: p.description, s: 'Blogs', u: p.href, ...(p.external ? { x: 1 as const } : {}) });
+    entries.push({ t: p.title, d: p.description, s: 'Blogs', u: p.href });
   }
   for (const r of RESOURCES) {
     entries.push({ t: r.title, d: r.blurb, s: 'Resources', u: r.href, x: 1 });

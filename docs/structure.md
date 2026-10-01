@@ -4,6 +4,7 @@
 pesos-web/
 ├── astro.config.mjs          # site URL, static output, redirects, code highlighting
 ├── blogs/                    # blog posts as markdown, one file per post (_TEMPLATE.md is never published)
+│   └── images/<post>/        # images used by posts, referenced as ./images/<post>/file.png
 ├── tsconfig.json             # extends astro/tsconfigs/strict; "@/*" → "src/*"
 ├── package.json              # dev / build / preview scripts; only dependency: astro
 ├── public/
@@ -61,7 +62,6 @@ pesos-web/
     │   ├── archive.ts
     │   ├── events.ts
     │   ├── perks.ts
-    │   ├── blogs.ts
     │   └── errors.ts
     ├── scripts/
     │   └── main.ts
@@ -85,7 +85,7 @@ The file name is the URL (`build.format: 'directory'` means every route ends in 
 | | `/about/goals/` | `about/goals.astro` | Mission statement + inline `goals` |
 | | `/about/how-to-join/` | `about/how-to-join.astro` | `JOIN_STEPS`, `LINKS` |
 | | `/about/perks/` | `about/perks.astro` | `PERKS`, `PERK_CATEGORIES`, `PERK_STEPS` |
-| Blogs and Resources | `/blogs/` | `blogs/index.astro` | `getAllPosts()`: markdown posts from `/blogs` plus legacy GitHub-hosted posts |
+| Blogs and Resources | `/blogs/` | `blogs/index.astro` | `getAllPosts()`: every markdown post in `/blogs` |
 | | `/blogs/<slug>/` | `blogs/[slug].astro` | One page per `/blogs/<slug>.md`, styled by `.prose` |
 | | `/blogs/resources/` | `blogs/resources.astro` | `RESOURCES`, `RESOURCE_FILTERS` |
 | Contact Us | `/contact/` | `contact.astro` | Inline `socials`, `stats`, `faqs`; Formspree form |
@@ -106,7 +106,6 @@ Each file exports a type and one or more arrays. Pages import from here instead 
 | File | Exports | Notes |
 |---|---|---|
 | `site.ts` | `SITE`, `NAV`, `navSection`, `LINKS`, `SECTIONS`, `FOOTER` | Global identity, the site map (`NAV`), external URLs (GitHub, Slack invite, Instagram, Twitter, Formspree) |
-| `blogs.ts` | `POSTS`, `FEATURED_POST`, `POST_REPO` | Legacy posts still hosted in `pesos/pesos.github.io`; delete each one once it's migrated to `/blogs` |
 | `errors.ts` | `ERRORS` | Title and message per HTTP status code |
 | `projects.ts` | `Project`, `PROJECTS`, `OTHER_PROJECTS`, `PROJECT_STATS`, `PROJECT_FILTERS` | `PROJECTS` drives both the listing and `getStaticPaths()` |
 | `guide.ts` | `GUIDE_SECTIONS`, `GUIDE_FILTERS`, `GUIDE_QUICK_REF`, `JOIN_STEPS` | Ported from the old site's get-started pages |

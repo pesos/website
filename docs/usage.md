@@ -62,7 +62,7 @@ Files starting with `_` are ignored. A missing or malformed required field fails
 
 Posts appear on the live site when it's next built and deployed. Under `npm run dev` they appear as soon as the file is saved (restart the dev server once after pulling this change, since it reads the content config at startup).
 
-To migrate an old post from `pesos/pesos.github.io`, add it to `blogs/` and delete its entry from `src/data/blogs.ts`.
+Images go in `blogs/images/<slug>/` and are referenced relatively, e.g. `![Alt text](./images/my-first-pr/screenshot.png)`. They're converted to optimised WebP at build time.
 
 ## Add an archive entry
 

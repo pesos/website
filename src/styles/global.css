@@ -1102,6 +1102,30 @@ textarea {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+/* GFM footnotes ([^1]) */
+.prose sup a {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  text-decoration: none;
+  padding-inline: 2px;
+}
+.prose .footnotes {
+  margin-top: 3em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.prose .footnotes .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.prose .data-footnote-backref {
+  text-decoration: none;
+}
 /* Shiki renders both themes (see astro.config.mjs); light colours are
    inline, the dark ones sit in --shiki-dark* variables */
 .prose .astro-code {
