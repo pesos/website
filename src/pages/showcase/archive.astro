@@ -1,12 +1,13 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import { ARCHIVE_ENTRIES, ARCHIVE_STATS, ARCHIVE_YEARS, ARCHIVE_SEMESTERS, ARCHIVE_TABS } from '../data/archive';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import { ARCHIVE_ENTRIES, ARCHIVE_STATS, ARCHIVE_YEARS, ARCHIVE_SEMESTERS, ARCHIVE_TABS } from '@/data/archive';
 ---
 
 <BaseLayout title="Archive" description="A permanent record of past events, completed projects and club history.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Archive' }]} />
+    <Crumb items={[{ label: 'Showcase and Engagement' }, { label: 'Archive' }]} />
     <div class="page-head__row" style="margin-top:14px">
       <div>
         <h1 class="h1" style="margin-bottom:10px">Archive</h1>
@@ -24,6 +25,7 @@ import { ARCHIVE_ENTRIES, ARCHIVE_STATS, ARCHIVE_YEARS, ARCHIVE_SEMESTERS, ARCHI
         ))}
       </div>
     </div>
+    <div style="margin-top:22px"><SectionTabs section="Showcase and Engagement" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>

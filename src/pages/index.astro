@@ -1,7 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroGlyphs from '../components/HeroGlyphs.astro';
-import { SITE, SECTIONS } from '../data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroGlyphs from '@/components/HeroGlyphs.astro';
+import { SITE, SECTIONS } from '@/data/site';
 
 // Every item is unique and one pass is wider than any viewport, so the
 // marquee never shows the same label twice on screen.
@@ -25,7 +25,7 @@ const tech = [
         {SITE.tagline}
       </p>
       <div class="hero__cta">
-        <a class="btn btn--primary" href="/how-to-join/">Join the club</a>
+        <a class="btn btn--primary" href="/about/how-to-join/">Join the club</a>
         <a class="btn btn--ghost" href="/getting-started/">Explore the club</a>
       </div>
     </div>

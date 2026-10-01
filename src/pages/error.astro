@@ -1,0 +1,8 @@
+---
+// Generic error page: /error/?code=403 etc. shows the matching message.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ErrorPage from '@/components/ErrorPage.astro';
+---
+<BaseLayout title="Error">
+  <ErrorPage code="404" dynamic />
+</BaseLayout>

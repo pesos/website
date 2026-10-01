@@ -1,22 +1,22 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import GuideTabs from '../components/GuideTabs.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import ImgPlaceholder from '../components/ImgPlaceholder.astro';
-import { JOIN_STEPS } from '../data/guide';
-import { LINKS } from '../data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
+import { JOIN_STEPS } from '@/data/guide';
+import { LINKS } from '@/data/site';
 ---
 
 <BaseLayout title="How to Join" description="Joining PESOS is a single pull request.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'Getting Started', href: '/getting-started/' }, { label: 'How to Join' }]} />
+    <Crumb items={[{ label: 'About' }, { label: 'How to Join' }]} />
     <h1 class="h1" style="margin:14px 0 10px">How to Join PESOS</h1>
     <p class="lead">
       Joining is easy: all you have to do is add your name to our members list in the
       organisation repository via a Pull Request.
     </p>
-    <div style="margin-top:22px"><GuideTabs active="How to Join" /></div>
+    <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
 
   <section class="wrap section">

@@ -40,12 +40,14 @@ function initNav() {
     })
   );
 
-  // active link by path
-  const path = location.pathname.replace(/\/$/, '') || '/';
-  document.querySelectorAll<HTMLAnchorElement>('.nav__link, .nav__drawer a').forEach((a) => {
-    const href = a.getAttribute('href')?.replace(/\/$/, '') || '/';
-    if (href !== '/' && path.startsWith(href)) a.classList.add('is-active');
-    if (href === '/' && path === '/') a.classList.add('is-active');
+  // active state: a section is active for any page under its base path;
+  // child links (dropdown + drawer) only on an exact match
+  const path = location.pathname.replace(/\/?$/, '/');
+  document.querySelectorAll<HTMLAnchorElement>('.nav__link[data-base]').forEach((a) => {
+    if (path.startsWith(a.dataset.base!)) a.classList.add('is-active');
+  });
+  document.querySelectorAll<HTMLAnchorElement>('.nav__menu a, .nav__drawer a').forEach((a) => {
+    if (a.getAttribute('href') === path) a.classList.add('is-active');
   });
 }
 
@@ -66,9 +68,19 @@ function initReveal() {
         }
       });
     },
-    { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+    // fire as soon as the top edge is 40px into view. A ratio threshold
+    // (the old 0.12) leaves tall elements, like a long doc section, blank
+    // while their top is already on screen.
+    { threshold: 0, rootMargin: '0px 0px -40px 0px' }
   );
-  els.forEach((e) => io.observe(e));
+  // anything already on screen at load is shown immediately, so the first
+  // view is never half-empty; only content further down waits to scroll in
+  const fold = window.innerHeight - 40;
+  els.forEach((e) => {
+    const r = e.getBoundingClientRect();
+    if (r.top < fold && r.bottom > 0) e.classList.add('in');
+    else io.observe(e);
+  });
 }
 
 /* ---------- cursor glow ---------- */

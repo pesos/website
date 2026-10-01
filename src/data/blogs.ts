@@ -1,25 +1,19 @@
----
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import ImgPlaceholder from '../components/ImgPlaceholder.astro';
-
 // Real posts from the PES Open Source community blog. Sources link to the
 // markdown in github.com/pesos/pesos.github.io while the site itself is
 // being rebuilt.
-const REPO = 'https://github.com/pesos/pesos.github.io/blob/master/_posts';
+export const POST_REPO = 'https://github.com/pesos/pesos.github.io/blob/master/_posts';
 
-const featured = {
+export const FEATURED_POST = {
   tag: 'Deep Dive',
   title: '0.1 + 0.2 is not 0.3 (and other ways to make money disappear)',
   blurb:
     'A tour of floating-point arithmetic: why it breaks intuition, and the practical ways it can quietly cost you money in production.',
   author: 'Atharva Raykar',
   meta: 'Jul 2020',
-  href: `${REPO}/2020-07-22-01-plus-02-is-not-03.md`,
+  href: `${POST_REPO}/2020-07-22-01-plus-02-is-not-03.md`,
 };
 
-const posts = [
+export const POSTS = [
   { tag: 'Tutorial', title: 'Terminal tips from PES Open Source', blurb: 'Short tricks for long commands: history search, reusing previous commands and more.', author: 'Aditi', meta: 'Sep 2019', file: '2019-09-08-terminal-tips.md' },
   { tag: 'Recap', title: 'Summary: Git Workshop, 16th October', blurb: 'A brief reference for PESOS’s first workshop, getting started with version control effectively.', meta: 'Oct 2019', file: '2019-10-27-git-workshop.md' },
   { tag: 'Guide', title: 'Living in the Terminal', blurb: 'A curated list of terminal applications (editors, file browsers and more) for getting comfortable off the GUI.', author: 'Anirudh H M', meta: 'Apr 2020', file: '2020-04-28-living-in-the-terminal.md' },
@@ -31,46 +25,4 @@ const posts = [
   { tag: 'Community', title: 'PES Open Source is Recruiting!', blurb: 'PESOS opens up its leadership roles to the next batch, the first phase of a new selection process.', author: 'Atharva Raykar', meta: 'Nov 2020', file: '2020-11-01-recruitments-2020.md' },
 ];
 
-const tags = ['All', 'Tutorial', 'Deep Dive', 'Recap', 'Guide', 'Community'];
----
-
-<BaseLayout title="Blogs" description="Articles, tutorials and field notes from the PES Open Source community.">
-  <section class="wrap page-head">
-    <Crumb items={[{ label: 'Blogs' }]} />
-    <h1 class="h1" style="margin:14px 0 10px">Blogs & Resources</h1>
-    <p class="lead">Articles, tutorials and field notes written by PESOS members over the years.</p>
-  </section>
-
-  <section class="wrap section" data-filter-root>
-    <div class="tabs" style="margin-bottom:36px">
-      {tags.map((t, i) => (
-        <button class:list={['chip', i === 0 && 'is-active']} data-filter={t} data-filter-key="cat" type="button">{t}</button>
-      ))}
-    </div>
-
-    <a class="split reveal" href={featured.href} target="_blank" rel="noopener" style="margin-bottom:56px;text-decoration:none">
-      <div class="split__media"><ImgPlaceholder label="Cover 1200×800" style="border:0;height:100%" /></div>
-      <div class="split__body">
-        <span class="tag tag--neon">Featured · {featured.tag}</span>
-        <h2 class="h2">{featured.title}</h2>
-        <p class="muted">{featured.blurb}</p>
-        <div class="mono muted" style="font-size:.78rem">{featured.author} · {featured.meta}</div>
-        <span class="link-arrow">Read article →</span>
-      </div>
-    </a>
-
-    <SectionHeader num="01" title="All Posts" center />
-    <div class="grid-3">
-      {posts.map((p, i) => (
-        <a class="card card--spotlight reveal" data-item data-cat={p.tag} href={`${REPO}/${p.file}`} target="_blank" rel="noopener" style={`--d:${i * 50}ms`}>
-          <div class="img-ph" style="min-height:130px;margin-bottom:14px">Cover</div>
-          <span class="tag">{p.tag}</span>
-          <h3 class="h3" style="margin:10px 0 6px">{p.title}</h3>
-          <p class="muted" style="font-size:.9rem">{p.blurb}</p>
-          <div class="mono muted" style="font-size:.76rem;margin:10px 0 8px">{p.author ? `${p.author} · ` : ''}{p.meta}</div>
-          <span class="link-arrow">Read →</span>
-        </a>
-      ))}
-    </div>
-  </section>
-</BaseLayout>
+export const BLOG_TAGS = ['All', 'Tutorial', 'Deep Dive', 'Recap', 'Guide', 'Community'];

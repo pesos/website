@@ -47,21 +47,23 @@ npm run preview   # serves dist/ locally
 A successful build ends with:
 
 ```
-[build] 17 page(s) built in …
+[build] 19 page(s) built in …
 [build] Complete!
 ```
 
-and `dist/` contains one folder per route (`about/`, `projects/grofer/`, …), plus `404.html` and `_astro/` (the hashed CSS and JS).
+and `dist/` contains one folder per route (`about/goals/`, `showcase/projects/grofer/`, …), plus `404.html`, `500.html`, `search.json` and `_astro/` (the hashed CSS and JS).
 
 Then check these in the browser:
 
 - `/`: the hero glyph animation runs, and the theme toggle switches dark and light and keeps the choice after a reload.
-- `/projects/`: the status chips and search box filter the cards.
-- `/projects/grofer/`: the Overview / Contribution Guide / Issues / Pull Requests tabs switch.
+- `/showcase/projects/`: the status chips and search box filter the cards.
+- The nav search button (or Ctrl/Cmd+K) finds pages, projects and posts.
+- `/showcase/projects/grofer/`: the Overview / Contribution Guide / Issues / Pull Requests tabs switch.
 
 ## Deploying
 
 `dist/` is plain static files and can go on any static host. Before deploying:
 
 - Set `site` in `astro.config.mjs` to the real domain. It is currently `https://pesos.example.org`.
-- Have the host serve `404.html` for unknown paths.
+- Have the host serve `404.html` for unknown paths (and `500.html` for server errors, if it supports that).
+- The `redirects` in `astro.config.mjs` are written as small HTML redirect pages; a host with its own redirect rules can replace them with real 301s.

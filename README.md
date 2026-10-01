@@ -17,7 +17,7 @@ The website for **PESOS (PES Open Source)**, the student-run open-source club at
 
 - **What it does:** a static site that explains why open source matters, how to join the club (one PR to [`pesos/members-list`](https://github.com/pesos/members-list)), what the club builds (Grofer, Rshark, browser-history), and its history, blog, resources and code of conduct.
 - **What problem it solves:** replaces the old `pesos.github.io` Jekyll site with one place for onboarding. Content lives in typed data files, so updating a project or archive entry doesn't mean editing markup.
-- **Real use case:** a new student lands on `/`, reads `/getting-started/`, follows the five steps on `/how-to-join/`, then picks a "good first issue" from `/projects/grofer/`.
+- **Real use case:** a new student lands on `/`, reads `/getting-started/`, follows the five steps on `/about/how-to-join/`, then picks a "good first issue" from `/showcase/projects/grofer/`.
 
 ## Quick start
 
@@ -46,16 +46,16 @@ Full steps: [docs/installation.md](docs/installation.md).
 
 ## Architecture (summary)
 
-Astro renders every page at build time from `.astro` templates plus typed arrays in `src/data/*.ts`. Every page is wrapped in `BaseLayout`, which also loads a single client script (`src/scripts/main.ts`). That script adds behavior to elements by looking up `data-*` attributes: theme toggle, filters, tabs, accordion, count-up and form submission. The one dynamic route, `/projects/[slug]/`, is expanded at build time from the `PROJECTS` array. There is no backend. See [docs/architecture.md](docs/architecture.md).
+Astro renders every page at build time from `.astro` templates plus typed arrays in `src/data/*.ts`. Every page is wrapped in `BaseLayout`, which also loads a single client script (`src/scripts/main.ts`). That script adds behavior to elements by looking up `data-*` attributes: theme toggle, filters, tabs, accordion, count-up and form submission. The one dynamic route, `/showcase/projects/[slug]/`, is expanded at build time from the `PROJECTS` array. There is no backend. See [docs/architecture.md](docs/architecture.md).
 
 ## Project structure
 
 ```
 src/
-├── pages/        # one file per route (+ projects/[slug].astro)
+├── pages/        # one folder per wireframe section: getting-started/, about/, blogs/, showcase/
 ├── layouts/      # BaseLayout: <head>, theme bootstrap, Nav, Footer, main.ts
-├── components/   # Nav, Footer, Wordmark, Crumb, GuideTabs, SectionHeader, ImgPlaceholder, HeroGlyphs
-├── data/         # all content: site, projects, guide, resources, archive, events, perks
+├── components/   # Nav, Footer, Search, SectionTabs, ErrorPage, Wordmark, Crumb, SectionHeader, ImgPlaceholder, HeroGlyphs
+├── data/         # all content: site (incl. the NAV site map), projects, guide, blogs, resources, archive, events, perks, errors
 ├── scripts/      # main.ts: all shared client behavior
 └── styles/       # global.css: tokens + every component style
 public/           # pesos-logo.svg (favicon)

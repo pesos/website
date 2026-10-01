@@ -5,4 +5,18 @@ export default defineConfig({
   site: 'https://pesos.example.org',
   output: 'static',
   build: { format: 'directory' },
+  // Section landings (the wireframe has no page for these, so they open the
+  // section's first child) and pre-restructure URLs, kept so old links work.
+  redirects: {
+    '/about': '/about/events/',
+    '/showcase': '/showcase/archive/',
+    '/pesos-101': '/getting-started/101/',
+    '/how-to-join': '/about/how-to-join/',
+    '/events': '/about/events/',
+    '/perks': '/about/perks/',
+    '/resources': '/blogs/resources/',
+    '/archive': '/showcase/archive/',
+    '/projects': '/showcase/projects/',
+    '/projects/[slug]': '/showcase/projects/[slug]',
+  },
 });

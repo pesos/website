@@ -455,7 +455,8 @@ textarea {
   border-color: var(--text);
 }
 :root[data-theme='dark'] .tab[aria-selected='true'],
-:root:not([data-theme='light']) .tab[aria-selected='true'] {
+:root:not([data-theme='light']) .tab[aria-selected='true'],
+:root:not([data-theme='light']) .tab.is-active {
   background: var(--neon);
   color: var(--neon-ink);
   border-color: var(--neon);
@@ -721,6 +722,8 @@ textarea {
   margin-left: 8px;
 }
 .nav__link {
+  position: relative;
+  display: block;
   padding: 7px 11px;
   border-radius: 6px;
   font-size: 0.86rem;
@@ -735,13 +738,66 @@ textarea {
 .nav__link.is-active {
   color: var(--text);
 }
+/* underline is absolutely positioned so it doesn't change the link's height
+   (an in-flow underline made the active item taller and shifted it up) */
 .nav__link.is-active::after {
   content: '';
-  display: block;
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 0;
   height: 2px;
-  margin-top: 5px;
   background: var(--neon);
   border-radius: 2px;
+}
+.nav__item {
+  position: relative;
+}
+/* section dropdown: opens on hover or keyboard focus */
+.nav__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 190px;
+  display: grid;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 60;
+}
+/* invisible bridge so the menu doesn't close while the pointer crosses the gap */
+.nav__menu::before {
+  content: '';
+  position: absolute;
+  inset: -8px 0 auto;
+  height: 8px;
+}
+.nav__item.has-menu:hover .nav__menu,
+.nav__item.has-menu:focus-within .nav__menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.nav__menu a {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.nav__menu a:hover,
+.nav__menu a.is-active {
+  color: var(--text);
+  background: var(--bg-card);
+}
+.nav__menu a.is-active {
+  color: var(--neon);
 }
 .nav__right {
   margin-left: auto;
@@ -809,7 +865,8 @@ textarea {
 .nav__drawer {
   display: none;
 }
-@media (max-width: 960px) {
+/* five long section labels: collapse to the drawer before they collide */
+@media (max-width: 1100px) {
   .nav__links,
   .nav__right .term-btn__label {
     display: none;
@@ -846,9 +903,116 @@ textarea {
     font-size: 1rem;
     color: var(--text-dim);
   }
-  .nav__drawer a:hover {
+  .nav__drawer a:hover,
+  .nav__drawer a.is-active {
     color: var(--neon);
   }
+  .nav__drawer-group {
+    padding-top: 14px;
+  }
+  .nav__drawer-head {
+    display: block;
+    padding: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+  }
+  .nav__drawer-group a {
+    padding-left: 14px;
+  }
+}
+
+/* ---------- site search dialog ---------- */
+.search-dlg {
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(70vh, 560px);
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--bg-elev);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.search-dlg[open] {
+  display: flex;
+  flex-direction: column;
+}
+.search-dlg::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+.search-dlg__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.search-dlg__bar svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-mute);
+  flex: none;
+}
+.search-dlg__input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 1rem;
+}
+.search-dlg__esc {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-mute);
+  background: transparent;
+  cursor: pointer;
+}
+.search-dlg__results {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+.search-dlg__results a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+}
+.search-dlg__results a:hover,
+.search-dlg__results a.is-focused {
+  background: var(--bg-card);
+}
+.search-dlg__t {
+  display: block;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.search-dlg__meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.search-dlg__sec {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-right: 8px;
+}
+.search-dlg__empty {
+  padding: 18px 14px;
+  font-size: 0.88rem;
+  color: var(--text-dim);
 }
 
 /* ---------- footer ---------- */
@@ -1040,6 +1204,76 @@ textarea {
 .doc__nav a.is-active {
   color: var(--neon);
   border-left-color: var(--neon);
+}
+/* doc page pieces shared by every Getting Started page (GuideDoc/DocSection) */
+.doc__body {
+  min-width: 0;
+}
+.doc__bar {
+  width: 56px;
+  height: 3px;
+  background: var(--neon);
+  margin-bottom: 36px;
+}
+.doc__sec {
+  margin-bottom: 44px;
+}
+.doc__sec-title {
+  margin-bottom: 14px;
+}
+.doc__sec-n {
+  font-family: var(--font-mono);
+  color: var(--neon);
+  margin-right: 8px;
+}
+.doc__sec > p + p {
+  margin-top: 12px;
+}
+.doc__sec > * + .check-list,
+.doc__sec > * + .note,
+.doc__sec > * + .doc__meta {
+  margin-top: 14px;
+}
+/* sub-heading inside a section (e.g. the 94% stat, each guide reason) */
+.doc__sub {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+.doc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-mute);
+}
+/* a list of entries inside one section, separated by hairlines */
+.doc__items > * {
+  padding-block: 18px;
+}
+.doc__items > * + * {
+  border-top: 1px solid var(--border);
+}
+.doc__items > :first-child {
+  padding-top: 4px;
+}
+.doc__figure {
+  margin: 0 0 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.doc__figure img {
+  width: 100%;
+  height: auto;
+}
+.doc__pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .skeleton-line {
   height: 12px;

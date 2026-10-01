@@ -1,0 +1,10 @@
+---
+/* One numbered section of a GuideDoc page: "1. Title", content, divider. */
+interface Props { n: number | string; title: string; }
+const { n, title } = Astro.props;
+---
+<section class="doc__sec reveal">
+  <h2 class="h3 doc__sec-title"><span class="doc__sec-n">{n}.</span>{title}</h2>
+  <slot />
+  <hr class="divider" style="margin-top:28px" />
+</section>

@@ -1,7 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import { LINKS, SITE } from '../data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import { LINKS, SITE } from '@/data/site';
 
 const socials = [
   { h: 'Slack', s: 'Our main channel, where most members are here', href: LINKS.slack },
@@ -24,7 +24,7 @@ const faqs = [
 
 <BaseLayout title="Contact" description="Get in touch with PES Open Source.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Contact' }]} />
+    <Crumb items={[{ label: 'Contact Us' }]} />
     <div class="page-head__row" style="margin-top:14px">
       <div>
         <h1 class="h1" style="margin-bottom:10px">Get in Touch</h1>
@@ -68,8 +68,7 @@ const faqs = [
         <span class="eyebrow" style="margin-bottom:14px">Code of Conduct</span>
         <p class="muted" style="font-size:.86rem">
           To report a Code of Conduct concern, use the form and mark it as such, or reach the
-          Community Relations Head directly on Slack. Read the full{' '}
-          <a class="link-arrow" href="/code-of-conduct/">Code of Conduct →</a>
+          Community Relations Head directly on Slack.
         </p>
       </div>
     </aside>

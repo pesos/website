@@ -1,10 +1,11 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import ImgPlaceholder from '../components/ImgPlaceholder.astro';
-import { ACTIVITIES, ACTIVITY_TYPES } from '../data/events';
-import { LINKS } from '../data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
+import { ACTIVITIES, ACTIVITY_TYPES } from '@/data/events';
+import { LINKS } from '@/data/site';
 
 const featured = ACTIVITIES.find((a) => a.featured)!;
 const rest = ACTIVITIES.filter((a) => !a.featured);
@@ -12,7 +13,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
 
 <BaseLayout title="Events & Activities" description="What PESOS actually runs, and how often, plus where to find out what's next.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'Community' }, { label: 'Events' }]} />
+    <Crumb items={[{ label: 'About' }, { label: 'Upcoming Events' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Events & Activities</h1>
     <p class="lead">
       We don't keep a public calendar with fixed dates; specific meet-ups, workshops and talks
@@ -22,6 +23,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
     <div style="margin-top:20px">
       <a class="btn btn--primary btn--sm" href={LINKS.slack} target="_blank" rel="noopener">See what's next on Slack</a>
     </div>
+    <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>
@@ -39,7 +41,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
         <h2 class="h2">{featured.title}</h2>
         <p class="muted">{featured.blurb}</p>
         <div class="mono muted" style="font-size:.8rem">{featured.cadence}</div>
-        <a class="btn btn--ghost btn--sm" href="/how-to-join/">How to join in →</a>
+        <a class="btn btn--ghost btn--sm" href="/about/how-to-join/">How to join in →</a>
       </div>
     </div>
 
@@ -63,7 +65,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
         <h3 class="h3">Looking for what we've already done?</h3>
         <p class="muted" style="margin-top:6px">Browse workshops, hackathons and other past events in the archive.</p>
       </div>
-      <a class="btn btn--primary" href="/archive/">View past events</a>
+      <a class="btn btn--primary" href="/showcase/archive/">View past events</a>
     </div>
   </section>
 </BaseLayout>

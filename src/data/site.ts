@@ -9,23 +9,58 @@ export const SITE = {
   founded: 2012,
 };
 
-export const NAV_LINKS = [
-  { label: 'Getting Started', href: '/getting-started/' },
-  { label: 'About', href: '/about/' },
-  { label: 'Blogs', href: '/blogs/' },
-  { label: 'Projects', href: '/projects/' },
-  { label: 'Resources', href: '/resources/' },
-  { label: 'Archive', href: '/archive/' },
-  { label: 'Contact', href: '/contact/' },
+// The site map, mirroring the wireframe: five top-level sections, each with
+// its own child pages. Nav, mobile drawer, per-section tabs and the footer
+// all render from this. `base` is the URL prefix that marks a page as
+// belonging to the section (used for the active state).
+export type NavPage = { label: string; href: string };
+export type NavSection = { label: string; href: string; base: string; children: NavPage[] };
+
+export const NAV: NavSection[] = [
+  {
+    label: 'Getting Started',
+    href: '/getting-started/',
+    base: '/getting-started/',
+    children: [
+      { label: 'Main Hub', href: '/getting-started/' },
+      { label: '101', href: '/getting-started/101/' },
+      { label: 'Why our club', href: '/getting-started/why-our-club/' },
+    ],
+  },
+  {
+    label: 'About',
+    href: '/about/events/',
+    base: '/about/',
+    children: [
+      { label: 'Upcoming Events', href: '/about/events/' },
+      { label: 'Goals', href: '/about/goals/' },
+      { label: 'How to Join', href: '/about/how-to-join/' },
+      { label: 'Perks', href: '/about/perks/' },
+    ],
+  },
+  {
+    label: 'Blogs and Resources',
+    href: '/blogs/',
+    base: '/blogs/',
+    // blog "Details" are the posts themselves, which live on GitHub
+    children: [
+      { label: 'Index', href: '/blogs/' },
+      { label: 'Resources', href: '/blogs/resources/' },
+    ],
+  },
+  { label: 'Contact Us', href: '/contact/', base: '/contact/', children: [] },
+  {
+    label: 'Showcase and Engagement',
+    href: '/showcase/archive/',
+    base: '/showcase/',
+    children: [
+      { label: 'Archive', href: '/showcase/archive/' },
+      { label: 'Projects', href: '/showcase/projects/' },
+    ],
+  },
 ];
 
-export const GUIDE_TABS = [
-  { label: 'Why Open Source', href: '/getting-started/' },
-  { label: 'Open Source 101', href: '/pesos-101/' },
-  { label: 'About PESOS', href: '/about/' },
-  { label: 'How to Join', href: '/how-to-join/' },
-  { label: 'PESOS Projects', href: '/projects/' },
-];
+export const navSection = (label: string) => NAV.find((s) => s.label === label)!;
 
 // real, published channels; see github.com/pesos/members-list and the
 // (archived) get-started/communication-channels page on the old site
@@ -41,20 +76,14 @@ export const LINKS = {
 
 export const SECTIONS = [
   { n: '01', label: 'Start', title: 'Getting Started', desc: 'Learn why open source matters and how to make your first contribution.', href: '/getting-started/', cta: 'Explore' },
-  { n: '02', label: 'About', title: 'About Us', desc: 'Who we are, what we build, and how the club is run by students, for students.', href: '/about/', cta: 'Learn more' },
-  { n: '06', label: 'Blogs', title: 'Blogs & Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
-  { n: '08', label: 'Showcase', title: 'Projects', desc: 'CLI tools, systems programs, libraries and more.', href: '/projects/', cta: 'View projects' },
-  { n: '07', label: 'Contact', title: 'Contact', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
+  { n: '02', label: 'About', title: 'About', desc: 'Upcoming events, our goals, how to join and member perks.', href: '/about/events/', cta: 'Learn more' },
+  { n: '03', label: 'Blogs', title: 'Blogs and Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
+  { n: '04', label: 'Contact', title: 'Contact Us', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
+  { n: '05', label: 'Showcase', title: 'Showcase and Engagement', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
 ];
 
 export const FOOTER = {
-  clubLinks: [
-    { label: 'Getting Started', href: '/getting-started/' },
-    { label: 'About', href: '/about/' },
-    { label: 'Projects', href: '/projects/' },
-    { label: 'Resources', href: '/resources/' },
-    { label: 'Blogs', href: '/blogs/' },
-  ],
+  clubLinks: NAV.map((s) => ({ label: s.label, href: s.href })),
   socialLinks: [
     { label: 'GitHub', href: LINKS.github },
     { label: 'Slack', href: LINKS.slack },

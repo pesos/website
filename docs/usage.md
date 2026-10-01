@@ -4,7 +4,7 @@ For club maintainers updating the site's content. Assumes `npm run dev` is runni
 
 ## Add or update a project
 
-Edit `PROJECTS` in `src/data/projects.ts`. Each entry becomes a card on `/projects/` **and** its own page at `/projects/<slug>/`.
+Edit `PROJECTS` in `src/data/projects.ts`. Each entry becomes a card on `/showcase/projects/` **and** its own page at `/showcase/projects/<slug>/`.
 
 ```ts
 {
@@ -72,13 +72,14 @@ If the year is new, add it to `ARCHIVE_YEARS`, or the entry can't be picked from
 
 All in `src/data/site.ts`:
 
-- `NAV_LINKS`: the header links and the mobile drawer.
-- `GUIDE_TABS`: the tab strip on the Getting Started / 101 / About / How to Join pages.
-- `FOOTER.clubLinks`, `FOOTER.socialLinks`.
+- `NAV`: the site map. Each section has a `label`, an `href` (where the nav item goes), a `base` URL prefix and its `children` pages. The nav, its dropdowns, the mobile drawer, every page's `SectionTabs`, the footer's club links and the search index all read from it.
+- `FOOTER.socialLinks`.
 - `LINKS`: GitHub, members repo, Slack invite, Instagram, Twitter, Formspree endpoint.
 - `SITE.tagline`: shown in the home hero and the footer.
 
-The nav highlights the active link by path prefix. Any link other than `/` is marked active on every page under it, so `/projects/` stays highlighted on `/projects/grofer/`.
+The nav highlights a section on every page under its `base`, so Showcase and Engagement stays highlighted on `/showcase/projects/grofer/`. Dropdown and drawer links are highlighted only on an exact match.
+
+To add a page to a section: create it under that section's folder in `src/pages/`, add it to the section's `children` in `NAV`, put `<SectionTabs section="…" />` in its header, and add a one-line description to `PAGE_DESC` in `src/pages/search.json.ts`. Link only to pages in the same section.
 
 ## Make a new list filterable
 
@@ -141,6 +142,6 @@ Without an http(s) `action`, the form only validates and shows `.form-success`. 
 
 ## Common problems
 
-- **Build error `Cannot read properties of undefined` on `/projects/`, `/events/` or `/perks/`**: no entry has `featured: true`.
+- **Build error `Cannot read properties of undefined` on `/showcase/projects/`, `/about/events/` or `/about/perks/`**: no entry has `featured: true`.
 - **A new card doesn't show up under a filter**: its `data-<key>` value doesn't match the chip or option value, or the new value is missing from the `*_FILTERS` / `*_YEARS` array.
-- **A new page isn't reachable**: add it to `NAV_LINKS` or `FOOTER.clubLinks`. `/events/` and `/perks/` currently have no inbound links.
+- **A new page isn't reachable**: add it to its section's `children` in `NAV`.

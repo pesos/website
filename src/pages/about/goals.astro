@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+
+// Broken out of the club's own mission statement (quoted below), one goal
+// per thing it commits the community to.
+const goals = [
+  { n: '01', t: 'Contribute to open source', d: 'Get members making real contributions to open-source projects, from their first pull request onwards.' },
+  { n: '02', t: 'Create open source', d: 'Build and maintain our own projects in the open under github.com/pesos.' },
+  { n: '03', t: 'Critique open source', d: 'Review each other’s code and ideas, and learn to give and take constructive criticism.' },
+  { n: '04', t: 'Advocate for open source', d: 'Spread the word about open source on campus and beyond.' },
+  { n: '05', t: 'Build the culture', d: 'Make open-source collaboration a normal part of student life at PES University.' },
+];
+---
+
+<BaseLayout title="Goals" description="What PES Open Source sets out to do.">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'About' }, { label: 'Goals' }]} />
+    <h1 class="h1" style="margin:14px 0 10px">Goals</h1>
+    <p class="lead">What PES Open Source sets out to do, straight from our mission statement.</p>
+    <div style="margin-top:22px"><SectionTabs section="About" /></div>
+  </section>
+
+  <section class="wrap section">
+    <div class="panel panel--accent reveal" style="margin-bottom:64px">
+      <span class="eyebrow" style="margin-bottom:14px">Mission Statement</span>
+      <p class="lead" style="font-style:italic;max-width:none">
+        "PES Open Source serves to facilitate technical skills and knowledge by fostering a
+        community around contributing to, creating, critiquing, and advocating for Open Source
+        Projects."
+      </p>
+      <p class="muted" style="margin-top:12px">
+        In other words, we want to create a culture of open-source collaboration in our college.
+      </p>
+    </div>
+
+    <SectionHeader num="01" title="What we're working towards" center />
+    <div class="grid-auto">
+      {goals.map((g, i) => (
+        <div class="card card--spotlight reveal" style={`--d:${i * 60}ms`}>
+          <span class="mono" style="color:var(--neon);font-size:.85rem">{g.n}</span>
+          <h3 class="h3" style="margin:8px 0 6px">{g.t}</h3>
+          <p class="muted" style="font-size:.92rem">{g.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

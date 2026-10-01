@@ -16,7 +16,7 @@
 
 **Trade-off:** blog posts are **not** hosted here. `blogs.astro` links out to the markdown in `pesos/pesos.github.io`. Adding real on-site posts later would be a natural fit for a content collection.
 
-**Inconsistency to be aware of:** some pages keep their data in their own frontmatter (`about.astro`, `blogs.astro`, `contact.astro`, `code-of-conduct.astro`) instead of in `src/data`.
+**Inconsistency to be aware of:** some pages keep their data in their own frontmatter (`getting-started/why-our-club.astro`, `about/goals.astro`, `contact.astro`) instead of in `src/data`.
 
 ## One `main.ts` with feature-detected init functions
 

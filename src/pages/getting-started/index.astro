@@ -1,0 +1,70 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GuideDoc from '@/components/GuideDoc.astro';
+import DocSection from '@/components/DocSection.astro';
+import { GUIDE_SECTIONS, GUIDE_QUICK_REF } from '@/data/guide';
+---
+
+<BaseLayout title="Why Open Source" description="Why you, as a college student, should care about open source.">
+  <GuideDoc
+    title="Why Should I Care About Open Source?"
+    subtitle="Here we address exactly why you, as a college student, would want to care about Open Source."
+  >
+    <DocSection n={1} title="Because The Industry Cares">
+      <div class="doc__meta" style="margin-bottom:12px">
+        <span class="tag">Key Insight</span>
+        <span class="tag tag--neon">Beginner Friendly</span>
+        <span>5 min read</span>
+      </div>
+      <p class="doc__sub">94% of employed developers use open source at work</p>
+      <p class="muted">
+        "Virtually all (94%) of those who are employed use open source at least sometimes in
+        their professional work (81% use it frequently), and 65% of those who contribute back
+        do so as part of their work duties." (GitHub Open Source Survey, 2017)
+      </p>
+      <ul class="check-list">
+        <li>Even Microsoft, once open source's "biggest enemy", now says "Microsoft ❤️ Open Source"</li>
+        <li>The transparency of open development is now often the default way software gets made</li>
+        <li>Industry-wide · All disciplines</li>
+      </ul>
+    </DocSection>
+
+    <DocSection n={2} title="All Guide Sections">
+      <div class="doc__items">
+        {GUIDE_SECTIONS.map((s) => (
+          <article>
+            <div class="doc__meta" style="margin-bottom:8px">
+              <span class="tag">{s.category}</span>
+              <span>{s.read}</span>
+              <span>{s.level}</span>
+              <span>{s.reason}</span>
+            </div>
+            <h3 class="doc__sub">{s.title}</h3>
+            <p class="muted">{s.blurb}</p>
+          </article>
+        ))}
+      </div>
+    </DocSection>
+
+    <DocSection n={3} title="Quick Reference">
+      <div class="qref">
+        {GUIDE_QUICK_REF.map((q) => (
+          <div class="qref__row">
+            <span class="qref__n">{q.n}</span>
+            <span class="qref__t">{q.t}</span>
+            <span class="qref__d">{q.d}</span>
+            <a class="btn btn--ghost btn--sm" href="/getting-started/101/">Read →</a>
+          </div>
+        ))}
+      </div>
+    </DocSection>
+
+    <DocSection n={4} title="Related Reading">
+      <div class="note">
+        Looking for more context? Browse our curated list of articles, talks, and resources on
+        open source contribution.{' '}
+        <a class="link-arrow" href="/blogs/resources/">View resources →</a>
+      </div>
+    </DocSection>
+  </GuideDoc>
+</BaseLayout>

@@ -1,9 +1,10 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import ImgPlaceholder from '../components/ImgPlaceholder.astro';
-import { PROJECTS, OTHER_PROJECTS, PROJECT_STATS, PROJECT_FILTERS } from '../data/projects';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
+import { PROJECTS, OTHER_PROJECTS, PROJECT_STATS, PROJECT_FILTERS } from '@/data/projects';
 
 const featured = PROJECTS.find((p) => p.featured)!;
 const rest = PROJECTS.filter((p) => !p.featured);
@@ -11,13 +12,14 @@ const rest = PROJECTS.filter((p) => !p.featured);
 
 <BaseLayout title="Projects" description="Real open-source tools maintained by PES Open Source members: Grofer, Rshark, browser-history and more.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'Projects' }]} />
+    <Crumb items={[{ label: 'Showcase and Engagement' }, { label: 'Projects' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Projects</h1>
     <p class="lead">
       We at PES Open Source are building an inclusive community of hackers that make awesome
       projects together, all run like real-world open-source projects, out in the open under{' '}
       <a class="link-arrow" href="https://github.com/pesos" target="_blank" rel="noopener">github.com/pesos</a>.
     </p>
+    <div style="margin-top:22px"><SectionTabs section="Showcase and Engagement" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>
@@ -64,7 +66,7 @@ const rest = PROJECTS.filter((p) => !p.featured);
           <span class="muted" style="font-size:.85rem">{featured.contributors} contributors</span>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn btn--primary btn--sm" href={`/projects/${featured.slug}/`}>View project</a>
+          <a class="btn btn--primary btn--sm" href={`/showcase/projects/${featured.slug}/`}>View project</a>
           <a class="btn btn--ghost btn--sm" href={`${featured.repo}/issues`} target="_blank" rel="noopener">Contribute</a>
         </div>
       </div>
@@ -91,7 +93,7 @@ const rest = PROJECTS.filter((p) => !p.featured);
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span class="avatars">{Array.from({ length: 3 }).map(() => <span>◦</span>)}</span>
-            <a class="btn btn--ghost btn--sm" href={`/projects/${p.slug}/`}>View details</a>
+            <a class="btn btn--ghost btn--sm" href={`/showcase/projects/${p.slug}/`}>View details</a>
           </div>
         </article>
       ))}

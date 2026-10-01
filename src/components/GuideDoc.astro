@@ -1,0 +1,41 @@
+---
+/* Shared layout for every Getting Started page (the "101" look): sticky
+   sidebar of the section's pages, breadcrumb, title + subtitle + accent bar,
+   numbered <DocSection>s in the slot, and prev/next buttons. Sidebar and
+   prev/next both come from NAV, so page order lives in one place. */
+import Crumb from './Crumb.astro';
+import { navSection } from '../data/site';
+
+interface Props { title: string; subtitle?: string; }
+const { title, subtitle } = Astro.props;
+
+const sec = navSection('Getting Started');
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+const i = sec.children.findIndex((c) => c.href === here);
+const page = sec.children[i];
+const prev = sec.children[i - 1];
+const next = sec.children[i + 1];
+---
+<section class="wrap section">
+  <div class="doc">
+    <nav class="doc__nav" aria-label={`${sec.label} pages`}>
+      {sec.children.map((c) => (
+        <a class:list={[c.href === here && 'is-active']} href={c.href} aria-current={c.href === here ? 'page' : undefined}>{c.label}</a>
+      ))}
+    </nav>
+
+    <div class="doc__body">
+      <Crumb items={[{ label: sec.label, href: sec.href }, { label: page.label }]} />
+      <h1 class="h1" style="margin:14px 0 6px">{title}</h1>
+      {subtitle && <p class="lead" style="margin-bottom:6px">{subtitle}</p>}
+      <div class="doc__bar"></div>
+
+      <slot />
+
+      <div class="doc__pager">
+        {prev ? <a class="btn btn--ghost btn--sm" href={prev.href}>← {prev.label}</a> : <span />}
+        {next && <a class="btn btn--primary btn--sm" href={next.href}>{next.label} →</a>}
+      </div>
+    </div>
+  </div>
+</section>

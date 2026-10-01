@@ -1,11 +1,18 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import { RESOURCES, RESOURCE_FILTERS } from '../data/resources';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import { RESOURCES, RESOURCE_FILTERS } from '@/data/resources';
 ---
 
 <BaseLayout title="Resources" description="Guides, tools and open-source repositories curated by our members.">
-  <section class="wrap" style="text-align:center;padding-block:clamp(48px,8vw,96px) 40px;max-width:760px">
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Blogs and Resources' }, { label: 'Resources' }]} />
+    <div style="margin-top:22px"><SectionTabs section="Blogs and Resources" /></div>
+  </section>
+
+  <section class="wrap" style="text-align:center;padding-block:24px 40px;max-width:760px">
     <span class="eyebrow eyebrow--pill" style="margin:0 auto">Resources</span>
     <h1 class="display" style="margin:20px 0 16px">Everything you need to build faster and smarter</h1>
     <p class="lead" style="margin:0 auto 26px">
