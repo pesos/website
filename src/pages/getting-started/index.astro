@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import GuideDoc from '@/components/GuideDoc.astro';
-import DocSection from '@/components/DocSection.astro';
-import { GUIDE_SECTIONS, GUIDE_QUICK_REF } from '@/data/guide';
+import { LINKS } from '@/data/site';
+import { OTHER_PROJECTS } from '@/data/projects';
 
-const HEART = '\u2665\uFE0E';
+const playground = OTHER_PROJECTS.find((p) => p.name === 'contributor-playground')!;
 ---
 
 <BaseLayout title="Why Open Source" description="Why you, as a college student, should care about open source.">
@@ -12,61 +12,122 @@ const HEART = '\u2665\uFE0E';
     title="Why Should I Care About Open Source?"
     subtitle="Here we address exactly why you, as a college student, would want to care about Open Source."
   >
-    <DocSection n={1} title="Because The Industry Cares">
-      <div class="doc__meta" style="margin-bottom:12px">
-        <span class="tag">Key Insight</span>
-        <span class="tag tag--neon">Beginner Friendly</span>
-        <span>5 min read</span>
-      </div>
-      <p class="doc__sub">94% of employed developers use open source at work</p>
+    <article class="doc__sec doc__prose reveal">
       <p class="muted">
-        "Virtually all (94%) of those who are employed use open source at least sometimes in
-        their professional work (81% use it frequently), and 65% of those who contribute back
-        do so as part of their work duties." (GitHub Open Source Survey, 2017)
+        If you're a college student wondering whether open source is worth your time, the short
+        answer is yes. Here are five reasons why, and how to get started.
+      </p>
+
+      <h2 class="h3">The industry runs on it</h2>
+      <p class="muted">
+        Open source isn't a side hobby next to "real" software work. It's how a lot of real
+        software gets made. GitHub's 2017 Open Source Survey found that among employed
+        developers:
       </p>
       <ul class="check-list">
-        <li><span>Even Microsoft, once open source's "biggest enemy", now says "Microsoft <span class="heart" aria-label="loves">&#9829;&#xFE0E;</span> Open Source"</span></li>
-        <li>The transparency of open development is now often the default way software gets made</li>
-        <li>Industry-wide · All disciplines</li>
+        <li><span><strong>94%</strong> use open source at least sometimes in their work</span></li>
+        <li><span><strong>81%</strong> use it frequently</span></li>
+        <li><span><strong>65%</strong> of those who contribute back do it as part of their job</span></li>
       </ul>
-    </DocSection>
-
-    <DocSection n={2} title="All Guide Sections">
-      <div class="doc__items">
-        {GUIDE_SECTIONS.map((s) => (
-          <article>
-            <div class="doc__meta" style="margin-bottom:8px">
-              <span class="tag">{s.category}</span>
-              <span>{s.read}</span>
-              <span>{s.level}</span>
-              <span>{s.reason}</span>
-            </div>
-            <h3 class="doc__sub">{s.title}</h3>
-            <p class="muted">{s.blurb.split(HEART).map((part, j) => (j ? <><span class="heart" aria-label="loves">{HEART}</span>{part}</> : part))}</p>
-          </article>
-        ))}
-      </div>
-    </DocSection>
-
-    <DocSection n={3} title="Quick Reference">
-      <div class="qref">
-        {GUIDE_QUICK_REF.map((q) => (
-          <div class="qref__row">
-            <span class="qref__n">{q.n}</span>
-            <span class="qref__t">{q.t}</span>
-            <span class="qref__d">{q.d}</span>
-            <a class="btn btn--ghost btn--sm" href="/getting-started/101/">Read →</a>
-          </div>
-        ))}
-      </div>
-    </DocSection>
-
-    <DocSection n={4} title="Related Reading">
       <div class="note">
-        Looking for more context? Browse our curated list of articles, talks, and resources on
-        open source contribution.{' '}
-        <a class="link-arrow" href="/blogs/resources/">View resources →</a>
+        <span>
+          Even Microsoft, a company that once called open source its biggest enemy, now says
+          "Microsoft <span class="heart" aria-label="loves">&#9829;&#xFE0E;</span> Open Source".
+        </span>
       </div>
-    </DocSection>
+      <p class="muted">
+        When an employer sees open-source work on your profile, they see someone who already
+        works the way their teams do.
+      </p>
+
+      <h2 class="h3">It's the best way to learn</h2>
+      <p class="muted">
+        Coursework hands you small, tidy problems with known answers. Open source hands you real
+        code written by real developers. Nobody has to hire you first: fork a project, start
+        hacking, and if your fix is good it gets merged straight back into the original. Along
+        the way you learn:
+      </p>
+      <ul class="check-list">
+        <li>How large, real-world codebases are organised</li>
+        <li>What a good commit and pull request look like</li>
+        <li>How experienced maintainers review code, because they're reviewing yours</li>
+      </ul>
+
+      <h2 class="h3">It builds skills beyond code</h2>
+      <p class="muted">
+        Open source almost always means working with a team you've never met. That teaches you
+        to:
+      </p>
+      <ul class="check-list">
+        <li>Explain your changes clearly</li>
+        <li>Take criticism without taking it personally</li>
+        <li>Work through disagreements</li>
+        <li>Split up work and decide what matters most</li>
+      </ul>
+      <p class="muted">In a crowded pool of developers, these are what make you stand out.</p>
+
+      <h2 class="h3">Your work actually matters</h2>
+      <p class="muted">
+        Your contribution doesn't sit in a folder after it's graded. It ships, and people use
+        it. You might fix a bug in software the world depends on, or help build the next big
+        idea from its first commit.
+      </p>
+
+      <h2 class="h3">You'll find your people</h2>
+      <p class="muted">
+        Open source runs on something close to the African philosophy of Ubuntu:
+      </p>
+      <div class="note"><span>"I am what I am because of what we all are."</span></div>
+      <p class="muted">
+        People from different countries and backgrounds build things together that none of them
+        could build alone, and the friendships made along the way often last for years. Come
+        for the prospects, stay for the community.
+      </p>
+
+      <h2 class="h3">How to get started</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step__n">1</span>
+          <div>
+            <div class="step__t">Learn the basics</div>
+            <div class="step__d">
+              Read <a class="link-arrow" href="/getting-started/101/">The Basics 101</a> to see what
+              open source actually means and what contributing looks like.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">2</span>
+          <div>
+            <div class="step__t">Practise your first pull request</div>
+            <div class="step__d">
+              Try the fork, branch, PR and merge flow on{' '}
+              <a class="link-arrow" href={playground.repo} target="_blank" rel="noopener">{playground.name}</a>,
+              a low-stakes sandbox made for exactly this.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">3</span>
+          <div>
+            <div class="step__t">Pick a real issue</div>
+            <div class="step__d">
+              Look for issues labelled <code>good first issue</code> on a project you like.
+              They're picked to be approachable for newcomers.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">4</span>
+          <div>
+            <div class="step__t">Ask for help</div>
+            <div class="step__d">
+              Stuck? Ask on the <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">PESOS Slack</a>.
+              Someone will point you in the right direction.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
   </GuideDoc>
 </BaseLayout>

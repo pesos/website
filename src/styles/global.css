@@ -929,6 +929,15 @@ textarea {
   }
 }
 
+/* ---------- listing pages (blogs, resources) ---------- */
+/* centred intro + filters in a readable column; the card grid below uses the
+   full page width */
+.listing__head {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+
 /* ---------- site search dialog ---------- */
 .search-dlg {
   width: min(640px, calc(100vw - 32px));
@@ -1238,6 +1247,22 @@ textarea {
 .doc__sec > * + .note,
 .doc__sec > * + .doc__meta {
   margin-top: 14px;
+}
+/* long-form article on a GuideDoc page: headings, lists and callouts get
+   their own breathing room */
+.doc__prose > * + * {
+  margin-top: 14px;
+}
+.doc__prose > h2 {
+  margin-top: 40px;
+  margin-bottom: 2px;
+}
+.doc__prose > h2:first-child {
+  margin-top: 0;
+}
+.doc__prose > .steps,
+.doc__prose > .note {
+  margin-top: 18px;
 }
 /* sub-heading inside a section (e.g. the 94% stat, each guide reason) */
 .doc__sub {

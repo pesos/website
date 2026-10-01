@@ -5,7 +5,6 @@ import SectionTabs from '@/components/SectionTabs.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
 import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
 import { ACTIVITIES, ACTIVITY_TYPES } from '@/data/events';
-import { LINKS } from '@/data/site';
 
 const featured = ACTIVITIES.find((a) => a.featured)!;
 const rest = ACTIVITIES.filter((a) => !a.featured);
@@ -20,19 +19,10 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
       are announced on Slack and Discord as they're scheduled. Here's the shape of what we
       actually run, and how often.
     </p>
-    <div style="margin-top:20px">
-      <a class="btn btn--primary btn--sm" href={LINKS.slack} target="_blank" rel="noopener">See what's next on Slack</a>
-    </div>
     <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>
-    <div class="tabs" style="margin-bottom:44px">
-      {ACTIVITY_TYPES.map((t, i) => (
-        <button class:list={['chip', i === 0 && 'is-active']} data-filter={t} data-filter-key="cat" type="button">{t}</button>
-      ))}
-    </div>
-
     <SectionHeader num="01" title="Our Most Regular Activity" center />
     <div class="split reveal" style="margin-bottom:60px">
       <div class="split__media"><ImgPlaceholder label="Meet-up photo" style="border:0;height:100%" /></div>
@@ -40,12 +30,12 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
         <span class="tag">{featured.type}</span>
         <h2 class="h2">{featured.title}</h2>
         <p class="muted">{featured.blurb}</p>
-        <div class="mono muted" style="font-size:.8rem">{featured.cadence}</div>
+        {featured.cadence && <div class="mono muted" style="font-size:.8rem">{featured.cadence}</div>}
         <a class="btn btn--ghost btn--sm" href="/about/how-to-join/">How to join in →</a>
       </div>
     </div>
 
-    <SectionHeader num="02" title="Everything Else We Run" center />
+    <SectionHeader num="02" title="Everything Else We Host" center />
     <div class="grid-3">
       {rest.map((a, i) => (
         <article class="card card--spotlight reveal" data-item data-cat={a.type} style={`--d:${i * 50}ms`}>
@@ -53,7 +43,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
           <span class="tag">{a.type}</span>
           <h3 class="h3" style="margin:10px 0 6px">{a.title}</h3>
           <p class="muted" style="font-size:.9rem">{a.blurb}</p>
-          <div class="mono muted" style="font-size:.76rem;margin-top:10px">{a.cadence}</div>
+          {a.cadence && <div class="mono muted" style="font-size:.76rem;margin-top:10px">{a.cadence}</div>}
         </article>
       ))}
     </div>

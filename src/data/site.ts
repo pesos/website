@@ -23,7 +23,7 @@ export const NAV: NavSection[] = [
     base: '/getting-started/',
     children: [
       { label: 'Main Hub', href: '/getting-started/' },
-      { label: '101', href: '/getting-started/101/' },
+      { label: 'The Basics 101', href: '/getting-started/101/' },
       { label: 'Why our club', href: '/getting-started/why-our-club/' },
     ],
   },
@@ -44,7 +44,7 @@ export const NAV: NavSection[] = [
     base: '/blogs/',
     // blog "Details" are the posts themselves, which live on GitHub
     children: [
-      { label: 'Index', href: '/blogs/' },
+      { label: 'Blogs', href: '/blogs/' },
       { label: 'Resources', href: '/blogs/resources/' },
     ],
   },

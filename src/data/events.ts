@@ -1,48 +1,54 @@
-// We don't have a live events calendar to pull from (specific dates/venues
-// are announced on Slack, not published anywhere we can source honestly),
-// so this page describes the real recurring activities instead of inventing
-// a fake calendar. See the "What We Do" section on /about/ for the source.
+// The kinds of events PESOS hosts. Specific dates and venues are announced on
+// Slack and Discord, so this lists the events themselves rather than a
+// calendar. `cadence` is only set where the schedule is actually fixed.
 export type ActivityItem = {
   title: string;
-  type: 'Workshop' | 'Talk' | 'Project Session' | 'PR Challenge' | 'Meetup';
+  type: 'Meetup' | 'Hackathon' | 'Hacktoberfest' | 'CTF' | 'Fireside Talk' | 'Contribution Spree';
   blurb: string;
-  cadence: string;
+  cadence?: string;
   featured?: boolean;
 };
 
 export const ACTIVITIES: ActivityItem[] = [
   {
-    title: 'General Meet-ups',
+    title: 'Meetups',
     type: 'Meetup',
     blurb:
       'Our most important activity. Casual coding, lightning talks, code review, question time, and planning for everything else we do.',
-    cadence: 'Twice a week, without fail',
+    cadence: 'Twice a week during the semester',
     featured: true,
   },
   {
-    title: 'Workshops',
-    type: 'Workshop',
-    blurb: 'Hands-on sessions on current tools and technologies, run by industry guests or by community members sharing something they discovered.',
-    cadence: 'At least once a semester (major) · twice a semester (community-run)',
+    title: 'Hackathons',
+    type: 'Hackathon',
+    blurb:
+      'Team up, pick a problem and build something from scratch against the clock. A fast way to learn a new stack and ship a working project in the open.',
   },
   {
-    title: 'Talks',
-    type: 'Talk',
-    blurb: 'Presentations from prominent open-source contributors around Bangalore, giving members a glimpse into real-world programming.',
-    cadence: 'As scheduled',
+    title: 'Hacktoberfest',
+    type: 'Hacktoberfest',
+    blurb:
+      'We celebrate the month-long open-source event with an intro session and a hack day where members register, find issues and ship their first pull requests together.',
+    cadence: 'Every October',
   },
   {
-    title: 'Community Project Sessions',
-    type: 'Project Session',
-    blurb: 'Coordinated work on Grofer, Rshark, browser-history and the rest of github.com/pesos, plus supporting other open-source projects on campus.',
-    cadence: 'Ongoing, in #projects',
+    title: 'CTFs',
+    type: 'CTF',
+    blurb:
+      'Capture-the-flag security challenges: crack, reverse and exploit your way through puzzles, solo or as a team, and learn how systems really break.',
   },
   {
-    title: 'PR Challenge',
-    type: 'PR Challenge',
-    blurb: 'A Hacktoberfest-style event where the community sets a pull-request target and tries to hit it within a week.',
-    cadence: 'Dedicated event, plus ongoing pushes during general meet-ups',
+    title: 'Fireside Talks',
+    type: 'Fireside Talk',
+    blurb:
+      'Informal conversations with open-source contributors and developers from around Bangalore about their work, their projects and how they got started.',
+  },
+  {
+    title: 'Contribution Sprees',
+    type: 'Contribution Spree',
+    blurb:
+      'The community sets a pull-request target and works together to hit it within a week, hunting for help-wanted and good-first issues across open-source projects.',
   },
 ];
 
-export const ACTIVITY_TYPES = ['All', 'Meetup', 'Workshop', 'Talk', 'Project Session', 'PR Challenge'];
+export const ACTIVITY_TYPES = ['All', ...ACTIVITIES.map((a) => a.type)];

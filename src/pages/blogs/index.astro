@@ -9,15 +9,17 @@ import { FEATURED_POST as featured, POSTS as posts, BLOG_TAGS as tags, POST_REPO
 
 <BaseLayout title="Blogs" description="Articles, tutorials and field notes from the PES Open Source community.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'Blogs and Resources' }, { label: 'Index' }]} />
+    <Crumb items={[{ label: 'Blogs and Resources' }, { label: 'Blogs' }]} />
     <div style="margin-top:22px"><SectionTabs section="Blogs and Resources" /></div>
   </section>
 
-  <section class="wrap" style="text-align:center;padding-block:24px 40px;max-width:760px">
+  <section class="wrap listing" style="padding-block:24px 40px">
+    <div class="listing__head">
     <span class="eyebrow eyebrow--pill" style="margin:0 auto">Blogs</span>
     <h1 class="display" style="margin:20px 0 16px">Articles, tutorials and field notes</h1>
-    <p class="lead" style="margin:0 auto 26px">Written by PESOS members over the years.</p>
+    </div>
     <div data-filter-root>
+      <div class="listing__head">
       <div class="search" style="max-width:460px;margin:0 auto 18px">
         <span class="search__icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -29,8 +31,9 @@ import { FEATURED_POST as featured, POSTS as posts, BLOG_TAGS as tags, POST_REPO
           <button class:list={['chip', i === 0 && 'is-active']} data-filter={t} data-filter-key="cat" type="button">{t}</button>
         ))}
       </div>
+      </div>
 
-      <div style="text-align:left;margin-top:56px">
+      <div style="margin-top:56px">
         <SectionHeader title="All Posts" />
         <div class="grid-3">
           {[{ ...featured, featured: true }, ...posts.map((p) => ({ ...p, href: `${REPO}/${p.file}`, featured: false }))].map((p, i) => (

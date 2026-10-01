@@ -73,9 +73,9 @@ The file name is the URL (`build.format: 'directory'` means every route ends in 
 | Section | Route | File | Content source |
 |---|---|---|---|
 | Home | `/` | `index.astro` | `SECTIONS`, `SITE.tagline`; `HeroGlyphs` animation |
-| Getting Started | `/getting-started/` | `getting-started/index.astro` | Main Hub: `GUIDE_SECTIONS`, `GUIDE_QUICK_REF` |
+| Getting Started | `/getting-started/` | `getting-started/index.astro` | Main Hub: `GUIDE_SECTIONS` |
 | | `/getting-started/101/` | `getting-started/101.astro` | Long-form guide written in the page |
-| | `/getting-started/why-our-club/` | `getting-started/why-our-club.astro` | Club photo, inline `activities`, stats |
+| | `/getting-started/why-our-club/` | `getting-started/why-our-club.astro` | Inline `activities`, stats |
 | About | `/about/events/` | `about/events.astro` | `ACTIVITIES`, `ACTIVITY_TYPES` |
 | | `/about/goals/` | `about/goals.astro` | Mission statement + inline `goals` |
 | | `/about/how-to-join/` | `about/how-to-join.astro` | `JOIN_STEPS`, `LINKS` |

@@ -4,8 +4,6 @@ import GuideDoc from '@/components/GuideDoc.astro';
 import DocSection from '@/components/DocSection.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
 import { SITE } from '@/data/site';
-import { Image } from 'astro:assets';
-import clubPhoto from '@/assets/united-by-foss.webp';
 
 // "Our Standards", from the club's own Code of Conduct.
 const standards = [
@@ -43,17 +41,9 @@ const stats = [
 <BaseLayout title="Why our club" description="PES Open Source is a student-run open-source community from PES University, Bangalore.">
   <GuideDoc
     title="Why our club"
-    subtitle={`PES Open Source is a student-run Open Source community from PES University, Bangalore. We aim to create a thriving culture based around Open Source in our campus. Since Feb 2026, our community goes by the nickname ${SITE.communityName}.`}
+    subtitle={`PES Open Source is a student-run Open Source community from PES University, Bangalore. We aim to create a thriving culture based around Open Source in our campus.`}
   >
     <DocSection n={1} title="What we do">
-      <figure class="doc__figure">
-        <Image
-          src={clubPhoto}
-          alt="PESOS members posing around a sticker-covered “United by FOSS” photo frame outside Auditorium 1"
-          widths={[640, 960, 1400]}
-          sizes="(max-width: 960px) 100vw, 860px"
-        />
-      </figure>
       <ul class="check-list">
         {activities.map((a) => <li><span><strong>{a.t}.</strong> {a.d}</span></li>)}
       </ul>
@@ -103,8 +93,8 @@ const stats = [
 
     <DocSection n={3} title="Come build with us">
       <p class="muted">Open to every branch and every skill level.</p>
-      <div class="note">
-        New to open source? <a class="link-arrow" href="/getting-started/101/">Read the 101 →</a>
+      <div class="note" style="align-items:center">
+        Ready to join? <a class="link-arrow" href="/about/how-to-join/" style="margin-left:auto">How to join →</a>
       </div>
     </DocSection>
   </GuideDoc>
