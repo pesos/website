@@ -23,7 +23,7 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
   </section>
 
   <section class="wrap section" data-filter-root>
-    <SectionHeader num="01" title="Our Most Regular Activity" center />
+    <!-- <SectionHeader num="01" title="Our Most Regular Activity" center />
     <div class="split reveal" style="margin-bottom:60px">
       <div class="split__media"><ImgPlaceholder label="Meet-up photo" style="border:0;height:100%" /></div>
       <div class="split__body">
@@ -33,9 +33,9 @@ const rest = ACTIVITIES.filter((a) => !a.featured);
         {featured.cadence && <div class="mono muted" style="font-size:.8rem">{featured.cadence}</div>}
         <a class="btn btn--ghost btn--sm" href="/about/how-to-join/">How to join in →</a>
       </div>
-    </div>
+    </div> -->
 
-    <SectionHeader num="02" title="Everything Else We Host" center />
+    <SectionHeader num="02" title="Everything We Host" center />
     <div class="grid-3">
       {rest.map((a, i) => (
         <article class="card card--spotlight reveal" data-item data-cat={a.type} style={`--d:${i * 50}ms`}>

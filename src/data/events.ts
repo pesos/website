@@ -16,7 +16,6 @@ export const ACTIVITIES: ActivityItem[] = [
     blurb:
       'Our most important activity. Casual coding, lightning talks, code review, question time, and planning for everything else we do.',
     cadence: 'Twice a week during the semester',
-    featured: true,
   },
   {
     title: 'Hackathons',
