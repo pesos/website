@@ -8,7 +8,7 @@ import { ARCHIVE_ENTRIES } from '@/data/archive';
 import { GUIDE_SECTIONS, JOIN_STEPS } from '@/data/guide';
 import { ACTIVITIES } from '@/data/events';
 import { PERKS } from '@/data/perks';
-import { FEATURED_POST, POSTS, POST_REPO } from '@/data/blogs';
+import { getAllPosts } from '@/lib/posts';
 
 export type SearchEntry = { t: string; d: string; s: string; u: string; x?: 1 };
 
@@ -16,7 +16,7 @@ const PAGE_DESC: Record<string, string> = {
   '/getting-started/': 'Why you, as a college student, should care about open source.',
   '/getting-started/101/': "Open source, a beginner's guide: what it means and how to start contributing.",
   '/getting-started/why-our-club/': 'Who we are, what we do, and the club in numbers.',
-  '/about/events/': 'Meet-ups, workshops, talks, project sessions and PR challenges.',
+  '/about/events/': 'Meetups, hackathons, Hacktoberfest, CTFs, fireside talks and contribution sprees.',
   '/about/goals/': 'Our mission statement and what the club works towards.',
   '/about/how-to-join/': 'Joining PESOS is a single pull request to the members list.',
   '/about/perks/': 'Tools, cloud credits and learning material for active members.',
@@ -27,7 +27,7 @@ const PAGE_DESC: Record<string, string> = {
   '/showcase/projects/': 'Open-source projects maintained by PESOS members.',
 };
 
-export function GET() {
+export async function GET() {
   const entries: SearchEntry[] = [];
 
   for (const sec of NAV) {
@@ -43,9 +43,9 @@ export function GET() {
   for (const p of OTHER_PROJECTS) {
     entries.push({ t: p.name, d: p.blurb, s: 'Projects', u: p.repo, x: 1 });
   }
-  for (const p of [FEATURED_POST, ...POSTS]) {
-    const href = 'href' in p ? p.href : `${POST_REPO}/${p.file}`;
-    entries.push({ t: p.title, d: p.blurb, s: 'Blogs', u: href, x: 1 });
+  // markdown posts in /blogs
+  for (const p of await getAllPosts()) {
+    entries.push({ t: p.title, d: p.description, s: 'Blogs', u: p.href });
   }
   for (const r of RESOURCES) {
     entries.push({ t: r.title, d: r.blurb, s: 'Resources', u: r.href, x: 1 });

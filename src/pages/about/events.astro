@@ -6,8 +6,9 @@ import SectionHeader from '@/components/SectionHeader.astro';
 import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
 import { ACTIVITIES, ACTIVITY_TYPES } from '@/data/events';
 
-const featured = ACTIVITIES.find((a) => a.featured)!;
-const rest = ACTIVITIES.filter((a) => !a.featured);
+// the featured activity leads the page; without one, the first activity does
+const featured = ACTIVITIES.find((a) => a.featured) ?? ACTIVITIES[0];
+const rest = ACTIVITIES.filter((a) => a !== featured);
 ---
 
 <BaseLayout title="Events & Activities" description="What PESOS actually runs, and how often, plus where to find out what's next.">
