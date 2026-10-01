@@ -39,6 +39,31 @@ If you add a new stack or category, also add it to `PROJECT_FILTERS` so it appea
 
 A repo that doesn't need its own page goes in `OTHER_PROJECTS` instead (`name`, `repo`, `blurb`).
 
+## Publish a blog post
+
+Add a markdown file to `blogs/` at the repo root. Nothing else needs to change: the post gets its own page, a card on `/blogs/`, a search entry and (for a new tag) a filter chip.
+
+1. Copy `blogs/_TEMPLATE.md` to `blogs/<slug>.md`. The file name is the URL: `blogs/my-first-pr.md` → `/blogs/my-first-pr/`. Use lowercase and hyphens, and don't name a post `resources.md` (that URL is the Resources page).
+2. Fill in the front matter:
+
+   | Field | Required | Notes |
+   |---|---|---|
+   | `title` | yes | |
+   | `description` | yes | Card text on `/blogs/` and in search |
+   | `date` | yes | `YYYY-MM-DD`; the list is newest first |
+   | `author` | no | |
+   | `tag` | no | Defaults to `Community`; a new value gets its own filter chip |
+   | `featured` | no | Listed first, with a green tag |
+   | `draft` | no | `true` shows the post in `npm run dev` only |
+
+3. Write the post in markdown below the front matter. Use `##` for sections; the page title comes from `title`. Code blocks are syntax-highlighted for the language you name (e.g. ```` ```bash ````).
+
+Files starting with `_` are ignored. A missing or malformed required field fails the build with an error naming the file.
+
+Posts appear on the live site when it's next built and deployed. Under `npm run dev` they appear as soon as the file is saved (restart the dev server once after pulling this change, since it reads the content config at startup).
+
+To migrate an old post from `pesos/pesos.github.io`, add it to `blogs/` and delete its entry from `src/data/blogs.ts`.
+
 ## Add an archive entry
 
 Append to `ARCHIVE_ENTRIES` in `src/data/archive.ts`:

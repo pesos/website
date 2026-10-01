@@ -4,7 +4,11 @@ import Crumb from '@/components/Crumb.astro';
 import SectionTabs from '@/components/SectionTabs.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
 
-import { FEATURED_POST as featured, POSTS as posts, BLOG_TAGS as tags, POST_REPO as REPO } from '@/data/blogs';
+import { getAllPosts } from '@/lib/posts';
+
+const posts = await getAllPosts();
+// one chip per tag actually in use, so a new tag in a post gets its own chip
+const tags = ['All', ...new Set(posts.map((p) => p.tag))];
 ---
 
 <BaseLayout title="Blogs" description="Articles, tutorials and field notes from the PES Open Source community.">
@@ -36,14 +40,18 @@ import { FEATURED_POST as featured, POSTS as posts, BLOG_TAGS as tags, POST_REPO
       <div style="margin-top:56px">
         <SectionHeader title="All Posts" />
         <div class="grid-3">
-          {[{ ...featured, featured: true }, ...posts.map((p) => ({ ...p, href: `${REPO}/${p.file}`, featured: false }))].map((p, i) => (
+          {posts.map((p, i) => (
             <article class="card card--spotlight reveal" data-item data-cat={p.tag} style={`--d:${i * 50}ms`}>
               <div class="img-ph" style="min-height:140px;margin-bottom:16px">Cover</div>
               <span class:list={['tag', p.featured && 'tag--neon']}>{p.featured ? `Featured · ${p.tag}` : p.tag}</span>
               <h3 class="h3" style="margin:10px 0 6px">{p.title}</h3>
-              <p class="muted" style="font-size:.9rem;margin-bottom:10px">{p.blurb}</p>
-              <div class="mono muted" style="font-size:.76rem;margin-bottom:14px">{p.author ? `${p.author} · ` : ''}{p.meta}</div>
-              <a class="link-arrow" href={p.href} target="_blank" rel="noopener">Read article →</a>
+              <p class="muted" style="font-size:.9rem;margin-bottom:10px">{p.description}</p>
+              <div class="mono muted" style="font-size:.76rem;margin-bottom:14px">
+                {[p.author, p.dateLabel, p.readMins && `${p.readMins} min read`].filter(Boolean).join(' · ')}
+              </div>
+              {p.external
+                ? <a class="link-arrow" href={p.href} target="_blank" rel="noopener">Read on GitHub ↗</a>
+                : <a class="link-arrow" href={p.href}>Read article →</a>}
             </article>
           ))}
         </div>

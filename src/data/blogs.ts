@@ -1,6 +1,6 @@
-// Real posts from the PES Open Source community blog. Sources link to the
-// markdown in github.com/pesos/pesos.github.io while the site itself is
-// being rebuilt.
+// Older posts that still live in github.com/pesos/pesos.github.io and are
+// linked out to. New posts go in /blogs as markdown (see blogs/_TEMPLATE.md);
+// move these over there and delete them from here as they're migrated.
 export const POST_REPO = 'https://github.com/pesos/pesos.github.io/blob/master/_posts';
 
 export const FEATURED_POST = {
@@ -25,4 +25,3 @@ export const POSTS = [
   { tag: 'Community', title: 'PES Open Source is Recruiting!', blurb: 'PESOS opens up its leadership roles to the next batch, the first phase of a new selection process.', author: 'Atharva Raykar', meta: 'Nov 2020', file: '2020-11-01-recruitments-2020.md' },
 ];
 
-export const BLOG_TAGS = ['All', 'Tutorial', 'Deep Dive', 'Recap', 'Guide', 'Community'];

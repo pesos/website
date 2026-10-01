@@ -14,7 +14,7 @@
 
 **Why:** most content is structured cards (status, stack, year, semester) that feed filters, not long prose. TS types catch a missing field or a status typo at build time. `'Active' | 'Completed' | …` on `Project.status` is one example.
 
-**Trade-off:** blog posts are **not** hosted here. `blogs.astro` links out to the markdown in `pesos/pesos.github.io`. Adding real on-site posts later would be a natural fit for a content collection.
+**Exception: blog posts.** Posts are long prose written by many members, so they live as markdown files in `/blogs` at the repo root and are loaded through an Astro content collection (`src/content.config.ts`, `glob` loader). Adding a post is a single new file in a pull request: no code changes, and the front matter is validated by a schema, so a missing `title` or a bad `date` fails the build instead of shipping a broken page. The older posts that still live in `pesos/pesos.github.io` stay listed (linked out) from `src/data/blogs.ts` until they're migrated.
 
 **Inconsistency to be aware of:** some pages keep their data in their own frontmatter (`getting-started/why-our-club.astro`, `about/goals.astro`, `contact.astro`) instead of in `src/data`.
 

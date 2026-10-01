@@ -2,13 +2,17 @@
 
 ```
 pesos-web/
-├── astro.config.mjs          # site URL, static output, directory-style URLs
+├── astro.config.mjs          # site URL, static output, redirects, code highlighting
+├── blogs/                    # blog posts as markdown, one file per post (_TEMPLATE.md is never published)
 ├── tsconfig.json             # extends astro/tsconfigs/strict; "@/*" → "src/*"
 ├── package.json              # dev / build / preview scripts; only dependency: astro
 ├── public/
 │   └── pesos-logo.svg        # favicon, copied verbatim to dist/
 └── src/
     ├── env.d.ts              # references .astro/types.d.ts (generated)
+    ├── content.config.ts     # the `blog` collection: loads /blogs/*.md and validates front matter
+    ├── lib/
+    │   └── posts.ts          # merged, sorted post list for the blog index and search
     ├── layouts/
     │   └── BaseLayout.astro
     ├── components/
@@ -37,6 +41,7 @@ pesos-web/
     │   │   └── perks.astro
     │   ├── blogs/
     │   │   ├── index.astro
+    │   │   ├── [slug].astro         # one page per markdown post
     │   │   └── resources.astro
     │   ├── contact.astro
     │   ├── showcase/
@@ -80,7 +85,8 @@ The file name is the URL (`build.format: 'directory'` means every route ends in 
 | | `/about/goals/` | `about/goals.astro` | Mission statement + inline `goals` |
 | | `/about/how-to-join/` | `about/how-to-join.astro` | `JOIN_STEPS`, `LINKS` |
 | | `/about/perks/` | `about/perks.astro` | `PERKS`, `PERK_CATEGORIES`, `PERK_STEPS` |
-| Blogs and Resources | `/blogs/` | `blogs/index.astro` | `POSTS`, `FEATURED_POST`; posts link out to GitHub |
+| Blogs and Resources | `/blogs/` | `blogs/index.astro` | `getAllPosts()`: markdown posts from `/blogs` plus legacy GitHub-hosted posts |
+| | `/blogs/<slug>/` | `blogs/[slug].astro` | One page per `/blogs/<slug>.md`, styled by `.prose` |
 | | `/blogs/resources/` | `blogs/resources.astro` | `RESOURCES`, `RESOURCE_FILTERS` |
 | Contact Us | `/contact/` | `contact.astro` | Inline `socials`, `stats`, `faqs`; Formspree form |
 | Showcase and Engagement | `/showcase/archive/` | `showcase/archive.astro` | `ARCHIVE_ENTRIES`, `ARCHIVE_STATS`, … |
@@ -100,7 +106,7 @@ Each file exports a type and one or more arrays. Pages import from here instead 
 | File | Exports | Notes |
 |---|---|---|
 | `site.ts` | `SITE`, `NAV`, `navSection`, `LINKS`, `SECTIONS`, `FOOTER` | Global identity, the site map (`NAV`), external URLs (GitHub, Slack invite, Instagram, Twitter, Formspree) |
-| `blogs.ts` | `POSTS`, `FEATURED_POST`, `POST_REPO`, `BLOG_TAGS` | Blog posts; each links to its markdown on GitHub |
+| `blogs.ts` | `POSTS`, `FEATURED_POST`, `POST_REPO` | Legacy posts still hosted in `pesos/pesos.github.io`; delete each one once it's migrated to `/blogs` |
 | `errors.ts` | `ERRORS` | Title and message per HTTP status code |
 | `projects.ts` | `Project`, `PROJECTS`, `OTHER_PROJECTS`, `PROJECT_STATS`, `PROJECT_FILTERS` | `PROJECTS` drives both the listing and `getStaticPaths()` |
 | `guide.ts` | `GUIDE_SECTIONS`, `GUIDE_FILTERS`, `GUIDE_QUICK_REF`, `JOIN_STEPS` | Ported from the old site's get-started pages |
