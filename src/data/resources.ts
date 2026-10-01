@@ -28,7 +28,7 @@ export const RESOURCES: Resource[] = [
   {
     title: "Hello World of GitHub",
     category: 'Guides',
-    blurb: 'GitHub’s own beginner walkthrough — branches, commits, and your first pull request.',
+    blurb: 'GitHub’s own beginner walkthrough: branches, commits, and your first pull request.',
     href: 'https://guides.github.com/activities/hello-world/',
   },
   {
@@ -58,19 +58,19 @@ export const RESOURCES: Resource[] = [
   {
     title: 'tldr-pages',
     category: 'Repositories',
-    blurb: 'Simplified, community-driven man pages for the Linux CLI — a great first-PR repo.',
+    blurb: 'Simplified, community-driven man pages for the Linux CLI, and a great first-PR repo.',
     href: 'https://github.com/tldr-pages/tldr',
   },
   {
     title: 'nand2tetris',
     category: 'Repositories',
-    blurb: 'Build a modern computer from first principles — from NAND gates up to a working OS.',
+    blurb: 'Build a modern computer from first principles, from NAND gates up to a working OS.',
     href: 'http://www.nand2tetris.org/',
   },
   {
     title: 'Hacktoberfest',
     category: 'Repositories',
-    blurb: 'DigitalOcean’s month-long celebration of open source — a great time to make your first PRs.',
+    blurb: 'DigitalOcean’s month-long celebration of open source and a great time to make your first PRs.',
     href: 'https://hacktoberfest.digitalocean.com/',
   },
   {

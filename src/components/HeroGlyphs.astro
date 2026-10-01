@@ -1,6 +1,6 @@
 ---
 /* Animated terminal-glyph field for the hero (right column), in the spirit
-   of the artwork on select.supabase.com — a block "waveform" on the left,
+   of the artwork on select.supabase.com: a block "waveform" on the left,
    bracket/arrow streams in the middle, a letter heatmap on the right.
    Pure JS value-noise, no deps. Sits on the page background; the left and
    right edges are feathered in CSS so it dissolves into the layout.
@@ -23,7 +23,7 @@ const cells = Array.from({ length: COLS * ROWS });
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const BLOCKS = ' ▁▂▃▄▅▆▇█';
-    const STREAM = '·:{<([»—+×◆';
+    const STREAM = '·:{<([»-+×◆';
     const LETTERS = 'ABCDEFG';
 
     // 4-octave sine "value noise" -> 0..1

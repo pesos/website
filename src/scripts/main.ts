@@ -1,4 +1,4 @@
-/* PESOS — client behaviour. Everything is guarded by element presence,
+/* PESOS: client behaviour. Everything is guarded by element presence,
    so this single module is safe to load on every page. */
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

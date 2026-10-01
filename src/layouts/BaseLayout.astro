@@ -8,7 +8,7 @@ interface Props {
   title?: string;
   description?: string;
 }
-const { title, description = 'PESOS — the student-run open-source club at PES University.' } = Astro.props;
+const { title, description = 'PESOS, the student-run open-source club at PES University.' } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : SITE.full;
 ---
 

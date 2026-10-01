@@ -3,32 +3,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Crumb from '../components/Crumb.astro';
 import GuideTabs from '../components/GuideTabs.astro';
 import SectionHeader from '../components/SectionHeader.astro';
-import ImgPlaceholder from '../components/ImgPlaceholder.astro';
 import { SITE } from '../data/site';
+import { Image } from 'astro:assets';
+import clubPhoto from '../assets/united-by-foss.webp';
 
-// "Our Standards" — from the club's own Code of Conduct.
+// "Our Standards", from the club's own Code of Conduct.
 const standards = [
   { n: '01', t: 'Welcoming, inclusive language', d: 'A positive environment starts with how we talk to each other, online and in person.' },
-  { n: '02', t: 'Help each other grow', d: 'Broaden each other’s knowledge and perspective — no question is a stupid question here.' },
+  { n: '02', t: 'Help each other grow', d: 'Broaden each other’s knowledge and perspective; no question is a stupid question here.' },
   { n: '03', t: 'Respect differing viewpoints', d: 'Gracefully accept constructive criticism, and show empathy towards other members.' },
   { n: '04', t: 'Safety over comfort', d: 'We prioritise the safety of the marginalised over the comfort of the privileged.' },
 ];
 
 // Real activities, from the club's "What We Do" mission page.
 const activities = [
-  { t: 'Workshops', d: 'Hands-on sessions on the open-source movement, tools and technologies — from industry guests and community members alike.' },
+  { t: 'Workshops', d: 'Hands-on sessions on the open-source movement, tools and technologies, from industry guests and community members alike.' },
   { t: 'Talks', d: 'Presentations from prominent open-source contributors around Bangalore, giving members a glimpse into real-world programming.' },
   { t: 'Community projects', d: 'Collaborative work on projects hosted under github.com/pesos, reviewed and selected based on community interest.' },
   { t: 'A Hacktoberfest-style PR challenge', d: 'Members hunt for help-wanted and low-hanging-fruit issues, with a dedicated event to hit a weekly pull-request target.' },
-  { t: 'General meet-ups', d: 'Twice-weekly, casual sessions for coding, lightning talks, code review, elections and planning — our most important activity.' },
+  { t: 'General meet-ups', d: 'Twice-weekly, casual sessions for coding, lightning talks, code review, elections and planning. Our most important activity.' },
 ];
 
-// Real organisational structure — from the club's handbook.
+// Real organisational structure, from the club's handbook.
 const roles = [
-  { r: 'Club Heads / Benevolent Dictators', d: 'Coordinate all activities and have final say in decisions — expected to be benevolent and serve the community’s needs.' },
+  { r: 'Club Heads / Benevolent Dictators', d: 'Coordinate all activities and have final say in decisions, and are expected to be benevolent and serve the community’s needs.' },
   { r: 'Technical Heads', d: 'Manage technical aspects: the website, group projects, and technical arrangements at events.' },
   { r: 'Community Relations Head', d: 'Promotes events and reviews Code of Conduct violations and other grievances.' },
-  { r: 'Event Coordinators', d: 'The backbone of every event — registrations, logistics and timing.' },
+  { r: 'Event Coordinators', d: 'The backbone of every event: registrations, logistics and timing.' },
 ];
 
 const stats = [
@@ -53,17 +54,25 @@ const stats = [
 
   <section class="wrap section">
     <div class="split reveal">
-      <div class="split__media"><ImgPlaceholder label="Club photo 1200×800" style="border:0;height:100%" /></div>
+      <div class="split__media">
+        <Image
+          class="split__img"
+          src={clubPhoto}
+          alt="PESOS members posing around a sticker-covered “United by FOSS” photo frame outside Auditorium 1"
+          widths={[640, 960, 1400]}
+          sizes="(max-width: 960px) 100vw, 600px"
+        />
+      </div>
       <div class="split__body">
         <span class="eyebrow">Mission Statement</span>
         <p class="muted" style="font-style:italic">
           "PES Open Source serves to facilitate technical skills and knowledge by fostering a
           community around contributing to, creating, critiquing, and advocating for Open Source
-          Projects." In other words — we want to create a culture of open-source collaboration
+          Projects." In other words, we want to create a culture of open-source collaboration
           in our college.
         </p>
         <ul class="check-list">
-          {activities.map((a) => <li><strong>{a.t}.</strong> {a.d}</li>)}
+          {activities.map((a) => <li><span><strong>{a.t}.</strong> {a.d}</span></li>)}
         </ul>
         <a class="btn btn--primary btn--sm" href="/how-to-join/">How to join</a>
       </div>
@@ -81,12 +90,9 @@ const stats = [
     </div>
   </section>
 
+  <!--
   <section class="wrap section">
     <SectionHeader num="01" title="Our Standards" center />
-    <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
-      From our <a class="link-arrow" href="/code-of-conduct/">Code of Conduct</a> — the driving
-      principle behind every meet-up, PR review and Slack thread.
-    </p>
     <div class="grid-2">
       {standards.map((v, i) => (
         <div class="card card--spotlight reveal" style={`--d:${i * 60}ms`}>
@@ -113,7 +119,7 @@ const stats = [
       ))}
     </div>
   </section>
-
+  -->
   <section class="wrap section--tight">
     <div class="panel panel--accent reveal" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
       <div>

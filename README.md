@@ -56,8 +56,8 @@ src/
 ├── layouts/      # BaseLayout: <head>, theme bootstrap, Nav, Footer, main.ts
 ├── components/   # Nav, Footer, Wordmark, Crumb, GuideTabs, SectionHeader, ImgPlaceholder, HeroGlyphs
 ├── data/         # all content: site, projects, guide, resources, archive, events, perks
-├── scripts/      # main.ts — all shared client behavior
-└── styles/       # global.css — tokens + every component style
+├── scripts/      # main.ts: all shared client behavior
+└── styles/       # global.css: tokens + every component style
 public/           # pesos-logo.svg (favicon)
 ```
 

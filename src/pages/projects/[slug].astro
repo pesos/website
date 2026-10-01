@@ -9,13 +9,13 @@ export function getStaticPaths() {
 
 const { p } = Astro.props;
 const stats = p.stats ?? [
-  { label: 'Stars', value: '—' },
-  { label: 'Forks', value: '—' },
-  { label: 'Open Issues', value: '—' },
+  { label: 'Stars', value: 'N/A' },
+  { label: 'Forks', value: 'N/A' },
+  { label: 'Open Issues', value: 'N/A' },
   { label: 'Contributors', value: String(p.contributors) },
 ];
 const info = p.info ?? [
-  { label: 'Language', value: p.stack[0] ?? '—' },
+  { label: 'Language', value: p.stack[0] ?? 'N/A' },
   { label: 'Status', value: p.status },
 ];
 const features = p.features ?? [];
@@ -108,7 +108,7 @@ const tabPanels = [
         {tabPanels.slice(1).map((t) => (
           <div data-panel={t.label} hidden>
             <div class="note">
-              “{t.label}” lives in the repository — <a class="link-arrow" href={t.href} target="_blank" rel="noopener">open it on GitHub →</a>
+              “{t.label}” lives in the repository: <a class="link-arrow" href={t.href} target="_blank" rel="noopener">open it on GitHub →</a>
             </div>
           </div>
         ))}
@@ -126,7 +126,7 @@ const tabPanels = [
               <div class="eyebrow" style="margin-bottom:12px">New here?</div>
               {p.goodFirstIssues.map((g) => (
                 <p class="muted" style="font-size:.85rem;margin-bottom:10px">
-                  Look for issues labeled <code>{g.id}</code> — {g.title}.
+                  Look for issues labeled <code>{g.id}</code>: {g.title}.
                 </p>
               ))}
               <a class="btn btn--ghost btn--sm" href={`${p.repo}/issues`} target="_blank" rel="noopener">View all issues</a>

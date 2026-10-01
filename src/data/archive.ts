@@ -1,4 +1,4 @@
-// A real record of PES Open Source's history — past events, legacy/archived
+// A real record of PES Open Source's history: past events, legacy/archived
 // repos under github.com/pesos, and a few historical milestones.
 export type ArchiveEntry = {
   title: string;
@@ -20,7 +20,7 @@ export const ARCHIVE_ENTRIES: ArchiveEntry[] = [
     year: '2019',
     date: 'Oct 16, 2019',
     blurb:
-      'PESOS’s first workshop — a hands-on session to learn git and get started using version control effectively.',
+      'PESOS’s first workshop: a hands-on session to learn git and get started using version control effectively.',
     href: 'https://github.com/pesos/pesos.github.io/blob/master/_posts/2019-10-27-git-workshop.md',
   },
   {
@@ -51,7 +51,7 @@ export const ARCHIVE_ENTRIES: ArchiveEntry[] = [
     semester: 'Fall',
     year: '2016',
     date: 'Archived',
-    blurb: 'Optimus Prime — PES Open Source’s IRC bot for the community’s online presence.',
+    blurb: 'Optimus Prime, PES Open Source’s IRC bot for the community’s online presence.',
     href: 'https://github.com/pesos/optimus',
   },
   {
@@ -81,7 +81,7 @@ export const ARCHIVE_ENTRIES: ArchiveEntry[] = [
     semester: 'Spring',
     year: '2012',
     date: 'Apr 2012',
-    blurb: 'The github.com/pesos organisation is created — the start of the community’s public history.',
+    blurb: 'The github.com/pesos organisation is created, marking the start of the community’s public history.',
     href: 'https://github.com/pesos',
   },
   {
@@ -101,7 +101,7 @@ export const ARCHIVE_ENTRIES: ArchiveEntry[] = [
     semester: 'Spring',
     year: '2026',
     date: 'Feb 6, 2026',
-    blurb: 'PESOS is newly revamped — the community now also goes by the nickname "OSIRIS."',
+    blurb: 'PESOS is newly revamped, and the community now also goes by the nickname "OSIRIS."',
     href: 'https://github.com/pesos/members-list',
   },
 ];

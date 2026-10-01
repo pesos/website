@@ -9,13 +9,13 @@ const featured = PROJECTS.find((p) => p.featured)!;
 const rest = PROJECTS.filter((p) => !p.featured);
 ---
 
-<BaseLayout title="Projects" description="Real open-source tools maintained by PES Open Source members — Grofer, Rshark, browser-history and more.">
+<BaseLayout title="Projects" description="Real open-source tools maintained by PES Open Source members: Grofer, Rshark, browser-history and more.">
   <section class="wrap page-head">
     <Crumb items={[{ label: 'Projects' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Projects</h1>
     <p class="lead">
       We at PES Open Source are building an inclusive community of hackers that make awesome
-      projects together — all run like real-world open-source projects, out in the open under{' '}
+      projects together, all run like real-world open-source projects, out in the open under{' '}
       <a class="link-arrow" href="https://github.com/pesos" target="_blank" rel="noopener">github.com/pesos</a>.
     </p>
   </section>
@@ -72,7 +72,7 @@ const rest = PROJECTS.filter((p) => !p.featured);
 
     <SectionHeader num="02" title="All Projects" center />
     <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:60ch">
-      These are the projects deemed most accessible, well documented and thoroughly vetted —
+      These are the projects deemed most accessible, well documented and thoroughly vetted;
       each has its own <code>#project-help</code> Slack channel.
     </p>
     <div class="grid-3">
@@ -110,7 +110,7 @@ const rest = PROJECTS.filter((p) => !p.featured);
       <SectionHeader num="03" title="Other Projects To Contribute To" center />
       <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
         Maintained by individual community members. Smaller in scope, no dedicated Slack
-        channel — ask in <code>#projects</code> instead.
+        channel; ask in <code>#projects</code> instead.
       </p>
       <div class="grid-3">
         {OTHER_PROJECTS.map((p) => (

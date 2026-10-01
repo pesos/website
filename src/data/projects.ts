@@ -1,5 +1,5 @@
 // Real projects maintained under github.com/pesos. Stats pulled from the
-// GitHub API on 2026-09-11 — re-check before relying on them long-term.
+// GitHub API on 2026-09-11; re-check before relying on them long-term.
 export type Project = {
   slug: string;
   name: string;
@@ -57,12 +57,12 @@ export const PROJECTS: Project[] = [
       },
     ],
     about:
-      'Grofer is a system and resource monitoring tool that runs from your terminal, written in Go. To those unfamiliar with Go and its concurrency model, the project maintains a learning path to get you up to speed — you don’t need to understand everything to start contributing.',
+      'Grofer is a system and resource monitoring tool that runs from your terminal, written in Go. To those unfamiliar with Go and its concurrency model, the project maintains a learning path to get you up to speed. You don’t need to understand everything to start contributing.',
     learningPath: [
-      'The basic syntax, features and constructs of Go — try Learn Go in Y Minutes',
-      'Goroutines, channels and WaitGroups — A Tour of Go, Go by Example',
+      'The basic syntax, features and constructs of Go: try Learn Go in Y Minutes',
+      'Goroutines, channels and WaitGroups: A Tour of Go, Go by Example',
       'The libraries used: gopsutil, termui and cobra/viper',
-      'Ask in #grofer-help — someone will point you in the right direction',
+      'Ask in #grofer-help and someone will point you in the right direction',
     ],
     install: [
       '# Clone and build',
@@ -142,7 +142,7 @@ export const PROJECTS: Project[] = [
     features: [
       {
         title: 'Zero dependencies',
-        desc: 'Pure standard-library Python — nothing extra to install.',
+        desc: 'Pure standard-library Python, nothing extra to install.',
       },
       {
         title: 'Cross-browser, cross-platform',
@@ -174,7 +174,7 @@ export const OTHER_PROJECTS = [
   {
     name: 'members-list',
     repo: 'https://github.com/pesos/members-list',
-    blurb: 'The official members (and alumni) list — this is the repo you open a PR against to join.',
+    blurb: 'The official members (and alumni) list. This is the repo you open a PR against to join.',
   },
 ];
 

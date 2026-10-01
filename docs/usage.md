@@ -8,7 +8,7 @@ Edit `PROJECTS` in `src/data/projects.ts`. Each entry becomes a card on `/projec
 
 ```ts
 {
-  slug: 'my-tool',                         // URL segment — must be unique
+  slug: 'my-tool',                         // URL segment; must be unique
   name: 'my-tool',
   category: 'CLI',                         // matches PROJECT_FILTERS.category
   status: 'Looking for Contributors',      // 'Active' | 'Completed' | 'Looking for Contributors' | 'Archived'
@@ -25,7 +25,7 @@ What happens when optional fields are left out:
 
 | Field | Fallback on the detail page |
 |---|---|
-| `stats` | Stars/Forks/Open Issues shown as `—`, Contributors from `contributors` |
+| `stats` | Stars/Forks/Open Issues shown as `N/A`, Contributors from `contributors` |
 | `info` | Language = `stack[0]`, Status = `status` |
 | `install` | `# Clone the repository` + `$ git clone <repo>` |
 | `about` | `blurb` |
@@ -64,7 +64,7 @@ If the year is new, add it to `ARCHIVE_YEARS`, or the entry can't be picked from
 |---|---|---|---|
 | Resource link | `resources.ts` | `RESOURCES` | `RESOURCE_FILTERS` for a new category |
 | "Why open source" card | `guide.ts` | `GUIDE_SECTIONS` | `GUIDE_FILTERS` for a new `filter` value |
-| Join step | `guide.ts` | `JOIN_STEPS` | — |
+| Join step | `guide.ts` | `JOIN_STEPS` | none |
 | Activity | `events.ts` | `ACTIVITIES` | `ACTIVITY_TYPES`; keep exactly one `featured: true` |
 | Perk | `perks.ts` | `PERKS` | `PERK_CATEGORIES`; keep exactly one `featured: true` |
 

@@ -15,7 +15,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Industry',
     filter: 'Career',
     blurb:
-      'All the big players use open source — even Microsoft, once its "biggest enemy," now says "Microsoft ❤️ Open Source." If you want a job in this industry, experience in open source is highly valued.',
+      'All the big players use open source. Even Microsoft, once its "biggest enemy," now says "Microsoft ❤️ Open Source." If you want a job in this industry, experience in open source is highly valued.',
     read: '5 min read',
     level: 'Beginner',
     reason: 'Core reason #1',
@@ -25,7 +25,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Learning',
     filter: 'Learning',
     blurb:
-      'Open source circumvents the meritocracy of formal software jobs — anyone can fork the code and start hacking. You get your hands on real code by real developers, and your fixes can be merged straight back into the original project.',
+      'Open source circumvents the meritocracy of formal software jobs: anyone can fork the code and start hacking. You get your hands on real code by real developers, and your fixes can be merged straight back into the original project.',
     read: '7 min read',
     level: 'All levels',
     reason: 'Core reason #2',
@@ -35,7 +35,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Soft Skills',
     filter: 'Career',
     blurb:
-      'Open source almost always means collaborating in teams — resolving conflicts, organizing work and prioritizing tasks. Skills like these make you stand out in a saturated pool of developers.',
+      'Open source almost always means collaborating in teams: resolving conflicts, organizing work and prioritizing tasks. Skills like these make you stand out in a saturated pool of developers.',
     read: '4 min read',
     level: 'Intermediate',
     reason: 'Core reason #3',
@@ -45,7 +45,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Satisfaction',
     filter: 'Why PESOS',
     blurb:
-      'You get a say in the world’s biggest software, or work on the next big idea. Your contributions have a real impact — and you make valuable friends and connections along the way.',
+      'You get a say in the world’s biggest software, or work on the next big idea. Your contributions have a real impact, and you make valuable friends and connections along the way.',
     read: '4 min read',
     level: 'All levels',
     reason: 'Core reason #4',
@@ -55,7 +55,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     category: 'Community',
     filter: 'Community',
     blurb:
-      'Open source embodies the African philosophy of Ubuntu: "I am what I am because of what we all are." Lifelong communities form here — cultural and geographical barriers crossed in service of building something better, together.',
+      'Open source embodies the African philosophy of Ubuntu: "I am what I am because of what we all are." Lifelong communities form here, with cultural and geographical barriers crossed in service of building something better, together.',
     read: '5 min read',
     level: 'All levels',
     reason: 'Core reason #5',
@@ -65,7 +65,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
 export const GUIDE_FILTERS = ['All', 'Why PESOS', 'Career', 'Learning', 'Community'];
 
 export const GUIDE_QUICK_REF = [
-  { n: '01', t: 'Industry Cares', d: '94% of devs use OSS at work — GitHub, 2017' },
+  { n: '01', t: 'Industry Cares', d: '94% of devs use OSS at work (GitHub, 2017)' },
   { n: '02', t: 'Best Way To Learn', d: 'Real code, real feedback' },
   { n: '03', t: 'Soft Skills', d: 'Teamwork, conflict resolution, planning' },
   { n: '04', t: 'Satisfaction', d: 'Ship things people actually use' },

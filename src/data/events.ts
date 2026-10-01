@@ -34,7 +34,7 @@ export const ACTIVITIES: ActivityItem[] = [
   {
     title: 'Community Project Sessions',
     type: 'Project Session',
-    blurb: 'Coordinated work on Grofer, Rshark, browser-history and the rest of github.com/pesos — plus supporting other open-source projects on campus.',
+    blurb: 'Coordinated work on Grofer, Rshark, browser-history and the rest of github.com/pesos, plus supporting other open-source projects on campus.',
     cadence: 'Ongoing, in #projects',
   },
   {

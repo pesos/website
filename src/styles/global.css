@@ -1,12 +1,12 @@
 /* ============================================================
-   PESOS — global stylesheet
+   PESOS: global stylesheet
    Design tokens (dark default + light override) + components
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ----------------------------------------------------------------
-   tokens — palette adapted from Supabase "Select" (select.supabase.com):
+   tokens: palette adapted from Supabase "Select" (select.supabase.com):
    green-tinted near-black ground, warm off-white ink, #3ECF8E accent,
    #94E6B7 mint as the secondary highlight.
    ---------------------------------------------------------------- */
@@ -24,7 +24,7 @@
 
   --neon: #3ecf8e;          /* Supabase brand green */
   --neon-2: #94e6b7;        /* mint highlight */
-  --neon-ink: #00190f;      /* dark green — text on green fills */
+  --neon-ink: #00190f;      /* dark green, text on green fills */
   --neon-soft: rgba(62, 207, 142, 0.12);
   --neon-line: rgba(62, 207, 142, 0.34);
   --neon-glow: rgba(62, 207, 142, 0.36);
@@ -917,7 +917,7 @@ textarea {
   flex-wrap: wrap;
   margin-top: 26px;
 }
-/* hero right column — animated glyph field, no frame, bleeds off-screen right */
+/* hero right column: animated glyph field, no frame, bleeds off-screen right */
 .hero__art {
   position: relative;
   align-self: stretch;
@@ -1186,6 +1186,12 @@ textarea {
 .split__media {
   min-height: 260px;
   border-right: 1px solid var(--border);
+}
+.split__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .split__body {
   padding: clamp(22px, 3vw, 38px);
