@@ -1,19 +1,19 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import { LINKS } from '../data/site';
-import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJECTS } from '../data/contact';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import { LINKS } from '@/data/site';
+import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJECTS } from '@/data/contact';
 ---
 
 <BaseLayout title="Contact" description="Get in touch with PES Open Source.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'PESOS', href: '/' }, { label: 'Contact' }]} />
+    <Crumb items={[{ label: 'Contact Us' }]} />
     <div class="page-head__row" style="margin-top:14px">
       <div>
         <h1 class="h1" style="margin-bottom:10px">Get in Touch</h1>
         <p class="lead">
           Have a question, proposal, or just want to say hello? Fill in the form below, or reach
-          us directly on Slack — either way, we'll get back to you.
+          us directly on Slack. Either way, we'll get back to you.
         </p>
       </div>
       <div class="stat-box" style="min-width:280px">
@@ -43,7 +43,7 @@ import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJE
         <div class="img-ph" style="min-height:150px;margin-bottom:14px">📍 PES University, Bangalore</div>
         <p class="muted" style="font-size:.86rem">
           We meet on campus, twice a week during the semester. Exact day, time and room are
-          announced on Slack — <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">join to find out →</a>
+          announced on Slack: <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">join to find out →</a>
         </p>
       </div>
 
@@ -51,8 +51,7 @@ import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJE
         <span class="eyebrow" style="margin-bottom:14px">Code of Conduct</span>
         <p class="muted" style="font-size:.86rem">
           To report a Code of Conduct concern, use the form and mark it as such, or reach the
-          Community Relations Head directly on Slack. Read the full{' '}
-          <a class="link-arrow" href="/code-of-conduct/">Code of Conduct →</a>
+          Community Relations Head directly on Slack.
         </p>
       </div>
     </aside>
@@ -83,7 +82,7 @@ import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJE
         </label>
         <label class="field" style="margin-top:16px">
           <span class="field__label">Message <span class="req">*</span></span>
-          <textarea class="textarea" name="message" required maxlength="1000" placeholder="Tell us what's on your mind — the more detail, the better we can help."></textarea>
+          <textarea class="textarea" name="message" required maxlength="1000" placeholder="Tell us what's on your mind. The more detail, the better we can help."></textarea>
           <div class="mono muted" style="font-size:.74rem;text-align:right;margin-top:4px" data-char-count>0 / 1000</div>
           <span class="field__error">Please write a message.</span>
         </label>
@@ -91,9 +90,9 @@ import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJE
           <span>ℹ</span>
           <span>Your details are used solely to respond to your message and are never shared with third parties.</span>
         </div>
-        <div class="form-success">✓ Thanks — your message is on its way. We'll be in touch soon.</div>
+        <div class="form-success">✓ Thanks! Your message is on its way. We'll be in touch soon.</div>
         <div class="form-error" style="display:none;border:1px solid #ff5c5c;background:rgba(255,92,92,.08);border-radius:var(--r);padding:14px 16px;font-size:.86rem;margin-bottom:14px">
-          Something went wrong sending that — please try again, or reach us on <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">Slack</a> instead.
+          Something went wrong sending that. Please try again, or reach us on <a class="link-arrow" href={LINKS.slack} target="_blank" rel="noopener">Slack</a> instead.
         </div>
         <button class="btn btn--primary btn--block" type="submit" style="margin-top:14px">Send message →</button>
       </form>

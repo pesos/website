@@ -1,8 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Crumb from '../components/Crumb.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import { PERKS, PERK_CATEGORIES, PERK_STEPS } from '../data/perks';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import { PERKS, PERK_CATEGORIES, PERK_STEPS } from '@/data/perks';
 
 const featured = PERKS.find((p) => p.featured)!;
 const rest = PERKS.filter((p) => !p.featured);
@@ -10,12 +11,13 @@ const rest = PERKS.filter((p) => !p.featured);
 
 <BaseLayout title="Member Perks" description="Tools, cloud credits, developer packs and learning materials for active members.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'Community' }, { label: 'Perks' }]} />
+    <Crumb items={[{ label: 'About' }, { label: 'Perks' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Member Perks</h1>
     <p class="lead">
       Active members and contributors unlock a curated set of tools, server credits, developer
       packs and learning materials. Perks unlock dynamically based on project participation.
     </p>
+    <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>

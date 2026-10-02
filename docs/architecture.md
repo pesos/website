@@ -23,23 +23,23 @@ build: { format: 'directory' },      // /about/ → dist/about/index.html
 
 | Layer | Files | Responsibility |
 |---|---|---|
-| Content | `src/data/*.ts` | Typed arrays and constants (`PROJECTS`, `ARCHIVE_ENTRIES`, `RESOURCES`, `GUIDE_SECTIONS`, `JOIN_STEPS`, `ACTIVITIES`, `PERKS`, `NAV_LINKS`, `LINKS`, …). The only place real content should change. |
-| Pages | `src/pages/*.astro` | Import data, map it to markup, add `data-*` hooks for client behavior. Some small page-local arrays (for example `standards`/`roles` in `about.astro`, `posts` in `blogs.astro`, `faqs` in `contact.astro`) live in the page frontmatter. |
-| Layout | `src/layouts/BaseLayout.astro` | `<head>`, `<title>` (`"{title} · PESOS"`, or `SITE.full` when no title is given), meta description, the inline theme bootstrap, decorative background layers, `Nav`, `Footer`, and the `main.ts` import. |
+| Content | `src/data/*.ts` | Typed arrays and constants (`PROJECTS`, `ARCHIVE_ENTRIES`, `RESOURCES`, `GUIDE_SECTIONS`, `JOIN_STEPS`, `ACTIVITIES`, `PERKS`, `NAV`, `LINKS`, …). The only place real content should change. |
+| Pages | `src/pages/*.astro` | Import data, map it to markup, add `data-*` hooks for client behavior. Some small page-local arrays (for example `activities` in `getting-started/why-our-club.astro`, `goals` in `about/goals.astro`, `faqs` in `contact.astro`) live in the page frontmatter. |
+| Layout | `src/layouts/BaseLayout.astro` | `<head>`, `<title>` (`"{title} · PESOS"`, or `SITE.full` when no title is given), meta description, the inline theme bootstrap, decorative background layers, `Nav`, `Footer`, the `Search` dialog, and the `main.ts` import. |
 | Components | `src/components/*.astro` | Presentational pieces with no client state. `HeroGlyphs` is the one exception: it ships its own `<script>`. |
 | Behavior | `src/scripts/main.ts` | A single module that runs on every page. Each `init*()` function queries for its hook and returns right away when the hook is absent. |
 | Styling | `src/styles/global.css` | Design tokens on `:root` (dark), overrides on `:root[data-theme='light']`, and every component's CSS. |
 
 ## Request / render flow
 
-1. **Build time**: Astro runs each page's frontmatter, then renders it with `BaseLayout`. `projects/[slug].astro` exports `getStaticPaths()`, which returns one path per item in `PROJECTS`. Each project page gets its entry as `props.p`, and optional fields fall back to defaults (`stats`, `info`, `install`).
+1. **Build time**: Astro runs each page's frontmatter, then renders it with `BaseLayout`. `showcase/projects/[slug].astro` exports `getStaticPaths()`, which returns one path per item in `PROJECTS`. Each project page gets its entry as `props.p`, and optional fields fall back to defaults (`stats`, `info`, `install`).
 2. **First paint**: an `is:inline` script in `<head>` reads `localStorage.theme` and sets `data-theme` on `<html>` before the body renders, so the page never flashes the wrong theme.
 3. **Hydration-free enhancement**: `main.ts` runs `boot()` on `DOMContentLoaded`, which calls:
 
 | Function | Hook | What it does |
 |---|---|---|
 | `initTheme` | `[data-theme-toggle]` | Toggles `dark`/`light` and saves the choice to `localStorage` |
-| `initNav` | `.nav`, `[data-nav-toggle]`, `.nav__drawer` | Sticky-nav shadow, mobile drawer, and active-link highlighting by `location.pathname` prefix |
+| `initNav` | `.nav`, `[data-nav-toggle]`, `.nav__drawer` | Sticky-nav shadow, mobile drawer, and active highlighting: a section on any page under its `base`, a child link on an exact match |
 | `initReveal` | `.reveal` | Fades elements in as they scroll into view, using `IntersectionObserver` (skipped under reduced motion) |
 | `initGlow` | `.card--spotlight`, `.hero__visual` | Makes a highlight follow the cursor by setting the `--mx`/`--my` CSS variables |
 | `initCount` | `[data-count]` | Animates the number in a value such as `"633+"` or `"30+"` and keeps the suffix |
@@ -54,7 +54,7 @@ build: { format: 'directory' },      // /about/ → dist/about/index.html
 
 ## The filter engine
 
-`initFilters` is the most reused piece of logic. It drives `/projects/`, `/archive/`, `/resources/`, `/getting-started/`, `/events/` and `/perks/`.
+`initFilters` is the most reused piece of logic. It drives `/showcase/projects/`, `/showcase/archive/`, `/blogs/resources/`, `/blogs/`, `/about/events/` and `/about/perks/`.
 
 - Each filterable card carries `data-item` plus a `data-<key>` attribute for each field it can be filtered on (`data-cat`, `data-status`, `data-year`, …).
 - Chips (`[data-filter][data-filter-key]`) and selects (`[data-filter-select="<key>"]`) write their value into `state[key]`.

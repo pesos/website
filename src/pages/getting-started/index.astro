@@ -1,0 +1,133 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GuideDoc from '@/components/GuideDoc.astro';
+import { LINKS } from '@/data/site';
+import { OTHER_PROJECTS } from '@/data/projects';
+
+const playground = OTHER_PROJECTS.find((p) => p.name === 'contributor-playground')!;
+---
+
+<BaseLayout title="Why Open Source" description="Why you, as a college student, should care about open source.">
+  <GuideDoc
+    title="Why Should I Care About Open Source?"
+    subtitle="Here we address exactly why you, as a college student, would want to care about Open Source."
+  >
+    <article class="doc__sec doc__prose reveal">
+      <p class="muted">
+        If you're a college student wondering whether open source is worth your time, the short
+        answer is yes. Here are five reasons why, and how to get started.
+      </p>
+
+      <h2 class="h3">The industry runs on it</h2>
+      <p class="muted">
+        Open source isn't a side hobby next to "real" software work. It's how a lot of real
+        software gets made. GitHub's 2017 Open Source Survey found that among employed
+        developers:
+      </p>
+      <ul class="check-list">
+        <li><span><strong>94%</strong> use open source at least sometimes in their work</span></li>
+        <li><span><strong>81%</strong> use it frequently</span></li>
+        <li><span><strong>65%</strong> of those who contribute back do it as part of their job</span></li>
+      </ul>
+      <div class="note">
+        <span>
+          Even Microsoft, a company that once called open source its biggest enemy, now says
+          "Microsoft <span class="heart" aria-label="loves">&#9829;&#xFE0E;</span> Open Source".
+        </span>
+      </div>
+      <p class="muted">
+        When an employer sees open-source work on your profile, they see someone who already
+        works the way their teams do.
+      </p>
+
+      <h2 class="h3">It's the best way to learn</h2>
+      <p class="muted">
+        Coursework hands you small, tidy problems with known answers. Open source hands you real
+        code written by real developers. Nobody has to hire you first: fork a project, start
+        hacking, and if your fix is good it gets merged straight back into the original. Along
+        the way you learn:
+      </p>
+      <ul class="check-list">
+        <li>How large, real-world codebases are organised</li>
+        <li>What a good commit and pull request look like</li>
+        <li>How experienced maintainers review code, because they're reviewing yours</li>
+      </ul>
+
+      <h2 class="h3">It builds skills beyond code</h2>
+      <p class="muted">
+        Open source almost always means working with a team you've never met. That teaches you
+        to:
+      </p>
+      <ul class="check-list">
+        <li>Explain your changes clearly</li>
+        <li>Take criticism without taking it personally</li>
+        <li>Work through disagreements</li>
+        <li>Split up work and decide what matters most</li>
+      </ul>
+      <p class="muted">In a crowded pool of developers, these are what make you stand out.</p>
+
+      <h2 class="h3">Your work actually matters</h2>
+      <p class="muted">
+        Your contribution doesn't sit in a folder after it's graded. It ships, and people use
+        it. You might fix a bug in software the world depends on, or help build the next big
+        idea from its first commit.
+      </p>
+
+      <h2 class="h3">You'll find your people</h2>
+      <p class="muted">
+        Open source runs on something close to the African philosophy of Ubuntu:
+      </p>
+      <div class="note"><span>"I am what I am because of what we all are."</span></div>
+      <p class="muted">
+        People from different countries and backgrounds build things together that none of them
+        could build alone, and the friendships made along the way often last for years. Come
+        for the prospects, stay for the community.
+      </p>
+
+      <h2 class="h3">How to get started</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step__n">1</span>
+          <div>
+            <div class="step__t">Learn the basics</div>
+            <div class="step__d">
+              Read <a class="link-arrow" href="/getting-started/101/">The Basics 101</a> to see what
+              open source actually means and what contributing looks like.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">2</span>
+          <div>
+            <div class="step__t">Practice your first pull request</div>
+            <div class="step__d">
+              Try the fork, branch, PR and merge flow on any repository like{' '}
+              <a class="link-arrow" href={playground.repo} target="_blank" rel="noopener">{playground.name}</a>
+              , or anything you find fancy on our <a class="link-arrow" href={LINKS.github} target="_blank" rel="noopener"> Github</a>.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">3</span>
+          <div>
+            <div class="step__t">Pick a real issue</div>
+            <div class="step__d">
+              Look for issues labelled good first issue on a project you like.
+              They're picked to be approachable for newcomers.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step__n">4</span>
+          <div>
+            <div class="step__t">Ask for help</div>
+            <div class="step__d">
+              Stuck? Ask on the <a class="link-arrow" href={LINKS.whatsapp} target="_blank" rel="noopener">PESOS WhatsApp</a> or <a class="link-arrow" href={LINKS.discord} target="_blank" rel="noopener">Discord</a>.
+              Someone will point you in the right direction.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </GuideDoc>
+</BaseLayout>

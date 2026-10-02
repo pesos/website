@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GuideDoc from '@/components/GuideDoc.astro';
+import DocSection from '@/components/DocSection.astro';
+---
+
+<BaseLayout title="The Basics 101" description="Open Source: a beginner's guide, the PESOS way.">
+  <GuideDoc title="The Basics 101" subtitle="Open Source: A Beginner's Guide">
+    <DocSection n={1} title={'What does "Open Source" actually mean?'}>
+      <p class="muted">
+        When a piece of software is Open Source, it means you can see its source code. That
+        opens the door to a lot of awesome things:
+      </p>
+      <ul class="check-list">
+        <li>Anyone can freely read, reuse and modify open-source software, and send their improvements back to the project.</li>
+        <li>Collaboration happens at scale: a whole community of shared ideas and expertise can form around a single project.</li>
+        <li>You get a real chance to work on software the world depends on, and make a real-world impact.</li>
+        <li>You learn best practices straight from the community, through feedback and advice from project collaborators.</li>
+      </ul>
+    </DocSection>
+
+    <DocSection n={2} title="I'm sold. Now how do I actually contribute?">
+      <p class="muted">
+        Ahh, now that's the tricky part. Contributing to open source can be intimidating,
+        especially for first-timers: you're often dealing with large codebases, and it's
+        hard to know where to even start. Then the doubts creep in: am I good enough? What
+        if I do something wrong?
+      </p>
+      <p class="muted">
+        This is exactly what PES Open Source aims to address. We want to provide a platform
+        where members support each other, until everyone can comfortably and confidently
+        make a real impact through open-source collaboration.
+      </p>
+    </DocSection>
+  </GuideDoc>
+</BaseLayout>

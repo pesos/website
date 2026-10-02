@@ -4,11 +4,11 @@ For club maintainers updating the site's content. Assumes `npm run dev` is runni
 
 ## Add or update a project
 
-Edit `PROJECTS` in `src/data/projects.ts`. Each entry becomes a card on `/projects/` **and** its own page at `/projects/<slug>/`.
+Edit `PROJECTS` in `src/data/projects.ts`. Each entry becomes a card on `/showcase/projects/` **and** its own page at `/showcase/projects/<slug>/`.
 
 ```ts
 {
-  slug: 'my-tool',                         // URL segment — must be unique
+  slug: 'my-tool',                         // URL segment; must be unique
   name: 'my-tool',
   category: 'CLI',                         // matches PROJECT_FILTERS.category
   status: 'Looking for Contributors',      // 'Active' | 'Completed' | 'Looking for Contributors' | 'Archived'
@@ -25,7 +25,7 @@ What happens when optional fields are left out:
 
 | Field | Fallback on the detail page |
 |---|---|
-| `stats` | Stars/Forks/Open Issues shown as `—`, Contributors from `contributors` |
+| `stats` | Stars/Forks/Open Issues shown as `N/A`, Contributors from `contributors` |
 | `info` | Language = `stack[0]`, Status = `status` |
 | `install` | `# Clone the repository` + `$ git clone <repo>` |
 | `about` | `blurb` |
@@ -38,6 +38,31 @@ Keep **exactly one** project with `featured: true`. `projects.astro` uses a non-
 If you add a new stack or category, also add it to `PROJECT_FILTERS` so it appears in the dropdowns.
 
 A repo that doesn't need its own page goes in `OTHER_PROJECTS` instead (`name`, `repo`, `blurb`).
+
+## Publish a blog post
+
+Add a markdown file to `blogs/` at the repo root. Nothing else needs to change: the post gets its own page, a card on `/blogs/`, a search entry and (for a new tag) a filter chip.
+
+1. Copy `blogs/_TEMPLATE.md` to `blogs/<slug>.md`. The file name is the URL: `blogs/my-first-pr.md` → `/blogs/my-first-pr/`. Use lowercase and hyphens, and don't name a post `resources.md` (that URL is the Resources page).
+2. Fill in the front matter:
+
+   | Field | Required | Notes |
+   |---|---|---|
+   | `title` | yes | |
+   | `description` | yes | Card text on `/blogs/` and in search |
+   | `date` | yes | `YYYY-MM-DD`; the list is newest first |
+   | `author` | no | |
+   | `tag` | no | Defaults to `Community`; a new value gets its own filter chip |
+   | `featured` | no | Listed first, with a green tag |
+   | `draft` | no | `true` shows the post in `npm run dev` only |
+
+3. Write the post in markdown below the front matter. Use `##` for sections; the page title comes from `title`. Code blocks are syntax-highlighted for the language you name (e.g. ```` ```bash ````).
+
+Files starting with `_` are ignored. A missing or malformed required field fails the build with an error naming the file.
+
+Posts appear on the live site when it's next built and deployed. Under `npm run dev` they appear as soon as the file is saved (restart the dev server once after pulling this change, since it reads the content config at startup).
+
+Images go in `blogs/images/<slug>/` and are referenced relatively, e.g. `![Alt text](./images/my-first-pr/screenshot.png)`. They're converted to optimised WebP at build time.
 
 ## Add an archive entry
 
@@ -64,7 +89,7 @@ If the year is new, add it to `ARCHIVE_YEARS`, or the entry can't be picked from
 |---|---|---|---|
 | Resource link | `resources.ts` | `RESOURCES` | `RESOURCE_FILTERS` for a new category |
 | "Why open source" card | `guide.ts` | `GUIDE_SECTIONS` | `GUIDE_FILTERS` for a new `filter` value |
-| Join step | `guide.ts` | `JOIN_STEPS` | — |
+| Join step | `guide.ts` | `JOIN_STEPS` | none |
 | Activity | `events.ts` | `ACTIVITIES` | `ACTIVITY_TYPES`; keep exactly one `featured: true` |
 | Perk | `perks.ts` | `PERKS` | `PERK_CATEGORIES`; keep exactly one `featured: true` |
 
@@ -72,13 +97,14 @@ If the year is new, add it to `ARCHIVE_YEARS`, or the entry can't be picked from
 
 All in `src/data/site.ts`:
 
-- `NAV_LINKS`: the header links and the mobile drawer.
-- `GUIDE_TABS`: the tab strip on the Getting Started / 101 / About / How to Join pages.
-- `FOOTER.clubLinks`, `FOOTER.socialLinks`.
+- `NAV`: the site map. Each section has a `label`, an `href` (where the nav item goes), a `base` URL prefix and its `children` pages. The nav, its dropdowns, the mobile drawer, every page's `SectionTabs`, the footer's club links and the search index all read from it.
+- `FOOTER.socialLinks`.
 - `LINKS`: GitHub, members repo, Slack invite, Instagram, Twitter, Formspree endpoint.
 - `SITE.tagline`: shown in the home hero and the footer.
 
-The nav highlights the active link by path prefix. Any link other than `/` is marked active on every page under it, so `/projects/` stays highlighted on `/projects/grofer/`.
+The nav highlights a section on every page under its `base`, so Showcase and Engagement stays highlighted on `/showcase/projects/grofer/`. Dropdown and drawer links are highlighted only on an exact match.
+
+To add a page to a section: create it under that section's folder in `src/pages/`, add it to the section's `children` in `NAV`, put `<SectionTabs section="…" />` in its header, and add a one-line description to `PAGE_DESC` in `src/pages/search.json.ts`. Link only to pages in the same section.
 
 ## Make a new list filterable
 
@@ -145,6 +171,6 @@ Every route must also exist in the terminal, or `npm run build` fails with `[ter
 
 ## Common problems
 
-- **Build error `Cannot read properties of undefined` on `/projects/`, `/events/` or `/perks/`**: no entry has `featured: true`.
+- **Build error `Cannot read properties of undefined` on `/showcase/projects/`, `/about/events/` or `/about/perks/`**: no entry has `featured: true`.
 - **A new card doesn't show up under a filter**: its `data-<key>` value doesn't match the chip or option value, or the new value is missing from the `*_FILTERS` / `*_YEARS` array.
-- **A new page isn't reachable**: add it to `NAV_LINKS` or `FOOTER.clubLinks`. `/events/` and `/perks/` currently have no inbound links.
+- **A new page isn't reachable**: add it to its section's `children` in `NAV`.

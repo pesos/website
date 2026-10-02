@@ -5,7 +5,7 @@ import { SITE, FOOTER } from '../data/site';
 <footer class="footer">
   <div class="wrap footer__top">
     <div>
-      <a href="/" class="brand"><img class="brand__logo" src="/pesos-logo.svg" alt="" width="1361" height="1257" /><span>{SITE.name}</span></a>
+      <a href="/" class="brand" aria-label={SITE.name + ' home'}><img class="footer__logo" src="/pesos-logo.svg" alt={SITE.name} width="1361" height="1257" /></a>
       <p class="footer__blurb">
         {SITE.tagline}
       </p>
@@ -18,9 +18,5 @@ import { SITE, FOOTER } from '../data/site';
       <h4>Social Links</h4>
       {FOOTER.socialLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </div>
-  </div>
-  <div class="wrap footer__bar">
-    <span>© {SITE.year} {SITE.name}. All rights reserved.</span>
-    <span>Built by the club · press <kbd>`</kbd> for the terminal</span>
   </div>
 </footer>

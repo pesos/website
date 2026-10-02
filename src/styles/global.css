@@ -1,12 +1,12 @@
 /* ============================================================
-   PESOS — global stylesheet
+   PESOS: global stylesheet
    Design tokens (dark default + light override) + components
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ----------------------------------------------------------------
-   tokens — palette adapted from Supabase "Select" (select.supabase.com):
+   tokens: palette adapted from Supabase "Select" (select.supabase.com):
    green-tinted near-black ground, warm off-white ink, #3ECF8E accent,
    #94E6B7 mint as the secondary highlight.
    ---------------------------------------------------------------- */
@@ -24,7 +24,7 @@
 
   --neon: #3ecf8e;          /* Supabase brand green */
   --neon-2: #94e6b7;        /* mint highlight */
-  --neon-ink: #00190f;      /* dark green — text on green fills */
+  --neon-ink: #00190f;      /* dark green, text on green fills */
   --neon-soft: rgba(62, 207, 142, 0.12);
   --neon-line: rgba(62, 207, 142, 0.34);
   --neon-glow: rgba(62, 207, 142, 0.36);
@@ -206,6 +206,11 @@ textarea {
 }
 .mono {
   font-family: var(--font-mono);
+}
+/* monochrome heart in the accent colour (replaces the red emoji) */
+.heart {
+  color: var(--neon);
+  font-family: var(--font-sans);
 }
 
 /* ---------- eyebrow ---------- */
@@ -455,7 +460,8 @@ textarea {
   border-color: var(--text);
 }
 :root[data-theme='dark'] .tab[aria-selected='true'],
-:root:not([data-theme='light']) .tab[aria-selected='true'] {
+:root:not([data-theme='light']) .tab[aria-selected='true'],
+:root:not([data-theme='light']) .tab.is-active {
   background: var(--neon);
   color: var(--neon-ink);
   border-color: var(--neon);
@@ -700,20 +706,20 @@ textarea {
   font-size: 0.9rem;
   font-weight: 800;
 }
-.brand__logo {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  flex: none;
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--neon);
 }
-.footer .brand__logo {
-  width: 34px;
-  height: 34px;
+.wordmark__o {
+  color: var(--text);
 }
-/* nav mark-only lockup: no wordmark beside it, so let the emblem run larger */
-.brand--mark-only .brand__logo {
-  width: 54px;
-  height: 54px;
+.footer__logo {
+  height: 64px;
+  width: auto;
 }
 .nav__links {
   display: flex;
@@ -722,6 +728,8 @@ textarea {
   margin-left: 8px;
 }
 .nav__link {
+  position: relative;
+  display: block;
   padding: 7px 11px;
   border-radius: 6px;
   font-size: 0.86rem;
@@ -736,13 +744,66 @@ textarea {
 .nav__link.is-active {
   color: var(--text);
 }
+/* underline is absolutely positioned so it doesn't change the link's height
+   (an in-flow underline made the active item taller and shifted it up) */
 .nav__link.is-active::after {
   content: '';
-  display: block;
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 0;
   height: 2px;
-  margin-top: 5px;
   background: var(--neon);
   border-radius: 2px;
+}
+.nav__item {
+  position: relative;
+}
+/* section dropdown: opens on hover or keyboard focus */
+.nav__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 190px;
+  display: grid;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 60;
+}
+/* invisible bridge so the menu doesn't close while the pointer crosses the gap */
+.nav__menu::before {
+  content: '';
+  position: absolute;
+  inset: -8px 0 auto;
+  height: 8px;
+}
+.nav__item.has-menu:hover .nav__menu,
+.nav__item.has-menu:focus-within .nav__menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.nav__menu a {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.nav__menu a:hover,
+.nav__menu a.is-active {
+  color: var(--text);
+  background: var(--bg-card);
+}
+.nav__menu a.is-active {
+  color: var(--neon);
 }
 .nav__right {
   margin-left: auto;
@@ -810,7 +871,8 @@ textarea {
 .nav__drawer {
   display: none;
 }
-@media (max-width: 960px) {
+/* five long section labels: collapse to the drawer before they collide */
+@media (max-width: 1100px) {
   .nav__links,
   .nav__right .term-btn__label {
     display: none;
@@ -847,9 +909,331 @@ textarea {
     font-size: 1rem;
     color: var(--text-dim);
   }
-  .nav__drawer a:hover {
+  .nav__drawer a:hover,
+  .nav__drawer a.is-active {
     color: var(--neon);
   }
+  .nav__drawer-group {
+    padding-top: 14px;
+  }
+  .nav__drawer-head {
+    display: block;
+    padding: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+  }
+  .nav__drawer-group a {
+    padding-left: 14px;
+  }
+}
+
+/* ---------- listing pages (blogs, resources) ---------- */
+/* centred intro + filters in a readable column; the card grid below uses the
+   full page width */
+.listing__head {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---------- blog post page (/blogs/<slug>/) ---------- */
+.post {
+  max-width: 760px;
+  padding-block: 24px clamp(56px, 9vw, 110px);
+}
+.post__head {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+.post__meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-mute);
+}
+.post__pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 56px 0 24px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.post__pager-link {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--bg-card);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: border-color 0.2s ease;
+}
+.post__pager-link:hover {
+  border-color: var(--neon);
+}
+.post__pager-link--next {
+  text-align: right;
+  grid-column: 2;
+}
+.post__pager-k {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-mute);
+}
+
+/* ---------- rendered markdown (blog posts) ---------- */
+.prose {
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.prose > * + * {
+  margin-top: 1.1em;
+}
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-top: 2em;
+  margin-bottom: -0.3em;
+}
+.prose h2 {
+  font-size: 1.45rem;
+  padding-left: 14px;
+  border-left: 3px solid var(--neon);
+}
+.prose h3 {
+  font-size: 1.15rem;
+}
+.prose h4 {
+  font-size: 1rem;
+}
+.prose strong {
+  color: var(--text);
+}
+.prose a {
+  color: var(--neon);
+  text-decoration: underline;
+  text-decoration-color: var(--neon-line);
+  text-underline-offset: 3px;
+}
+.prose a:hover {
+  text-decoration-color: var(--neon);
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose ul li::marker {
+  color: var(--neon);
+}
+.prose ol li::marker {
+  color: var(--neon);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.prose blockquote {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--neon);
+  background: var(--bg-inset);
+  border-radius: var(--r-sm);
+  padding: 12px 18px;
+  color: var(--text);
+}
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-inset);
+  color: var(--text);
+}
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow-x: auto;
+}
+.prose pre code {
+  font-family: inherit;
+}
+.prose img {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  height: auto;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-block: 2.2em;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.prose th {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* GFM footnotes ([^1]) */
+.prose sup a {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  text-decoration: none;
+  padding-inline: 2px;
+}
+.prose .footnotes {
+  margin-top: 3em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.prose .footnotes .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.prose .data-footnote-backref {
+  text-decoration: none;
+}
+/* Shiki renders both themes (see astro.config.mjs); light colours are
+   inline, the dark ones sit in --shiki-dark* variables */
+.prose .astro-code {
+  background-color: var(--bg-inset) !important;
+}
+:root:not([data-theme='light']) .prose .astro-code,
+:root:not([data-theme='light']) .prose .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+@media (max-width: 720px) {
+  .post__pager {
+    grid-template-columns: 1fr;
+  }
+  .post__pager-link--next {
+    grid-column: 1;
+  }
+}
+
+/* ---------- site search dialog ---------- */
+.search-dlg {
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(70vh, 560px);
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--bg-elev);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.search-dlg[open] {
+  display: flex;
+  flex-direction: column;
+}
+.search-dlg::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+}
+.search-dlg__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.search-dlg__bar svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-mute);
+  flex: none;
+}
+.search-dlg__input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 1rem;
+}
+.search-dlg__esc {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-mute);
+  background: transparent;
+  cursor: pointer;
+}
+.search-dlg__results {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+.search-dlg__results a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+}
+.search-dlg__results a:hover,
+.search-dlg__results a.is-focused {
+  background: var(--bg-card);
+}
+.search-dlg__t {
+  display: block;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.search-dlg__meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.search-dlg__sec {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-right: 8px;
+}
+.search-dlg__empty {
+  padding: 18px 14px;
+  font-size: 0.88rem;
+  color: var(--text-dim);
 }
 
 /* ---------- footer ---------- */
@@ -918,7 +1302,7 @@ textarea {
   flex-wrap: wrap;
   margin-top: 26px;
 }
-/* hero right column — animated glyph field, no frame, bleeds off-screen right */
+/* hero right column: animated glyph field, no frame, bleeds off-screen right */
 .hero__art {
   position: relative;
   align-self: stretch;
@@ -937,12 +1321,11 @@ textarea {
   line-height: 1.5;
   letter-spacing: 0.01em;
   user-select: none;
-  /* feather the left edge into the copy and top/bottom into the layout;
-     the right edge stays put (padding gives it room) */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 24%, #000 99%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 24%, #000 99%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  /* feather every edge so the field dissolves into the layout */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 26%, #000 80%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 26%, #000 80%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -990,18 +1373,28 @@ textarea {
 }
 .marquee__track {
   display: flex;
-  gap: 48px;
   width: max-content;
-  animation: marquee 26s linear infinite;
+  animation: marquee 120s linear infinite;
+  will-change: transform;
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--text-dim);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+/* trailing padding = gap, so each group's width is exactly one loop period */
+.marquee__group {
+  display: flex;
+  flex: none;
+  gap: 48px;
+  padding-right: 48px;
+}
 @keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -1032,6 +1425,92 @@ textarea {
 .doc__nav a.is-active {
   color: var(--neon);
   border-left-color: var(--neon);
+}
+/* doc page pieces shared by every Getting Started page (GuideDoc/DocSection) */
+.doc__body {
+  min-width: 0;
+}
+.doc__bar {
+  width: 56px;
+  height: 3px;
+  background: var(--neon);
+  margin-bottom: 36px;
+}
+.doc__sec {
+  margin-bottom: 44px;
+}
+.doc__sec-title {
+  margin-bottom: 14px;
+}
+.doc__sec-n {
+  font-family: var(--font-mono);
+  color: var(--neon);
+  margin-right: 8px;
+}
+.doc__sec > p + p {
+  margin-top: 12px;
+}
+.doc__sec > * + .check-list,
+.doc__sec > * + .note,
+.doc__sec > * + .doc__meta {
+  margin-top: 14px;
+}
+/* long-form article on a GuideDoc page: headings, lists and callouts get
+   their own breathing room */
+.doc__prose > * + * {
+  margin-top: 14px;
+}
+.doc__prose > h2 {
+  margin-top: 40px;
+  margin-bottom: 2px;
+}
+.doc__prose > h2:first-child {
+  margin-top: 0;
+}
+.doc__prose > .steps,
+.doc__prose > .note {
+  margin-top: 18px;
+}
+/* sub-heading inside a section (e.g. the 94% stat, each guide reason) */
+.doc__sub {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+.doc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-mute);
+}
+/* a list of entries inside one section, separated by hairlines */
+.doc__items > * {
+  padding-block: 18px;
+}
+.doc__items > * + * {
+  border-top: 1px solid var(--border);
+}
+.doc__items > :first-child {
+  padding-top: 4px;
+}
+.doc__figure {
+  margin: 0 0 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.doc__figure img {
+  width: 100%;
+  height: auto;
+}
+.doc__pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .skeleton-line {
   height: 12px;
@@ -1178,6 +1657,12 @@ textarea {
 .split__media {
   min-height: 260px;
   border-right: 1px solid var(--border);
+}
+.split__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .split__body {
   padding: clamp(22px, 3vw, 38px);

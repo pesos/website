@@ -14,9 +14,9 @@
 
 **Why:** most content is structured cards (status, stack, year, semester) that feed filters, not long prose. TS types catch a missing field or a status typo at build time. `'Active' | 'Completed' | …` on `Project.status` is one example.
 
-**Trade-off:** blog posts are **not** hosted here. `blogs.astro` links out to the markdown in `pesos/pesos.github.io`. Adding real on-site posts later would be a natural fit for a content collection.
+**Exception: blog posts.** Posts are long prose written by many members, so they live as markdown files in `/blogs` at the repo root and are loaded through an Astro content collection (`src/content.config.ts`, `glob` loader). Adding a post is a single new file in a pull request: no code changes, and the front matter is validated by a schema, so a missing `title` or a bad `date` fails the build instead of shipping a broken page. The posts from the old `pesos/pesos.github.io` Jekyll blog were migrated into `/blogs` (Liquid/Kramdown syntax removed, local images copied into `blogs/images/`).
 
-**Inconsistency to be aware of:** some pages keep their data in their own frontmatter (`about.astro`, `blogs.astro`, `contact.astro`, `code-of-conduct.astro`) instead of in `src/data`.
+**Inconsistency to be aware of:** some pages keep their data in their own frontmatter (`getting-started/why-our-club.astro`, `about/goals.astro`, `contact.astro`) instead of in `src/data`.
 
 ## One `main.ts` with feature-detected init functions
 
@@ -65,9 +65,9 @@ As a result, `initCalendar` in `main.ts`, which was built for a dated events cal
 
 ## Two UIs, one content source: the terminal
 
-**Decision:** the site ships two UIs on every route: the normal website and a terminal (`src/components/TerminalMode.astro`, mounted by `BaseLayout`). The terminal reads a JSON manifest (`/terminal-content.json`) that `src/lib/terminalContent.ts` builds at build time **from the same `src/data/*` modules the pages render**.
+**Decision:** the site ships two UIs on every route: the normal website and a terminal (`src/components/TerminalMode.astro`, mounted by `BaseLayout`). The terminal reads a JSON manifest (`/terminal-content.json`) that `src/lib/terminalContent.ts` builds at build time **from the same `src/data/*` modules and `/blogs` markdown the pages render**.
 
-**Why:** the terminal must offer everything the website does. Building both from one data source means an edit to a project, post or FAQ shows up in both. That's also why page-local arrays (home sections, about, blog posts, contact FAQs, join-step links, project criteria) moved into `src/data`.
+**Why:** the terminal must offer everything the website does. Building both from one data source means an edit to a project, post or FAQ shows up in both. Content that only exists in page markup is mirrored instead (see trade-offs).
 
 **How the two stay in sync:**
 - **Parity guard:** the build fails if a route under `src/pages` has no terminal entry.
@@ -75,6 +75,7 @@ As a result, `initCalendar` in `main.ts`, which was built for a dated events cal
 - **Contact form:** the terminal's `send` command asks for the same fields, runs the same checks and posts to the same Formspree endpoint as the form on `/contact/`.
 
 **Trade-offs:**
-- Some lead paragraphs and prose (for example `pesos-101.astro`) exist only in page markup, so `terminalContent.ts` keeps a copy marked `mirrors <page>`. Update it when you edit those pages.
+- Much of the prose (all of Getting Started, Goals, How to Join, and lead paragraphs elsewhere) exists only in page markup, so `terminalContent.ts` keeps a copy marked `mirrors <page>`. Update it when you edit those pages.
+- The terminal's tree follows `NAV`: `/getting-started`, `/about`, `/blogs` (one file per markdown post, plus `/blogs/resources`), `/contact`, `/showcase/archive`, `/showcase/projects`.
 - Mode is per session (`sessionStorage.pesosMode`), and a new session starts on the terminal's boot screen, which asks the visitor to choose a UI.
-- Browsers reserve Ctrl+T, so the toggles that actually work are backtick and the nav's `$ Terminal` button.
+- Browsers reserve Ctrl+T, so the toggles that actually work are backtick and the nav's `>_ Terminal` button.

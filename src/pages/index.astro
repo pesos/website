@@ -1,21 +1,22 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroGlyphs from '../components/HeroGlyphs.astro';
-import { SITE } from '../data/site';
-import { HOME_SECTIONS as sections, HOME_TECH as tech } from '../data/home';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroGlyphs from '@/components/HeroGlyphs.astro';
+import { SITE, SECTIONS } from '@/data/site';
+import { HOME_TECH as tech } from '@/data/home';
 ---
 
-<BaseLayout description="PESOS — the student-run open-source community at PES University.">
+<BaseLayout description="PESOS, the student-run open-source community at PES University.">
   <section class="wrap hero">
     <div class="hero__copy">
       <span class="eyebrow">01 // Open Source</span>
-      <h1 class="display hero__title">Build in the open<br />with <span style="color:var(--neon)">PESOS</span></h1>
+      <h1 class="display hero__title">Execute.<br />
+        Teach.<br />
+        <span style="color:var(--neon)">Contribute.</span></h1>
       <p class="lead">
-        {SITE.tagline} We build, contribute to and support software that solves real
-        problems — and we teach you how to do the same.
+        {SITE.tagline}
       </p>
       <div class="hero__cta">
-        <a class="btn btn--primary" href="/how-to-join/">Join the club</a>
+        <a class="btn btn--primary" href="/about/how-to-join/">Join the club</a>
         <a class="btn btn--ghost" href="/getting-started/">Explore the club</a>
       </div>
     </div>
@@ -27,18 +28,23 @@ import { HOME_SECTIONS as sections, HOME_TECH as tech } from '../data/home';
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
-      {[...tech, ...tech].map((t) => <span>{t}</span>)}
+      {/* two identical groups; the track slides exactly one group width, so
+          the loop point is seamless. */}
+      {[0, 1].map(() => (
+        <div class="marquee__group">
+          {tech.map((t) => <span>{t}</span>)}
+        </div>
+      ))}
     </div>
   </div>
 
   <section class="wrap section">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:32px">
       <span class="eyebrow">03 // Club Sections</span>
-      <span class="mono muted" style="font-size:.78rem;letter-spacing:.1em;text-transform:uppercase">Club Sections</span>
     </div>
 
     <div class="grid-auto">
-      {sections.map((s, i) => (
+      {SECTIONS.map((s, i) => (
         <a class="card card--spotlight reveal" href={s.href} style={`--d:${i * 60}ms`}>
           <span class="eyebrow eyebrow--pill" style="margin-bottom:16px">{s.n} // {s.label}</span>
           <div class="card__body">
@@ -50,7 +56,7 @@ import { HOME_SECTIONS as sections, HOME_TECH as tech } from '../data/home';
       ))}
     </div>
   </section>
-
+  <!--
   <section class="wrap section--tight">
     <div class="panel panel--accent reveal" style="display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap">
       <div>
@@ -63,4 +69,5 @@ import { HOME_SECTIONS as sections, HOME_TECH as tech } from '../data/home';
       <a class="btn btn--primary" href="/contact/">Propose a project</a>
     </div>
   </section>
+  -->
 </BaseLayout>

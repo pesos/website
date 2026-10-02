@@ -1,0 +1,201 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+
+const FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSeNcexCvYqQkwotRZGJqjoBx8e9ca69QnJMiMBIZ4eE54taPQ/viewform';
+
+const steps = [
+  {
+    n: '01',
+    title: 'Fill the Form',
+    desc: 'Tell us a bit about yourself, what technologies or areas you want to explore, and any past work if you have it.',
+    cta: 'Apply Now',
+    href: FORM_LINK,
+  },
+  {
+    n: '02',
+    title: 'Review & Shortlist',
+    desc: 'The team reviews applications on a rolling basis. Shortlisted candidates will be contacted via email with next steps.',
+  },
+  {
+    n: '03',
+    title: 'Join and Contribute',
+    desc: 'Selected candidates join the team and start contributing to active projects.',
+  },
+];
+
+const include = [
+  'A short intro about you',
+  'Areas or technologies you want to explore',
+  'Past work or projects (optional)',
+];
+---
+
+<BaseLayout
+  title="How to Join"
+  description="Official recruitment process to join PES Open Source (PESOS)."
+>
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'About' }, { label: 'How to Join' }]} />
+    <h1 class="h1 title">How to Join PESOS</h1>
+    <p class="lead">Fill one form. We'll take it from there.</p>
+    <div class="tabs"><SectionTabs section="About" /></div>
+  </section>
+
+  <section class="wrap section--tight process">
+    <SectionHeader num="01" title="The Process" />
+
+    <ol class="steps">
+      {steps.map((s, i) => (
+        <li class="card step reveal" style={`--d:${i * 50}ms`}>
+          <span class="step-num">{s.n}</span>
+          <h3 class="h3 step-title">{s.title}</h3>
+          <p class="step-desc">{s.desc}</p>
+          {s.cta && (
+            <a class="btn cta" href={s.href} target="_blank" rel="noopener noreferrer">
+              <span>{s.cta}</span>
+              <span class="arr" aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    <div class="card prep reveal">
+      <h3 class="h3 prep-title">What to include</h3>
+      <ul class="prep-list">
+        {include.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <p class="mono note reveal">&gt; Open year-round &middot; Any PES University student can apply</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .title { margin: 14px 0 10px; font-size: clamp(1.65rem, 5vw, 2.4rem); }
+  .tabs { margin-top: 22px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .process { padding-top: 28px; }
+
+  .card {
+    background: #0f1211;
+    border: 1px solid rgba(248, 243, 239, 0.12);
+    border-radius: var(--r);
+    transition: border-color 0.2s ease, transform 0.15s ease;
+  }
+
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .step {
+    position: relative;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Connector line between cards (desktop only) */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 36px;
+    right: -20px;
+    width: 20px;
+    height: 1px;
+    background: rgba(248, 243, 239, 0.16);
+  }
+
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--neon);
+  }
+
+  .step-title { margin: 14px 0 6px; }
+
+  .step-desc {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin: 0;
+    color: #c9c4bf;
+  }
+
+  /* What to include */
+  .prep { margin-top: 20px; padding: 20px 24px; }
+  .prep-title { margin: 0 0 10px; }
+  .prep-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 6px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #c9c4bf;
+  }
+  .prep-list li::marker { color: var(--neon); }
+
+  .note { font-size: 0.8rem; color: #9da39f; margin: 28px 0 0; }
+
+  /* Button (inside step 01), pinned to card bottom */
+  .btn.cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    margin-top: auto;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    background: #090c0b;
+    border: 1px solid rgba(248, 243, 239, 0.16);
+    color: #f8f3ef;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  /* spacing above button without breaking margin-top:auto pinning */
+  .step-desc + .btn.cta { margin-top: auto; }
+  .step:has(.btn.cta) .step-desc { margin-bottom: 18px; }
+
+  .btn.cta:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
+  .btn.cta:active { background: rgba(62, 207, 142, 0.18); border-color: var(--neon); color: var(--neon); }
+
+  .arr { transition: transform 0.15s ease; }
+
+  @media (hover: hover) {
+    .btn.cta:hover { background: rgba(62, 207, 142, 0.12); border-color: var(--neon); color: var(--neon); }
+    .btn.cta:hover .arr { transform: translateX(3px); }
+    .step:hover { border-color: var(--neon-line); transform: translateY(-2px); }
+  }
+
+  @media (max-width: 992px) {
+    .steps { gap: 14px; }
+    .step { padding: 20px; }
+    .step:not(:last-child)::after { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    .steps { grid-template-columns: 1fr; gap: 14px; }
+    .step { padding: 18px 18px 18px 20px; }
+    .prep { padding: 18px; }
+  }
+
+  @media (max-width: 380px) {
+    .step { padding: 16px; }
+    .step-desc, .prep-list { font-size: 0.86rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .arr, .btn.cta { transition: none; }
+    .step:hover { transform: none; }
+  }
+</style>

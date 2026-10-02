@@ -3,13 +3,14 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import TerminalMode from '../components/TerminalMode.astro';
+import Search from '../components/Search.astro';
 import { SITE } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
 }
-const { title, description = 'PESOS — the student-run open-source club at PES University.' } = Astro.props;
+const { title, description = 'PESOS, the student-run open-source club at PES University.' } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : SITE.full;
 ---
 
@@ -62,6 +63,7 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.full;
         <slot />
       </main>
       <Footer />
+      <Search />
     </div>
     <TerminalMode />
     <script>

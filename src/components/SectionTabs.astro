@@ -1,0 +1,24 @@
+---
+/* Tab strip for one top-level section: lists only that section's own child
+   pages (from NAV), so sections never link into each other. */
+import { navSection } from '../data/site';
+interface Props { section: string; }
+const { section } = Astro.props;
+const s = navSection(section);
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+// the active tab is the child whose URL is the longest prefix of this page,
+// so a blog post (/blogs/<slug>/) highlights "Blogs" while /blogs/resources/
+// still highlights "Resources"
+const active = s.children
+  .filter((c) => here.startsWith(c.href))
+  .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+---
+<nav class="tabs" aria-label={`${s.label} pages`}>
+  {s.children.map((c) => (
+    <a
+      class:list={['tab', c.href === active && 'is-active']}
+      href={c.href}
+      aria-current={c.href === here ? 'page' : c.href === active ? 'true' : undefined}
+    >{c.label}</a>
+  ))}
+</nav>

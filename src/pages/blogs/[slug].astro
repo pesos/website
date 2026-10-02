@@ -1,0 +1,63 @@
+---
+// One page per markdown file in /blogs (see src/content.config.ts).
+// Note: a post called "resources.md" would be shadowed by /blogs/resources/.
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Crumb from '@/components/Crumb.astro';
+import SectionTabs from '@/components/SectionTabs.astro';
+import { getBlogEntries, formatDate, readingMinutes } from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const entries = await getBlogEntries();
+  return entries.map((entry, i) => ({
+    params: { slug: entry.id },
+    // entries are newest first, so "newer" is the previous index
+    props: { entry, newer: entries[i - 1], older: entries[i + 1] },
+  }));
+}
+
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const { title, description, author, date, tag, draft } = entry.data;
+const meta = [author, formatDate(date), `${readingMinutes(entry.body)} min read`].filter(Boolean);
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="wrap page-head">
+    <Crumb items={[{ label: 'Blogs and Resources' }, { label: 'Blogs', href: '/blogs/' }, { label: title }]} />
+    <div style="margin-top:22px"><SectionTabs section="Blogs and Resources" /></div>
+  </section>
+
+  <article class="wrap post">
+    <header class="post__head">
+      <div class="doc__meta">
+        <span class="tag">{tag}</span>
+        {draft && <span class="tag tag--neon">Draft · not published</span>}
+      </div>
+      <h1 class="h1">{title}</h1>
+      <p class="lead">{description}</p>
+      <div class="post__meta">{meta.join(' · ')}</div>
+      <div class="doc__bar" style="margin:0"></div>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <nav class="post__pager" aria-label="More posts">
+      {older ? (
+        <a class="post__pager-link" href={`/blogs/${older.id}/`}>
+          <span class="post__pager-k">← Older</span>
+          <span>{older.data.title}</span>
+        </a>
+      ) : <span />}
+      {newer && (
+        <a class="post__pager-link post__pager-link--next" href={`/blogs/${newer.id}/`}>
+          <span class="post__pager-k">Newer →</span>
+          <span>{newer.data.title}</span>
+        </a>
+      )}
+    </nav>
+    <a class="link-arrow" href="/blogs/">← All posts</a>
+  </article>
+</BaseLayout>
