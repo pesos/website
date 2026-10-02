@@ -165,9 +165,13 @@ Without an http(s) `action`, the form only validates and shows `.form-success`. 
 | In-page tabs | `data-tabs` wrapper, `data-tab="X"` buttons, `data-panel="X"` panels |
 | Accordion | `.accordion__btn` immediately followed by its panel element |
 
-## Adding a page (terminal UI)
+## Pages and the terminal UI
 
-Every route must also exist in the terminal, or `npm run build` fails with `[terminal] website routes with no terminal page: …`. Add an entry in `src/lib/terminalContent.ts` using the `page(path, route, title, body)` helper, and build the body from the same `src/data` module the page uses.
+Nothing to do: every page under `src/pages` shows up in the terminal automatically. `src/lib/terminalContent.ts` renders each page and converts the content of its `<main>` to markdown, so text written anywhere (in `src/data`, in the page's frontmatter or straight in its markup) appears in both UIs.
+
+- **Hide something from the terminal:** add `data-terminal-skip` to the element. Filter chips, search boxes, breadcrumbs, image placeholders and anything `aria-hidden="true"` or `hidden` are already dropped (see `SKIP` in `terminalContent.ts`).
+- **A new kind of widget reads badly in the terminal:** add a selector to `SKIP`, or a rule in `makeTurndown()` that turns it into better markdown.
+- **Leave a page out entirely:** add its route to `NO_TERMINAL_PAGE` (the error pages are).
 
 ## Common problems
 
