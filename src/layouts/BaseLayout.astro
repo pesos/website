@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import TerminalMode from '../components/TerminalMode.astro';
 import Search from '../components/Search.astro';
+import TerminalMode from '../components/TerminalMode.astro';
 import { SITE } from '../data/site';
 
 interface Props {
@@ -32,40 +32,17 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.full;
         } catch (e) {}
       })();
     </script>
-
-    <!-- Terminal UI: pick the mode class before first paint -->
-    <script is:inline>
-      (function () {
-        var dev = true;
-        try {
-          dev = sessionStorage.getItem('pesosMode') !== 'normal';
-        } catch (e) {}
-        document.documentElement.classList.add(dev ? 'mode-dev' : 'mode-normal');
-        if (dev) {
-          document.addEventListener('DOMContentLoaded', function () {
-            var r = document.querySelector('.root');
-            if (r) r.inert = true;
-          });
-        }
-      })();
-    </script>
-    <!-- the terminal UI's font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <!-- .root = the normal website; hidden (and inert) while the terminal is up -->
-    <div class="root">
-      <div class="bg-grid" aria-hidden="true"></div>
-      <div class="bg-aurora" aria-hidden="true"></div>
-      <Nav />
-      <main>
-        <slot />
-      </main>
-      <Footer />
-      <Search />
-    </div>
     <TerminalMode />
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-aurora" aria-hidden="true"></div>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <Search />
     <script>
       import '../scripts/main.ts';
     </script>

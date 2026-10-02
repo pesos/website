@@ -120,8 +120,7 @@ Each file exports a type and one or more arrays. Pages import from here instead 
 
 | Component | Props | Purpose |
 |---|---|---|
-| `Nav` | none | `Wordmark`, `NAV` sections with hover/focus dropdowns, search button, theme toggle, `>_ Terminal` button (`data-terminal-toggle`), mobile drawer grouped by section |
-| `TerminalMode` | own `<script>` | The terminal UI, on every page. Content comes from `/terminal-content.json` (`src/lib/terminalContent.ts`). See [decisions.md](decisions.md#two-uis-one-content-source-the-terminal) |
+| `Nav` | none | `Wordmark`, `NAV` sections with hover/focus dropdowns, search button, theme toggle, placeholder `>_ Terminal` button, mobile drawer grouped by section |
 | `Search` | none | Site search dialog: nav button, Ctrl/Cmd+K or `/`; fetches `/search.json` on first open |
 | `SectionTabs` | `section: string` | Tab strip of one `NAV` section's child pages, current page highlighted |
 | `GuideDoc` | `title`, `subtitle?` | Layout for every Getting Started page: sticky sidebar of the section's pages, breadcrumb, title, accent bar, prev/next buttons (all from `NAV`) |

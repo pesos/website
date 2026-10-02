@@ -1,11 +1,17 @@
 ---
 // Developer Mode: the whole site, browsable as markdown inside a terminal.
 //
-// Rendered once by BaseLayout.astro, so it is available on every route.
-//  - html.mode-dev    -> the real page (.root) fades out, this fills the screen
+// Self-contained: the main website knows nothing about it. BaseLayout.astro
+// only imports it and renders <TerminalMode /> as the first thing in <body>;
+// delete those two lines (and this file, src/lib/terminalContent.ts,
+// src/pages/terminal-content.json.ts, the turndown dependency) and the
+// website is exactly as it was. Everything else hooks in from the outside:
+//  - html.mode-dev    -> the website (every other child of <body>) fades out
+//                        and is made inert; this fills the screen
 //  - html.mode-normal -> this fades out, the normal website shows
-// Ctrl+T (or backtick) toggles; the choice is kept per session. Any
-// [data-terminal-toggle] element (the nav's "$ Terminal" button) toggles too.
+// Backtick toggles (Ctrl+T too, where the browser lets it through); the
+// choice is kept per session. The nav's existing ">_ Terminal" links (found
+// by .term-btn / their text, the nav itself is untouched) open it too.
 //
 // The terminal keeps the address bar on the website route of whatever it is
 // showing, so switching back lands on the matching page, and loading any
@@ -15,6 +21,26 @@
 // keys / j k / space / g G to move, q to quit. Content comes from
 // /terminal-content.json (see src/lib/terminalContent.ts). Theme: Tokyo Night.
 ---
+
+<!-- pick the mode before the website paints (this is the first thing in <body>) -->
+<script is:inline>
+  (function () {
+    var dev = true;
+    try {
+      dev = sessionStorage.getItem('pesosMode') !== 'normal';
+    } catch (e) {}
+    document.documentElement.classList.add(dev ? 'mode-dev' : 'mode-normal');
+    if (dev) {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('body > :not(#pesos-terminal):not(script)').forEach(function (el) {
+          el.inert = true;
+        });
+      });
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700&display=swap" rel="stylesheet" />
 
 <div id="pesos-terminal" aria-hidden="true">
   <canvas class="pt-matrix"></canvas>
@@ -65,7 +91,6 @@
   </div>
 </div>
 
-<button id="pesos-dev-hint" type="button">dev mode · Ctrl+T</button>
 
 <style is:global>
   /* ---- Tokyo Night palette --------------------------------------------- */
@@ -85,8 +110,12 @@
     --ptn-blue: #7aa2f7;
     --ptn-blue0: #3d59a1;
     --ptn-magenta: #bb9af7;
-    /* "scaled at 170": 170% of the original 14px design base. Fixed, so a
-       browser zoom only ever changes text size, never the layout. */
+    /* "scaled at 170": 170% of the original 14px design base. Browser zoom
+       scales the whole terminal like a picture: its box keeps the size the
+       screen had when it opened (fitFrame), so zooming out gives a smaller
+       copy, centred, with the
+       same line breaks. The nyan scrollbar and the matrix rain stay pinned
+       to the screen in viewport units, the same size at any zoom. */
     --pt-scale: 1.7;
   }
   @media (pointer: coarse) and (max-width: 820px) {
@@ -104,9 +133,11 @@
     overflow: hidden;
     background: var(--ptn-bg);
   }
-  html.mode-dev .root,
-  html.mode-normal .root { transition: opacity 0.3s ease; }
-  html.mode-dev .root { opacity: 0; }
+  /* the website: every other child of <body>. The fade only exists while
+     switching (html.pt-switching), so the website's own styles are never
+     touched while it's showing. */
+  html.pt-switching body > :not(#pesos-terminal) { transition: opacity 0.3s ease; }
+  html.mode-dev body > :not(#pesos-terminal) { opacity: 0; }
 
   #pesos-terminal {
     position: fixed;
@@ -126,6 +157,11 @@
     transform: translateY(6px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
   }
+  #pesos-terminal {
+    width: min(var(--pt-w, 100vw), 100vw);
+    height: min(var(--pt-h, 100vh), 100vh);
+    margin: auto;
+  }
   html.mode-dev #pesos-terminal {
     opacity: 1;
     visibility: visible;
@@ -133,31 +169,10 @@
     transform: none;
   }
 
-  /* ---- dev-mode hint pill ------------------------------------------------ */
-  #pesos-dev-hint { display: none; }
-  html.mode-normal #pesos-dev-hint {
-    display: inline-flex;
-    align-items: center;
-    position: fixed;
-    right: 14px;
-    bottom: 14px;
-    z-index: 2147483000;
-    padding: 7px 13px;
-    border: 1px solid var(--ptn-blue0);
-    border-radius: 999px;
-    background: var(--ptn-bg-dark);
-    color: var(--ptn-blue);
-    font: 600 12px/1 'Source Code Pro', ui-monospace, monospace;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-  }
-  html.mode-normal #pesos-dev-hint:hover { opacity: 1; transform: translateY(-1px); }
 
   /* ---- chrome --------------------------------------------------------- */
   #pesos-terminal .pt-matrix {
-    position: absolute;
+    position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
@@ -182,8 +197,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: clamp(16px, 3vh, 30px) clamp(30px, 5vw, 72px) clamp(16px, 3vh, 30px)
-      clamp(16px, 5vw, 68px);
+    padding: 1.25em 3.2em 1.25em 2.85em;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -193,9 +207,16 @@
   #pesos-terminal .pt-scrollback {
     white-space: pre-wrap;
     word-break: break-word;
-    max-width: 104ch;
   }
   #pesos-terminal .pt-line { margin: 1px 0; }
+  /* boot / mode-switch reveal: lines fade up one after another, the logo
+     scans in top to bottom, and a screen being replaced fades out */
+  #pesos-terminal .pt-enter { animation: pt-enter 0.45s ease both; }
+  @keyframes pt-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  #pesos-terminal .pt-scan pre { animation: pt-scan 0.9s ease-out both; }
+  @keyframes pt-scan { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+  #pesos-terminal .pt-scrollback { transition: opacity 0.2s ease; }
+  #pesos-terminal .pt-scrollback.pt-fading { opacity: 0; }
   #pesos-terminal .pt-err { color: var(--ptn-red); }
   #pesos-terminal .pt-ok { color: var(--ptn-green); }
   #pesos-terminal .pt-dir { color: var(--ptn-blue); font-weight: 700; }
@@ -231,7 +252,7 @@
   #pesos-terminal .pt-prompt-echo { color: var(--ptn-green); }
 
   /* ---- rendered markdown --------------------------------------------- */
-  #pesos-terminal .pt-doc { margin: 4px 0 8px; max-width: 94ch; }
+  #pesos-terminal .pt-doc { margin: 4px 0 8px; }
   #pesos-terminal .pt-h1,
   #pesos-terminal .pt-h2,
   #pesos-terminal .pt-h3,
@@ -304,7 +325,6 @@
   /* ---- code blocks -------------------------------------------------------- */
   #pesos-terminal .pt-codeblock {
     margin: 0.7em 0;
-    max-width: 94ch;
     border: 1px solid var(--ptn-bg-hl);
     border-radius: 6px;
     overflow: hidden;
@@ -361,7 +381,7 @@
   }
   #pesos-terminal .pt-neo {
     display: flex;
-    gap: clamp(12px, 4vw, 44px);
+    gap: 1.8em;
     align-items: flex-start;
     margin: 0.3em 0 1em;
     overflow-x: auto;
@@ -378,13 +398,13 @@
   #pesos-terminal .pt-neo-rule { color: var(--ptn-comment); }
   #pesos-terminal .pt-swatch { display: inline-flex; margin-top: 0.5em; }
   #pesos-terminal .pt-swatch i { width: 2.4ch; height: 1.05em; display: inline-block; }
-  #pesos-terminal .pt-c-green { color: var(--ptn-green); }
-  #pesos-terminal .pt-c-blue { color: var(--ptn-blue); }
-  #pesos-terminal .pt-c-cyan { color: var(--ptn-cyan); }
-  #pesos-terminal .pt-c-magenta { color: var(--ptn-magenta); }
+  /* the logo's own colours (sampled from the PESOS logo image) */
+  #pesos-terminal .pt-logo-g { color: #3cd198; }
+  #pesos-terminal .pt-logo-w { color: #e6e6e6; }
   #pesos-terminal .pt-c-muted { color: var(--ptn-comment); }
 
   /* ---- input line + riced prompt ----------------------------------- */
+  #pesos-terminal.pt-raining .pt-input-line { visibility: hidden; }
   #pesos-terminal .pt-input-line {
     display: flex;
     align-items: center;
@@ -454,13 +474,11 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: clamp(14px, 3vh, 26px) clamp(30px, 5vw, 72px) clamp(20px, 6vh, 60px)
-      clamp(16px, 5vw, 64px);
+    padding: 1.1em 3.2em 2.5em 2.7em;
     white-space: pre-wrap;
     word-break: break-word;
     outline: none;
   }
-  #pesos-terminal .pt-pager-body .pt-doc { max-width: 94ch; }
   #pesos-terminal .pt-pager-status {
     flex: none;
     background: var(--ptn-fg-dim);
@@ -473,12 +491,13 @@
   }
 
   /* ---- nyan cat scrollbar ----------------------------------------------- */
+  /* sized in vmin, so browser zoom never moves or resizes it */
   #pesos-terminal .pt-nyan {
-    position: absolute;
-    top: 10px;
-    right: 7px;
-    bottom: 10px;
-    width: 20px;
+    position: fixed;
+    top: 1.25vmin;
+    right: 0.9vmin;
+    bottom: 1.25vmin;
+    width: 2.5vmin;
     z-index: 6;
     opacity: 0;
     pointer-events: none;
@@ -487,10 +506,10 @@
   #pesos-terminal .pt-nyan-rain {
     position: absolute;
     top: 0;
-    left: 2px;
-    width: 16px;
-    min-height: 4px;
-    border-radius: 2px;
+    left: 0.25vmin;
+    width: 2vmin;
+    min-height: 0.5vmin;
+    border-radius: 0.25vmin;
     background: linear-gradient(
       to right,
       #ff004d 0 16.66%, #ff8c00 0 33.33%, #ffe600 0 50%,
@@ -499,13 +518,18 @@
   }
   #pesos-terminal .pt-nyan-cat {
     position: absolute;
-    left: -9px;
+    left: -1.1vmin;
     top: 0;
     will-change: transform;
   }
-  #pesos-terminal .pt-nyan-cat svg { display: block; animation: pt-nyan-bob 0.4s steps(2) infinite; }
+  #pesos-terminal .pt-nyan-cat svg {
+    display: block;
+    width: 4.75vmin;
+    height: 2.75vmin;
+    animation: pt-nyan-bob 0.4s steps(2) infinite;
+  }
   #pesos-terminal .pt-nyan-leg { animation: pt-nyan-leg 0.3s steps(2) infinite; }
-  @keyframes pt-nyan-bob { 50% { transform: translateY(-1.5px); } }
+  @keyframes pt-nyan-bob { 50% { transform: translateY(-0.19vmin); } }
   @keyframes pt-nyan-leg { 50% { transform: translateY(1px); } }
 
   /* ---- destructive-command easter egg ------------------------------- */
@@ -534,9 +558,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    #pesos-terminal .pt-enter,
+    #pesos-terminal .pt-scan pre { animation: none; }
     #pesos-terminal,
-    html.mode-dev .root,
-    html.mode-normal .root { transition: none; }
+    html.pt-switching body > :not(#pesos-terminal) { transition: none; }
     #pesos-terminal .pt-cursor,
     #pesos-terminal .pt-nyan-cat svg,
     #pesos-terminal .pt-nyan-leg,
@@ -557,23 +582,37 @@
 
   // Home-screen / neofetch art: a broken circuit ring around the omega, with
   // a PESOS wordmark under it.
+  // The PESOS logo, traced from the club's logo image into braille (2×4
+  // dots per character). Each row is [text, colours]: one letter per
+  // character, g = logo green, w = white (the O in PESOS).
   const HERO = [
-    ['        ·─────·─────·', 'g'],
-    ['     ·─┘             └─·', 'g'],
-    ['   ·┘      ·─────·      └·', 'g'],
-    ['  ·      ·┘       └·      ·', 'g'],
-    ['  │     ·    ▄▄▄    ·     │', 'g'],
-    ['  ·     │   █   █   │     ·', 'g'],
-    ['  │     ·    ▀▀▀    ·     │', 'g'],
-    ['  ·      ·┐       ┌·      ·', 'g'],
-    ['   ·┐      ·─────·      ┌·', 'g'],
-    ['     ·─┐             ┌─·', 'g'],
-    ['        ·─────· ·────·', 'g'],
-    ['', ''],
-    ['   ░█▀█░█▀▀░█▀▀░█▀█░█▀▀', 'c'],
-    ['   ░█▀▀░█▀▀░▀▀█░█░█░▀▀█', 'b'],
-    ['   ░▀░░░▀▀▀░▀▀▀░▀▀▀░▀▀▀', 'b'],
-    ['      p e s  ·  open source', 'm'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣄⠀⢰⣶⠒⠒⠚⠛⠋⠉⠙⠛⠒⠒⠲⠤⢤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠴⠚⠉⣋⣀⣀⡤⠤⠶⠒⠒⠒⠒⠒⠒⠲⠦⠤⢄⣀⡀⠉⠙⠲⣴⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡠⠞⠉⠀⢾⣆⡀⠛⠃⢀⣀⣠⠤⠤⠤⠶⠶⠤⠤⠤⢤⣀⣀⠀⠉⠑⠲⢤⣈⠁⠀⣶⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠔⠋⢀⣶⡆⠀⣠⡀⠙⠒⠋⠉⢠⣄⠀⠀⠀⣶⡄⠀⣠⣄⣀⡀⠈⠉⠓⠢⢤⡀⠈⠑⠦⡀⠈⠓⢄⡀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⢀⠞⠁⢀⡴⠋⢀⣤⡖⠛⠃⣀⡤⠖⠋⠉⠋⢀⣠⠊⠀⣤⡞⠁⢀⣀⠈⠉⠓⠦⣄⡀⠈⢓⣦⡀⠈⠳⣄⠀⢙⣆⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⢠⣴⠃⢀⡴⠋⢠⣤⠈⠉⣠⠴⠋⠁⣀⡤⠖⠚⠉⣉⣀⡠⠤⠩⠥⣀⣈⡛⠙⠒⠦⣄⡀⠉⠋⠉⣀⠉⠢⣄⠈⠉⠉⠉⠳⡄⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠰⡿⠉⣠⠏⠀⣠⠋⠉⣠⠞⠁⢀⠴⠊⢁⡤⡒⢛⡥⠬⠴⠒⠒⠒⠒⠢⠤⠌⣉⠒⢤⠄⠉⠲⢄⡈⠛⢧⡀⠈⠣⡀⠸⢿⡀⠘⢦⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⢀⡰⠃⢀⡜⠁⢠⠞⠁⢠⠞⠁⡠⠊⣥⠀⣙⠢⠔⢒⡈⠉⢩⡍⢉⣉⡐⠒⠤⣈⠒⠤⡛⠢⡀⠙⢦⣀⣙⣦⠀⠙⣄⠀⠳⡄⠈⢧⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⢠⠖⠋⣽⣁⣤⠎⠀⣰⠋⠀⡴⢁⡠⠊⡴⢊⠰⠎⡩⠔⢊⡩⠥⠔⠁⠶⠁⠴⢌⣉⠒⠤⠭⠦⣈⠢⠬⠦⡀⠁⠀⠈⢳⡀⠈⢦⠀⠹⡄⠈⢧⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⡞⠀⣰⠋⠀⠀⠀⣰⠃⢀⡞⠀⠾⢡⠊⡠⢋⡴⢋⡤⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠢⣜⠳⡌⠣⡐⢶⠙⡄⠺⣷⠀⢳⡀⠺⠟⠀⢱⡀⠘⡆⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⢸⠁⢀⡇⠀⡴⠒⠋⠁⠀⡞⠀⡤⣲⣃⠜⢠⠊⡰⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠚⢢⠘⣄⢣⠘⡆⠘⡆⠀⢳⠀⠀⣶⣆⣇⠀⢹⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⡏⠀⣸⡀⢠⠇⢠⣤⠀⣸⠁⡸⢠⠃⣀⠤⠃⡜⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⡄⢣⠙⣀⢧⠸⡀⢹⡀⠘⡆⠀⣀⡈⢻⡀⠘⡇', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⢠⡇⠈⠛⠁⢸⠀⢸⡏⠀⡏⢀⠇⣼⢰⠡⡤⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢱⠈⡆⣩⠙⡀⡇⠈⡇⠀⣷⠀⢻⡃⠈⡇⠀⣧', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠙⠋⢰⣶⠀⣿⠀⢸⠀⠀⡇⠸⠦⡤⢸⢰⠇⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠷⢸⠀⡇⢸⠀⣇⠀⠿⠇⢸⡇⠀⡇⠀⢿', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⣠⣄⠀⡇⠀⢿⠀⢸⠀⠀⡇⢰⠆⡇⢸⠘⡇⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠷⠀⢸⠀⡇⣸⠀⣏⣤⠀⠀⢸⡇⠀⡇⠀⣾', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠙⡏⢀⠇⠀⢸⠀⠘⡇⠀⣧⠀⡟⢁⠜⡄⣧⠸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀⢀⡜⢰⠁⡇⢀⡏⠋⠀⠀⢸⠀⢠⡇⠀⡏', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⣷⠋⠀⢀⠞⡇⠀⣧⡀⢸⡀⢱⠀⣤⢳⠈⣰⢡⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⢁⡎⣭⢀⡎⣸⠁⣼⠀⠀⠀⠀⡟⠀⣸⠁⢠⡇', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⢸⡄⠀⠉⠀⢻⡀⠛⠋⠀⡷⠀⢣⡘⣄⠳⡈⢆⠑⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠜⢡⠎⡰⢃⡜⢠⠃⢰⠃⢀⡤⠴⠚⠁⢀⡏⠀⣼⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⢷⠀⢰⣦⠀⢧⠀⠀⡞⠀⣴⡆⢀⡌⢦⡙⢄⠑⢄⡑⠦⣀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡠⠖⠷⠔⢁⠞⠁⢸⠘⠋⣰⠋⠀⡼⠁⢴⡶⠀⡼⠀⢰⠇⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠈⢧⠀⠹⡄⠈⢧⠀⠙⣆⠈⠱⣄⠙⢦⡙⢒⡟⠦⣉⠒⠤⡍⠀⠀⠀⠀⠀⠀⢉⣵⢀⡶⢀⠞⣥⢸⡇⠛⢀⡴⠁⢀⡞⠁⢠⠏⠀⡼⠁⢀⡏⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠸⠿⠀⠹⣄⠀⠳⡀⠈⢳⡀⠈⠳⣄⠙⠢⠭⠶⠤⣉⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⡡⠜⢊⡡⠊⢀⡴⠋⠀⡠⠋⠀⡰⠋⠀⡼⠁⠀⠈⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠸⢿⡀⠘⢦⠀⠙⢦⠀⠙⠂⠀⠈⠓⠦⣀⠘⠓⠤⠁⠀⠀⠀⠀⠀⠀⠀⠀⠘⠱⠔⠊⢁⡠⠖⠋⠀⠀⠈⠁⠀⠚⠁⠀⠀⠁⣸⠿⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠱⣄⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠈⠙⠒⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠔⠚⠉⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⢀⡔⠁⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠈⠳⢄⠀⠀⠀⠀⣿⠛⠻⢶⣦⠀⢀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⠀⣠⡶⠾⠛⠋⠀⠀⠀⢀⠴⠋⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggwwwwggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣤⣄⣠⣿⢁⣿⠉⠉⠛⠛⢰⡿⠛⠛⠛⠃⢰⣿⠛⠛⠛⢻⣇⠹⣧⣴⠶⢶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggwwwwwwwgggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⠃⠀⠉⠉⠁⢸⣟⠛⠛⠻⠆⠘⠿⠶⠶⢶⣄⢸⣿⠀⠀⠀⢸⣿⠀⣀⣤⣤⠾⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggwwgggwwgggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠿⠶⠶⠆⢰⣶⣶⣶⣾⠟⠀⠿⠷⠶⠿⠟⠃⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'ggggggggggggggggggggggggggggggggwwwwwwgggggggggggggggggg'],
   ];
 
   const reducedMotion = () =>
@@ -582,11 +621,13 @@
   function setMode(mode) {
     const el = document.documentElement;
     const dev = mode !== 'normal';
+    el.classList.add('pt-switching');
+    clearTimeout(setMode.done);
+    setMode.done = setTimeout(() => el.classList.remove('pt-switching'), 400);
     el.classList.remove('mode-dev', 'mode-normal');
     el.classList.add(dev ? 'mode-dev' : 'mode-normal');
     try {
-      const rootEl = document.querySelector('.root');
-      if (rootEl) rootEl.inert = dev;
+      document.querySelectorAll('body > :not(#pesos-terminal):not(script)').forEach((w) => { w.inert = dev; });
     } catch (e) {}
     try { sessionStorage.setItem(MODE_KEY, dev ? 'dev' : 'normal'); } catch (e) {}
   }
@@ -672,13 +713,34 @@
     return out;
   }
 
-  const HERO_CLASS = { g: 'pt-c-green', b: 'pt-c-blue', c: 'pt-c-cyan', m: 'pt-c-magenta' };
+  const HERO_CLASS = { g: 'pt-logo-g', w: 'pt-logo-w' };
+  // one span per run of same-coloured characters
+  // Braille comes from whatever fallback font has it, often wider than the
+  // terminal font, which stretches the logo sideways. Squeeze it back so a
+  // character (2 dots wide) is half a line (4 dots) tall: round, not oval.
+  function fitLogo(pre) {
+    if (!pre) return;
+    const probe = document.createElement('span');
+    probe.textContent = '\u28ff'.repeat(10);
+    pre.appendChild(probe);
+    const w = probe.getBoundingClientRect().width / 10;
+    probe.remove();
+    const lh = parseFloat(getComputedStyle(pre).lineHeight);
+    const k = lh / 2 / w;
+    if (!w || !lh || k >= 1) return;
+    pre.style.transformOrigin = 'left top';
+    pre.style.transform = 'scaleX(' + k + ')';
+    // the transform doesn't shrink the layout box; give the space back
+    pre.style.marginRight = -pre.getBoundingClientRect().width * (1 - k) / k + 'px';
+  }
   function heroHtml() {
-    return HERO
-      .map(([line, c]) =>
-        c ? '<span class="' + (HERO_CLASS[c] || '') + '">' + esc(line || ' ') + '</span>' : ' '
-      )
-      .join('\n');
+    return HERO.map(([line, colours]) =>
+      [...line].reduce((out, ch, i) => {
+        const c = colours[i];
+        if (c !== colours[i - 1]) out += (i ? '</span>' : '') + '<span class="' + HERO_CLASS[c] + '">';
+        return out + ch + (i === line.length - 1 ? '</span>' : '');
+      }, '')
+    ).join('\n');
   }
 
   // Minimal markdown -> terminal HTML. Input is escaped first, so the spans
@@ -800,7 +862,7 @@
       this.el.style.pointerEvents = 'auto';
       const p = Math.min(1, Math.max(0, sc.scrollTop / max));
       const h = this.el.clientHeight;
-      const catH = 22;
+      const catH = this.cat.offsetHeight;
       const y = p * (h - catH);
       this.cat.style.transform = 'translateY(' + y.toFixed(1) + 'px)';
       this.rain.style.height = (y + catH / 2).toFixed(1) + 'px';
@@ -879,9 +941,13 @@
         this.updatePagerStatus();
       }, { passive: true });
       window.addEventListener('resize', () => { this.nyan.sync(); this.updatePagerStatus(); });
+      // the rain starts right away; the content downloads underneath it. The
+      // prompt (and its blinking cursor) stays hidden until the rain is gone.
+      if (boot) this.root.classList.add('pt-raining');
+      const rain = boot && !reducedMotion() ? this.matrix() : null;
       await this.loadManifest();
       if (boot) {
-        await this.runBoot();
+        await this.runBoot(rain);
       } else {
         this.setPrompt();
         this.openForLocation();
@@ -1027,6 +1093,11 @@
       const div = document.createElement('div');
       div.className = 'pt-line' + (cls ? ' ' + cls : '');
       div.innerHTML = html;
+      if (this.reveal != null && !reducedMotion()) {
+        // fade in one after another; long pages stop staggering after a few
+        div.classList.add('pt-enter');
+        div.style.animationDelay = Math.min(this.reveal++, 14) * 60 + 'ms';
+      }
       this.scrollback.appendChild(div);
       this.scrollBottom();
       return div;
@@ -1043,6 +1114,16 @@
       );
     }
     clear() { this.scrollback.innerHTML = ''; }
+    // fade the screen out, clear it, then run `then` (which paints the next one)
+    fadeOut(then) {
+      if (reducedMotion()) { this.clear(); return then(); }
+      this.scrollback.classList.add('pt-fading');
+      setTimeout(() => {
+        this.clear();
+        this.scrollback.classList.remove('pt-fading');
+        then();
+      }, 220);
+    }
     scrollBottom() {
       const w = this.win;
       if (!w) return;
@@ -1468,7 +1549,7 @@
 
     openForLocation() {
       this.restoring = true;
-      this.print('<pre class="pt-hero">' + heroHtml() + '</pre>');
+      fitLogo(this.print('<pre class="pt-hero">' + heroHtml() + '</pre>').querySelector('pre'));
       if (this.entries['/']) this.print(renderMarkdown(this.entries['/'].body), 'pt-doc');
       this.println('');
       this.ls('/');
@@ -1486,11 +1567,7 @@
     /* ---- boot + neofetch --------------------------------------------- */
     renderNeofetch() {
       const m = this.meta || {};
-      const logo = HERO
-        .map(([line, c]) =>
-          c ? '<span class="' + (HERO_CLASS[c] || '') + '">' + esc(line || ' ') + '</span>' : ' '
-        )
-        .join('\n');
+      const logo = heroHtml();
       const rows = [
         ['OS', 'PES Open Source'],
         ['Host', 'pes.community'],
@@ -1512,30 +1589,28 @@
         '--ptn-bg-hl', '--ptn-red', '--ptn-green', '--ptn-yellow',
         '--ptn-blue', '--ptn-magenta', '--ptn-teal', '--ptn-fg',
       ].map((c) => '<i style="background:var(' + c + ')"></i>').join('');
-      this.print(
-        '<div class="pt-neo">' +
+      fitLogo(this.print(
+        '<div class="pt-neo pt-scan">' +
           '<pre>' + logo + '</pre>' +
           '<div class="pt-neo-info">' + info + '\n\n<span class="pt-swatch">' + swatch + '</span></div>' +
         '</div>'
-      );
+      ).querySelector('pre'));
     }
 
-    async runBoot() {
+    async runBoot(rain) {
       this.booting = true;
       this.input.disabled = true;
-      if (!reducedMotion()) await this.matrix(1200);
+      if (rain) await rain;
+      this.root.classList.remove('pt-raining');
       this.clear();
+      this.reveal = 0;
       this.renderNeofetch();
-      this.println('');
-      await this.sleep(140);
-      this.println('mounting /content … ok', 'pt-ok');
-      this.println('indexed ' + this.paths.length + ' paths across ' + Object.keys(this.dirs).length + ' sections', 'pt-muted');
-      await this.sleep(140);
       this.println('');
       this.println('select mode:  (type 1 / 2, or tap)', 'pt-doc-head');
       this.print('  <span class="pt-file" data-mode="1">[1] developer</span>  <span class="pt-muted">browse the whole site in this terminal</span>');
       this.print('  <span class="pt-file" data-mode="2">[2] normal</span>     <span class="pt-muted">the regular website</span>');
       this.println('');
+      this.reveal = null;
       this.booting = false;
       this.input.disabled = false;
       this.awaitingMode = true;
@@ -1549,13 +1624,16 @@
         this.awaitingMode = false;
         try { sessionStorage.setItem(BOOT_KEY, '1'); } catch (e) {}
         setMode('dev');
-        this.clear();
-        this.println('developer mode. "help" for commands, "exit" for the normal site.', 'pt-ok');
-        this.println('');
-        this.setPrompt();
-        this.openForLocation();
-        this.enableSmooth();
-        this.focus();
+        this.fadeOut(() => {
+          this.reveal = 0;
+          this.println('developer mode. "help" for commands, "exit" for the normal site.', 'pt-ok');
+          this.println('');
+          this.setPrompt();
+          this.openForLocation();
+          this.reveal = null;
+          this.enableSmooth();
+          this.focus();
+        });
       } else if (['2', 'n', 'no', 'normal', 'non-dev', 'nondev'].includes(s)) {
         this.awaitingMode = false;
         try { sessionStorage.setItem(BOOT_KEY, '1'); } catch (e) {}
@@ -1573,7 +1651,7 @@
     help() {
       const rows = [
         ['ls [path]', 'list a section  (auto-runs when you cd)'],
-        ['cd <dir>', 'enter a section, e.g. projects/   ("cd /" = home)'],
+        ['cd <dir>', 'enter a section, e.g. about/   ("cd /" = home)'],
         ['cat <file>', 'read a page in the pager  (q to quit)'],
         ['grep <text>', 'search every page  (shortcut:  /text )'],
         ['tree', 'show the whole site'],
@@ -1588,41 +1666,62 @@
       for (const [c, d] of rows) this.print('  <span class="pt-file">' + esc(c.padEnd(14)) + '</span><span class="pt-muted">' + esc(d) + '</span>');
       this.println('');
       this.println('getting around', 'pt-doc-head');
-      this.println('  type a name directly — e.g. "projects", "about", "getting-started"');
+      this.println('  type a name directly — e.g. "about", "blogs", "showcase"');
       this.println('  Tab completes commands and paths; Tab twice lists options');
       this.println('  click any highlighted path or link');
-      this.println('  Ctrl+T  or  `   toggle the normal website from anywhere');
+      this.println('  `   (backtick)  toggle the normal website from anywhere');
     }
 
     /* ---- effects ---------------------------------------------------- */
-    matrix(duration) {
+    // Matrix rain over the whole terminal. Columns fall from above the top
+    // and start again when they pass the bottom; once the screen has been
+    // covered, the rain fades out while still falling, and the promise
+    // resolves early in that fade so the next screen fades in underneath.
+    matrix() {
       return new Promise((resolve) => {
         const c = this.canvas;
         const ctx = c && c.getContext('2d');
         if (!ctx) return resolve();
+        const dpr = window.devicePixelRatio || 1;
+        const w = c.clientWidth || window.innerWidth;
+        const h = c.clientHeight || window.innerHeight;
+        c.width = w * dpr;
+        c.height = h * dpr;
+        ctx.scale(dpr, dpr);
         c.classList.add('on');
-        c.width = window.innerWidth;
-        c.height = window.innerHeight;
-        const glyphs = 'アイウエオカキクケコ0123456789<>[]{}/\\$#@';
+        const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>[]{}/\\$#@=+*';
         const size = 16;
-        const drops = Array(Math.ceil(c.width / size)).fill(1);
+        const rows = Math.ceil(h / size);
+        const SPEED = 1.6; // average rows per tick
+        const cols = Array.from({ length: Math.ceil(w / size) }, () => ({
+          y: -Math.random() * rows * 0.5,
+          v: SPEED * (0.6 + Math.random() * 0.8),
+        }));
+        // long enough for the average column to reach the bottom
+        const runMs = Math.min(2400, Math.max(1000, (rows * 1.5 / SPEED) * 33));
+        ctx.font = size + 'px "Source Code Pro", monospace';
         const tick = () => {
           ctx.fillStyle = 'rgba(26,27,38,0.14)';
-          ctx.fillRect(0, 0, c.width, c.height);
-          ctx.fillStyle = '#7aa2f7';
-          ctx.font = size + 'px monospace';
-          drops.forEach((d, i) => {
-            ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, d * size);
-            if (d * size > c.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+          ctx.fillRect(0, 0, w, h);
+          cols.forEach((col, i) => {
+            const from = Math.floor(col.y);
+            col.y += col.v;
+            const to = Math.floor(col.y);
+            // every row passed this tick gets a glyph (no gaps in fast
+            // columns): the theme's blue for the trail, a bright head
+            for (let r = Math.max(from + 1, 1); r <= to; r++) {
+              ctx.fillStyle = r === to ? '#c0caf5' : '#7aa2f7';
+              ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, r * size);
+            }
+            if (col.y > rows + 6) col.y = -Math.random() * 8;
           });
         };
         const iv = setInterval(tick, 33);
         setTimeout(() => {
-          clearInterval(iv);
-          c.classList.remove('on');
-          setTimeout(resolve, 400);
-        }, duration);
+          c.classList.remove('on'); // CSS fades the canvas out over 0.8s
+          setTimeout(resolve, 250);
+          setTimeout(() => { clearInterval(iv); ctx.clearRect(0, 0, w, h); }, 900);
+        }, runMs);
       });
     }
 
@@ -1630,7 +1729,7 @@
       if (document.getElementById('pesos-fire')) return;
       this.fireEl = document.createElement('div');
       this.fireEl.id = 'pesos-fire';
-      document.body.appendChild(this.fireEl);
+      this.root.appendChild(this.fireEl);
     }
     fire() {
       this.animating = true;
@@ -1650,6 +1749,32 @@
   /* ---- module-level wiring ------------------------------------------- */
   let term = null;
   const root = document.getElementById('pesos-terminal');
+
+  // Keep the terminal box at the size the screen had when it opened, in CSS
+  // px. Browser zoom changes how big a CSS px is, so zooming out turns the
+  // box into a smaller copy (centred by CSS) with the same line breaks, and
+  // zooming in fills the screen. Zoom changes the window's size in CSS px
+  // but not in physical pixels; a real resize changes both, and is the only
+  // thing that re-measures. The baseline is kept per session, so a reload
+  // while zoomed keeps it. Touch devices (pinch zoom doesn't reflow) just
+  // fill the screen.
+  const FRAME_KEY = 'pesosFrame';
+  function fitFrame() {
+    if (!root || window.matchMedia('(pointer: coarse)').matches) return;
+    const dpr = window.devicePixelRatio || 1;
+    const physW = Math.round(window.innerWidth * dpr);
+    const physH = Math.round(window.innerHeight * dpr);
+    let base = null;
+    try { base = JSON.parse(sessionStorage.getItem(FRAME_KEY) || 'null'); } catch (e) {}
+    if (!base || Math.abs(base.physW - physW) > 3 || Math.abs(base.physH - physH) > 3) {
+      base = { physW, physH, w: window.innerWidth, h: window.innerHeight };
+      try { sessionStorage.setItem(FRAME_KEY, JSON.stringify(base)); } catch (e) {}
+    }
+    root.style.setProperty('--pt-w', base.w + 'px');
+    root.style.setProperty('--pt-h', base.h + 'px');
+  }
+  fitFrame();
+  window.addEventListener('resize', fitFrame);
 
   function ensureTerm(opts) {
     if (!root) return;
@@ -1704,9 +1829,12 @@
 
   document.addEventListener('keydown', onKey, true);
 
-  const hint = document.getElementById('pesos-dev-hint');
-  if (hint) hint.addEventListener('click', enterDevMode);
-  document.querySelectorAll('[data-terminal-toggle]').forEach((el) =>
+  // the nav's ">_ Terminal" links (the nav itself isn't changed for this)
+  const toggles = [
+    ...document.querySelectorAll('.term-btn'),
+    ...[...document.querySelectorAll('.nav__drawer a[href="#"]')].filter((a) => /terminal/i.test(a.textContent || '')),
+  ];
+  toggles.forEach((el) =>
     el.addEventListener('click', (e) => { e.preventDefault(); enterDevMode(); })
   );
 

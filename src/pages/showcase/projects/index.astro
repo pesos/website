@@ -4,7 +4,7 @@ import Crumb from '@/components/Crumb.astro';
 import SectionTabs from '@/components/SectionTabs.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
 import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
-import { PROJECTS, OTHER_PROJECTS, PROJECT_STATS, PROJECT_FILTERS, PROJECT_CRITERIA } from '@/data/projects';
+import { PROJECTS, OTHER_PROJECTS, PROJECT_STATS, PROJECT_FILTERS } from '@/data/projects';
 
 const featured = PROJECTS.find((p) => p.featured)!;
 const rest = PROJECTS.filter((p) => !p.featured);
@@ -134,7 +134,10 @@ const rest = PROJECTS.filter((p) => !p.featured);
         the community to get contributions. Here's what we look for:
       </p>
       <ul class="check-list" style="margin-bottom:20px;max-width:70ch">
-        {PROJECT_CRITERIA.map((c) => <li>{c}</li>)}
+        <li>Written in any language or framework, as long as it carries an open-source license</li>
+        <li>Accessible enough for new contributors to get involved (an obscure stack is a harder sell)</li>
+        <li>Well documented at all times, and run like an organized open-source project</li>
+        <li>You commit to maintaining it long-term, and stay responsive to questions</li>
       </ul>
       <a class="btn btn--primary" href="/contact/">Pitch a project</a>
     </div>

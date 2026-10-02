@@ -63,20 +63,6 @@ The data files follow a clear rule: show real information or visible placeholder
 
 As a result, `initCalendar` in `main.ts`, which was built for a dated events calendar, is still in the bundle but no page uses it. It also hard-codes the view to September 2026.
 
-## Two UIs, one content source: the terminal
+## Deferred: "Terminal" (TUI) edition
 
-**Decision:** the site ships two UIs on every route: the normal website and a terminal (`src/components/TerminalMode.astro`, mounted by `BaseLayout`). The terminal reads a JSON manifest (`/terminal-content.json`) that `src/lib/terminalContent.ts` builds **by rendering every page with Astro's container API and converting its `<main>` to markdown** (with Turndown).
-
-**Why:** the terminal must offer everything the website does, and page content is written in many places: `src/data`, page frontmatter, page markup, `/blogs` markdown. Reading the rendered pages means every one of those reaches the terminal with no copy to keep in sync. An earlier version built the terminal from `src/data` and hand-copied the rest, and the copies went stale as soon as pages were edited.
-
-**How it works:**
-- **File tree:** a page's route is its terminal path (`/about/goals/` → `/about/goals`). A route other pages live under becomes that directory's `README` (`/showcase/projects/` → `/showcase/projects/README`). Directory names and blurbs come from `NAV` and `SECTIONS`.
-- **Clean-up:** website-only widgets (filter bars, search, breadcrumbs, image placeholders, `aria-hidden`/`hidden` elements, `[data-terminal-skip]`) are dropped, and a few patterns get custom markdown: section headers, stat tiles, numbered steps, card links, FAQ accordions, and the contact form, which becomes a pointer to `send`.
-- **Routes:** every terminal file and directory records the website `route` it stands for. The terminal keeps the address bar on that route. Loading any URL in terminal mode opens its terminal page, and switching back loads the website page for the last thing opened.
-- **Contact form:** the terminal's `send` command asks for the same fields, runs the same checks and posts to the same Formspree endpoint (`LINKS.formspree`) as the form on `/contact/`.
-
-**Trade-offs:**
-- Terminal pages read like the website converted to text, not hand-written terminal pages. A new kind of widget may need a `SKIP` selector or a conversion rule.
-- Under `npm run dev` the manifest is rebuilt on every request (it renders every page, so it takes a moment); in a build it's made once.
-- Mode is per session (`sessionStorage.pesosMode`), and a new session starts on the terminal's boot screen, which asks the visitor to choose a UI.
-- Browsers reserve Ctrl+T, so the toggles that actually work are backtick and the nav's `>_ Terminal` button.
+The nav's `>_ Terminal` button and the footer's "TUI edition coming soon" refer to a separate terminal-style version of the site that isn't built yet. The button links to `#`.

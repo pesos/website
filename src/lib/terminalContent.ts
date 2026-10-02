@@ -19,8 +19,7 @@
 
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import TurndownService from 'turndown';
-import { SITE, LINKS, NAV, SECTIONS } from '../data/site';
-import { CONTACT_SUBJECTS } from '../data/contact';
+import { SITE, NAV, SECTIONS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { getAllPosts } from './posts';
 
@@ -40,6 +39,12 @@ type PageModule = {
   getStaticPaths?: () => Promise<{ params: Record<string, string>; props?: Record<string, unknown> }[]> | any[];
 };
 
+// Per-page things to leave out of the terminal, by route.
+const PAGE_SKIP: Record<string, string> = {
+  // the home page's "Club Sections" cards: `ls` lists the same sections
+  '/': 'section.section',
+};
+
 // Routes that intentionally have no terminal page.
 const NO_TERMINAL_PAGE = new Set(['/404', '/500', '/error']);
 
@@ -56,7 +61,7 @@ const norm = (route: string) => '/' + route.replace(/^\/+|\/+$/g, '');
 const is = (node: Node, selector: string) => node.nodeType === 1 && (node as HTMLElement).matches(selector);
 const oneLine = (s: string) => s.replace(/\s+/g, ' ').trim();
 
-function makeTurndown() {
+function makeTurndown(extraSkip = '') {
   const td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
   // the terminal renders text as-is, so markdown escapes would show up as backslashes
   td.escape = (s: string) => s;
@@ -143,7 +148,8 @@ function makeTurndown() {
       !(node as HTMLElement).querySelector('p, h1, h2, h3, article'),
     replacement: () => '',
   });
-  td.addRule('skip', { filter: (node) => is(node, SKIP), replacement: () => '' });
+  const skip = extraSkip ? SKIP + ',' + extraSkip : SKIP;
+  td.addRule('skip', { filter: (node) => is(node, skip), replacement: () => '' });
   return td;
 }
 
@@ -188,6 +194,9 @@ async function build() {
 
   // --- render every page ----------------------------------------------------
   const pages: { route: string; title: string; body: string }[] = [];
+  // the contact form, read off the rendered contact page: where it posts and
+  // its subject options (the terminal's `send` asks the same things)
+  let form: { action?: string; subjects: string[] } = { subjects: [] };
   for (const [file, mod] of Object.entries(modules)) {
     const pattern = fileRoute(file);
     if (NO_TERMINAL_PAGE.has(pattern)) continue;
@@ -207,7 +216,17 @@ async function build() {
       const title = (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '')
         .replace(/&amp;/g, '&')
         .replace(` · ${SITE.name}`, '');
-      pages.push({ route: v.route, title, body: htmlToMarkdown(td, html) });
+      const pageTd = PAGE_SKIP[v.route] ? makeTurndown(PAGE_SKIP[v.route]) : td;
+      pages.push({ route: v.route, title, body: htmlToMarkdown(pageTd, html) });
+      const formTag = html.match(/<form\b[^>]*>[\s\S]*?<select[^>]*name="subject"[\s\S]*?<\/select>/);
+      if (formTag) {
+        form = {
+          action: formTag[0].match(/^<form\b[^>]*\baction="([^"]+)"/)?.[1],
+          subjects: [...formTag[0].matchAll(/<option(?: value="([^"]*)")?[^>]*>([^<]*)<\/option>/g)]
+            .filter(([, value]) => value !== '')
+            .map(([, , text]) => text.trim()),
+        };
+      }
     }
   }
 
@@ -262,8 +281,8 @@ async function build() {
       pages: Object.keys(entries).length,
       posts: posts.length,
       founded: SITE.founded,
-      formspree: (LINKS as Record<string, string>).formspree,
-      subjects: CONTACT_SUBJECTS,
+      formspree: form.action,
+      subjects: form.subjects,
       generatedAt: new Date().toISOString(),
     },
   };

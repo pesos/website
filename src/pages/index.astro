@@ -2,7 +2,16 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import HeroGlyphs from '@/components/HeroGlyphs.astro';
 import { SITE, SECTIONS } from '@/data/site';
-import { HOME_TECH as tech } from '@/data/home';
+
+// Every item is unique and one pass is wider than any viewport, so the
+// marquee never shows the same label twice on screen.
+const tech = [
+  'Linux', 'Git', 'Go', 'Rust', 'Python', 'C', 'C++', 'TypeScript', 'Bash', 'Vim',
+  'Neovim', 'Emacs', 'Docker', 'Kubernetes', 'PostgreSQL', 'SQLite', 'Redis', 'Nginx',
+  'GCC', 'LLVM', 'Node.js', 'Deno', 'Astro', 'React', 'Django', 'Flask', 'Arch Linux',
+  'Debian', 'Fedora', 'tmux', 'GNU Make', 'Wireshark', 'Firefox', 'Blender', 'GIMP',
+  'Kdenlive', 'VS Code', 'Jupyter', 'PyTorch', 'NumPy', 'Hugo', 'Jekyll', 'Mastodon',
+];
 ---
 
 <BaseLayout description="PESOS, the student-run open-source community at PES University.">
