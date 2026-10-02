@@ -63,6 +63,18 @@ The data files follow a clear rule: show real information or visible placeholder
 
 As a result, `initCalendar` in `main.ts`, which was built for a dated events calendar, is still in the bundle but no page uses it. It also hard-codes the view to September 2026.
 
-## Deferred: "Terminal" (TUI) edition
+## Two UIs, one content source: the terminal
 
-The nav's `$ Terminal` button and the footer's "TUI edition coming soon" refer to a separate terminal-style version of the site that isn't built yet. The button links to `#`.
+**Decision:** the site ships two UIs on every route: the normal website and a terminal (`src/components/TerminalMode.astro`, mounted by `BaseLayout`). The terminal reads a JSON manifest (`/terminal-content.json`) that `src/lib/terminalContent.ts` builds at build time **from the same `src/data/*` modules the pages render**.
+
+**Why:** the terminal must offer everything the website does. Building both from one data source means an edit to a project, post or FAQ shows up in both. That's also why page-local arrays (home sections, about, blog posts, contact FAQs, join-step links, project criteria) moved into `src/data`.
+
+**How the two stay in sync:**
+- **Parity guard:** the build fails if a route under `src/pages` has no terminal entry.
+- **Routes:** every terminal file and directory records the website `route` it stands for. The terminal keeps the address bar on that route. Loading any URL in terminal mode opens its terminal page, and switching back loads the website page for the last thing opened.
+- **Contact form:** the terminal's `send` command asks for the same fields, runs the same checks and posts to the same Formspree endpoint as the form on `/contact/`.
+
+**Trade-offs:**
+- Some lead paragraphs and prose (for example `pesos-101.astro`) exist only in page markup, so `terminalContent.ts` keeps a copy marked `mirrors <page>`. Update it when you edit those pages.
+- Mode is per session (`sessionStorage.pesosMode`), and a new session starts on the terminal's boot screen, which asks the visitor to choose a UI.
+- Browsers reserve Ctrl+T, so the toggles that actually work are backtick and the nav's `$ Terminal` button.

@@ -48,27 +48,18 @@ import { LINKS } from '../data/site';
 
     <SectionHeader num="02" title="Step-by-Step Guide" center />
     <div class="grid-3">
-      {JOIN_STEPS.map((s, i) => {
-        const hrefs = [
-          'https://github.com/signup',
-          LINKS.membersRepo,
-          `${LINKS.membersRepo}/blob/master/OSIRIS-members-list.md`,
-          `${LINKS.membersRepo}/pulls`,
-          LINKS.slack,
-        ];
-        return (
-          <article id={`step-${s.n}`} class="card card--spotlight reveal" style={`--d:${i * 50}ms`}>
-            <div class="img-ph" style="min-height:110px;margin-bottom:14px;font-size:1.4rem;letter-spacing:0">{s.n}</div>
-            <span class="tag">{s.tag}</span>
-            <h3 class="h3" style="margin:10px 0 6px">{s.title}</h3>
-            <p class="muted" style="font-size:.9rem">{s.desc}</p>
-            <div class="mono muted" style="font-size:.76rem;margin-top:10px">
-              {s.meta.map((m) => <div>{m}</div>)}
-            </div>
-            <a class="btn btn--ghost btn--sm" href={hrefs[i]} target="_blank" rel="noopener" style="margin-top:12px">View step</a>
-          </article>
-        );
-      })}
+      {JOIN_STEPS.map((s, i) => (
+        <article id={`step-${s.n}`} class="card card--spotlight reveal" style={`--d:${i * 50}ms`}>
+          <div class="img-ph" style="min-height:110px;margin-bottom:14px;font-size:1.4rem;letter-spacing:0">{s.n}</div>
+          <span class="tag">{s.tag}</span>
+          <h3 class="h3" style="margin:10px 0 6px">{s.title}</h3>
+          <p class="muted" style="font-size:.9rem">{s.desc}</p>
+          <div class="mono muted" style="font-size:.76rem;margin-top:10px">
+            {s.meta.map((m) => <div>{m}</div>)}
+          </div>
+          <a class="btn btn--ghost btn--sm" href={s.href} target="_blank" rel="noopener" style="margin-top:12px">View step</a>
+        </article>
+      ))}
     </div>
 
     <div style="margin-top:64px">

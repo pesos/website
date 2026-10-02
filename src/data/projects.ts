@@ -190,3 +190,11 @@ export const PROJECT_FILTERS = {
   stack: ['Tech Stack', 'Go', 'Rust', 'Python'],
   category: ['Category', 'CLI', 'Library'],
 };
+
+// "Want to start your own project?" — what the club looks for in a pitch.
+export const PROJECT_CRITERIA = [
+  'Written in any language or framework, as long as it carries an open-source license',
+  'Accessible enough for new contributors to get involved (an obscure stack is a harder sell)',
+  'Well documented at all times, and run like an organized open-source project',
+  'You commit to maintaining it long-term, and stay responsive to questions',
+];

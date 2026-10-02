@@ -1,25 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Crumb from '../components/Crumb.astro';
-import { LINKS, SITE } from '../data/site';
-
-const socials = [
-  { h: 'Slack', s: 'Our main channel — most members are here', href: LINKS.slack },
-  { h: 'GitHub', s: 'github.com/pesos', href: LINKS.github },
-  { h: 'Instagram', s: '@pes.opensource', href: LINKS.instagram },
-  { h: 'Twitter / X', s: '@pesopensource', href: LINKS.twitter },
-];
-const stats = [
-  { k: 'Founded', v: String(SITE.founded) },
-  { k: 'Members', v: '30+' },
-  { k: 'Public Repos', v: '27' },
-];
-const faqs = [
-  { q: 'What is the fastest way to reach you?', a: 'Slack — that\'s where the community actually lives and where most questions get answered fastest. The form on this page works too, and reaches the team directly.' },
-  { q: 'Where and when are your meet-ups held?', a: 'On campus, twice a week during the semester. The exact day, time and room are announced on Slack each week — join to see what\'s next.' },
-  { q: 'Can I attend a meeting before becoming a member?', a: 'Absolutely. Open work sessions are open to anyone curious. Bring a laptop and introduce yourself.' },
-  { q: 'Do you accept partnership or project proposals?', a: 'Yes — use the form, or reach out on Slack. See the "start your own project" criteria on the Projects page.' },
-];
+import { LINKS } from '../data/site';
+import { SOCIALS as socials, CONTACT_STATS as stats, FAQS as faqs, CONTACT_SUBJECTS } from '../data/contact';
 ---
 
 <BaseLayout title="Contact" description="Get in touch with PES Open Source.">
@@ -94,8 +77,7 @@ const faqs = [
           <span class="field__label">Subject <span class="req">*</span></span>
           <select class="select" name="subject" required>
             <option value="">Select a subject…</option>
-            <option>General inquiry</option><option>Join the club</option>
-            <option>Project proposal</option><option>Code of Conduct concern</option>
+            {CONTACT_SUBJECTS.map((s) => <option>{s}</option>)}
           </select>
           <span class="field__error">Please pick a subject.</span>
         </label>

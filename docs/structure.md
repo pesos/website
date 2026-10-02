@@ -95,7 +95,8 @@ Each file exports a type and one or more arrays. Pages import from here instead 
 
 | Component | Props | Purpose |
 |---|---|---|
-| `Nav` | none | Logo, `NAV_LINKS`, theme toggle, placeholder `$ Terminal` button, mobile drawer |
+| `Nav` | none | Logo, `NAV_LINKS`, theme toggle, `$ Terminal` button (`data-terminal-toggle`), mobile drawer |
+| `TerminalMode` | own `<script>` | The terminal UI, on every page. Content comes from `/terminal-content.json` (`src/lib/terminalContent.ts`). See [decisions.md](decisions.md#two-uis-one-content-source-the-terminal) |
 | `Footer` | none | Tagline, `FOOTER.clubLinks`, `FOOTER.socialLinks` |
 | `Crumb` | `items: {label, href?}[]` | Breadcrumb; the last item without an `href` is rendered as the current page |
 | `GuideTabs` | `active: string` | Tab strip shared by the "Getting Started" pages (`GUIDE_TABS`) |

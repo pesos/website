@@ -1,3 +1,5 @@
+import { LINKS } from './site';
+
 // Ported from the old site's get-started/whats-in-it-for-me page.
 export type GuideSection = {
   title: string;
@@ -81,6 +83,7 @@ export const JOIN_STEPS = [
     title: 'Create a GitHub Account',
     desc: "Sign up for a free GitHub account if you don't already have one.",
     meta: ['~2 min', 'Free forever', 'github.com/signup'],
+    href: 'https://github.com/signup',
   },
   {
     n: '02',
@@ -88,6 +91,7 @@ export const JOIN_STEPS = [
     title: 'Fork the Members Repo',
     desc: 'Go to the members-list repository and click Fork in the top right corner.',
     meta: ['~1 min', 'One click', 'github.com/pesos/members-list'],
+    href: LINKS.membersRepo,
   },
   {
     n: '03',
@@ -95,6 +99,7 @@ export const JOIN_STEPS = [
     title: 'Add Your Name & Bio',
     desc: 'In your fork, open OSIRIS-members-list.md and add your name, SRN, GitHub profile and a short, genuine bio.',
     meta: ['~3 min', 'Any text editor', 'OSIRIS-members-list.md'],
+    href: `${LINKS.membersRepo}/blob/master/OSIRIS-members-list.md`,
   },
   {
     n: '04',
@@ -102,6 +107,7 @@ export const JOIN_STEPS = [
     title: 'Open a Pull Request',
     desc: 'In your forked repository, click New Pull Request, select your fork, add a title and description, then Create Pull Request.',
     meta: ['~2 min', 'GitHub UI', 'Pull Requests tab'],
+    href: `${LINKS.membersRepo}/pulls`,
   },
   {
     n: '05',
@@ -109,5 +115,6 @@ export const JOIN_STEPS = [
     title: 'Join Slack and Discord',
     desc: 'VERY IMPORTANT: join both our Slack and Discord after your PR is merged. Set Slack notifications to "All new messages" so you don\'t miss updates.',
     meta: ['~2 min', 'Required step', 'Slack workspace'],
+    href: LINKS.slack,
   },
 ];

@@ -139,6 +139,10 @@ Without an http(s) `action`, the form only validates and shows `.form-success`. 
 | In-page tabs | `data-tabs` wrapper, `data-tab="X"` buttons, `data-panel="X"` panels |
 | Accordion | `.accordion__btn` immediately followed by its panel element |
 
+## Adding a page (terminal UI)
+
+Every route must also exist in the terminal, or `npm run build` fails with `[terminal] website routes with no terminal page: …`. Add an entry in `src/lib/terminalContent.ts` using the `page(path, route, title, body)` helper, and build the body from the same `src/data` module the page uses.
+
 ## Common problems
 
 - **Build error `Cannot read properties of undefined` on `/projects/`, `/events/` or `/perks/`**: no entry has `featured: true`.
