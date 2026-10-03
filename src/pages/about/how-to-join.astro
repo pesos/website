@@ -80,10 +80,10 @@ const include = [
   .process { padding-top: 28px; }
 
   .card {
-    background: #0f1211;
-    border: 1px solid rgba(248, 243, 239, 0.12);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: var(--r);
-    transition: border-color 0.2s ease, transform 0.15s ease;
+    transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
   }
 
   .steps {
@@ -110,7 +110,7 @@ const include = [
     right: -20px;
     width: 20px;
     height: 1px;
-    background: rgba(248, 243, 239, 0.16);
+    background: var(--border-strong);
   }
 
   .step-num {
@@ -126,7 +126,7 @@ const include = [
     font-size: 0.9rem;
     line-height: 1.55;
     margin: 0;
-    color: #c9c4bf;
+    color: var(--text-dim);
   }
 
   /* What to include */
@@ -139,11 +139,11 @@ const include = [
     gap: 6px;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: #c9c4bf;
+    color: var(--text-dim);
   }
   .prep-list li::marker { color: var(--neon); }
 
-  .note { font-size: 0.8rem; color: #9da39f; margin: 28px 0 0; }
+  .note { font-size: 0.8rem; color: var(--text-mute); margin: 28px 0 0; }
 
   /* Button (inside step 01), pinned to card bottom */
   .btn.cta {
@@ -157,22 +157,22 @@ const include = [
     padding: 10px 20px;
     font-size: 0.8rem;
     letter-spacing: 0.05em;
-    background: #090c0b;
-    border: 1px solid rgba(248, 243, 239, 0.16);
-    color: #f8f3ef;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
   /* spacing above button without breaking margin-top:auto pinning */
   .step-desc + .btn.cta { margin-top: auto; }
   .step:has(.btn.cta) .step-desc { margin-bottom: 18px; }
 
   .btn.cta:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
-  .btn.cta:active { background: rgba(62, 207, 142, 0.18); border-color: var(--neon); color: var(--neon); }
+  .btn.cta:active { background: var(--neon-soft); border-color: var(--neon); color: var(--neon); }
 
   .arr { transition: transform 0.15s ease; }
 
   @media (hover: hover) {
-    .btn.cta:hover { background: rgba(62, 207, 142, 0.12); border-color: var(--neon); color: var(--neon); }
+    .btn.cta:hover { background: var(--neon-soft); border-color: var(--neon); color: var(--neon); }
     .btn.cta:hover .arr { transform: translateX(3px); }
     .step:hover { border-color: var(--neon-line); transform: translateY(-2px); }
   }
