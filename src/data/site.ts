@@ -81,7 +81,7 @@ export const SECTIONS = [
   { n: '02', label: 'About', title: 'About', desc: 'Upcoming events, our goals, how to join and member perks.', href: '/about/events/', cta: 'Learn more' },
   { n: '03', label: 'Blogs', title: 'Blogs and Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
   { n: '04', label: 'Contact', title: 'Contact Us', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
-  { n: '05', label: 'Showcase', title: 'Showcase and Engagement', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
+  { n: '05', label: 'Showcase', title: 'Projects and Archive', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
 ];
 
 export const FOOTER = {
