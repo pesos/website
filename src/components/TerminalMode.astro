@@ -9,8 +9,8 @@
 //  - html.mode-dev    -> the website (every other child of <body>) fades out
 //                        and is made inert; this fills the screen
 //  - html.mode-normal -> this fades out, the normal website shows
-// Backtick toggles (Ctrl+T too, where the browser lets it through); the
-// choice is kept per session. The nav's existing ">_ Terminal" links (found
+// The normal website loads first. Backtick toggles (Ctrl+T too, where the
+// browser lets it through); the choice is kept per session. The nav's existing ">_ Terminal" links (found
 // by .term-btn / their text, the nav itself is untouched) open it too.
 //
 // The terminal keeps the address bar on the website route of whatever it is
@@ -22,12 +22,14 @@
 // /terminal-content.json (see src/lib/terminalContent.ts). Theme: Tokyo Night.
 ---
 
-<!-- pick the mode before the website paints (this is the first thing in <body>) -->
+<!-- pick the mode before the website paints (this is the first thing in <body>).
+     The website is the default; the terminal only opens once the visitor
+     chooses it (>_ Terminal, backtick), and then stays on for the session. -->
 <script is:inline>
   (function () {
-    var dev = true;
+    var dev = false;
     try {
-      dev = sessionStorage.getItem('pesosMode') !== 'normal';
+      dev = sessionStorage.getItem('pesosMode') === 'dev';
     } catch (e) {}
     document.documentElement.classList.add(dev ? 'mode-dev' : 'mode-normal');
     if (dev) {

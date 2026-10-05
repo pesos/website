@@ -25,7 +25,7 @@ The website is then exactly as it would be without the terminal. Nothing else in
 
 - **Hiding the website:** in terminal mode every other child of `<body>` is faded out and made `inert`. No wrapper element is added.
 - **Opening it:** backtick, or the nav's existing `>_ Terminal` button and drawer link, which the terminal finds by their class and text. The nav markup isn't changed.
-- **Mode:** kept per session (`sessionStorage.pesosMode`). A new session starts on the terminal's boot screen, which asks the visitor to pick a UI.
+- **Mode:** a new visit always starts on the normal website. Opening the terminal sets `sessionStorage.pesosMode` to `dev`, so it stays open across page loads for the rest of that session; `exit` (or backtick) switches back and sets it to `normal`.
 - **Contact form:** the terminal's `send` command reads the subjects and destination from the rendered contact page's form, and posts to the same place.
 
 ## Content
