@@ -29,15 +29,15 @@ export const NAV: NavSection[] = [
   },
   {
     label: 'About',
-    href: '/about/events/',
+    href: '/about/goals/',
     base: '/about/',
     children: [
-      { label: 'Upcoming Events', href: '/about/events/' },
       { label: 'Goals', href: '/about/goals/' },
       { label: 'How to Join', href: '/about/how-to-join/' },
       { label: 'Perks', href: '/about/perks/' },
     ],
   },
+  { label: 'Upcoming Events', href: '/events/', base: '/events/', children: [] },
   {
     label: 'Blogs and Resources',
     href: '/blogs/',
@@ -48,9 +48,8 @@ export const NAV: NavSection[] = [
       { label: 'Resources', href: '/blogs/resources/' },
     ],
   },
-  { label: 'Contact Us', href: '/contact/', base: '/contact/', children: [] },
   {
-    label: 'Showcase and Engagement',
+    label: 'Projects and Archive',
     href: '/showcase/archive/',
     base: '/showcase/',
     children: [
@@ -58,9 +57,15 @@ export const NAV: NavSection[] = [
       { label: 'Projects', href: '/showcase/projects/' },
     ],
   },
+  { label: 'Contact Us', href: '/contact/', base: '/contact/', children: [] },
 ];
 
-export const navSection = (label: string) => NAV.find((s) => s.label === label)!;
+export const navSection = (label: string) => {
+  const sec = NAV.find((s) => s.label === label);
+  // a renamed section would otherwise crash later with "reading 'children'"
+  if (!sec) throw new Error(`No NAV section labelled "${label}" (labels: ${NAV.map((s) => s.label).join(', ')})`);
+  return sec;
+};
 
 // real, published channels; see github.com/pesos/members-list and the
 // (archived) get-started/communication-channels page on the old site
@@ -78,10 +83,10 @@ export const LINKS = {
 
 export const SECTIONS = [
   { n: '01', label: 'Start', title: 'Getting Started', desc: 'Learn why open source matters and how to make your first contribution.', href: '/getting-started/', cta: 'Explore' },
-  { n: '02', label: 'About', title: 'About', desc: 'Upcoming events, our goals, how to join and member perks.', href: '/about/events/', cta: 'Learn more' },
+  { n: '02', label: 'About', title: 'About', desc: 'Our goals, how to join and member perks.', href: '/about/goals/', cta: 'Learn more' },
   { n: '03', label: 'Blogs', title: 'Blogs and Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
   { n: '04', label: 'Contact', title: 'Contact Us', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
-  { n: '05', label: 'Showcase', title: 'Showcase and Engagement', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
+  { n: '05', label: 'Showcase', title: 'Projects and Archive', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
 ];
 
 export const FOOTER = {

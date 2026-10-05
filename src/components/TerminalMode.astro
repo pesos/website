@@ -1,0 +1,1866 @@
+---
+// Developer Mode: the whole site, browsable as markdown inside a terminal.
+//
+// Self-contained: the main website knows nothing about it. BaseLayout.astro
+// only imports it and renders <TerminalMode /> as the first thing in <body>;
+// delete those two lines (and this file, src/lib/terminalContent.ts,
+// src/pages/terminal-content.json.ts, the turndown dependency) and the
+// website is exactly as it was. Everything else hooks in from the outside:
+//  - html.mode-dev    -> the website (every other child of <body>) fades out
+//                        and is made inert; this fills the screen
+//  - html.mode-normal -> this fades out, the normal website shows
+// The normal website loads first. Backtick toggles (Ctrl+T too, where the
+// browser lets it through); the choice is kept per session. The nav's existing ">_ Terminal" links (found
+// by .term-btn / their text, the nav itself is untouched) open it too.
+//
+// The terminal keeps the address bar on the website route of whatever it is
+// showing, so switching back lands on the matching page, and loading any
+// route in dev mode opens its terminal equivalent.
+//
+// Reading a file (`cat`) opens a man/less-style pager: top of file, arrow
+// keys / j k / space / g G to move, q to quit. Content comes from
+// /terminal-content.json (see src/lib/terminalContent.ts). Colours: the website's own palette,
+// dark or light to match the site's theme.
+---
+
+<!-- pick the mode before the website paints (this is the first thing in <body>).
+     The website is the default; the terminal only opens once the visitor
+     chooses it (>_ Terminal, backtick), and then stays on for the session. -->
+<script is:inline>
+  (function () {
+    var dev = false;
+    try {
+      dev = sessionStorage.getItem('pesosMode') === 'dev';
+    } catch (e) {}
+    document.documentElement.classList.add(dev ? 'mode-dev' : 'mode-normal');
+    if (dev) {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('body > :not(#pesos-terminal):not(script)').forEach(function (el) {
+          el.inert = true;
+        });
+      });
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700&display=swap" rel="stylesheet" />
+
+<div id="pesos-terminal" aria-hidden="true">
+  <canvas class="pt-matrix"></canvas>
+
+  <div class="pt-window">
+    <div class="pt-scrollback" role="log" aria-live="polite"></div>
+    <div class="pt-input-line">
+      <span class="pt-prompt"></span>
+      <span class="pt-typed"></span>
+      <span class="pt-cursor"></span>
+      <input
+        class="pt-input"
+        type="text"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="terminal input"
+      />
+    </div>
+  </div>
+
+  <div class="pt-pager" hidden>
+    <div class="pt-pager-body"></div>
+    <div class="pt-pager-status"></div>
+  </div>
+
+  <div class="pt-nyan" aria-hidden="true">
+    <div class="pt-nyan-rain"></div>
+    <div class="pt-nyan-cat">
+      <!-- pixel cat: frames adapted from github.com/iliana/html5nyancat -->
+      <svg class="pt-nc" viewBox="0 0 21 34" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><g transform="translate(21,0) rotate(90)"><g class="pt-nc-frame pt-nc-f1"><g transform="translate(1,0)" style="display:inline"><g transform="translate(4,-1032.3622)"><path d="m 0,50 0,-3 1,0 0,-1 4,0 0,3 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 1,49 0,-2 3,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(4,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,29,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 24,49 0,-1 4,0 0,1 -1,0 0,1 -2,0 0,-1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 25,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g><path d="M 0,10 0,7 4,7 4,8 5,8 5,9 6,9 6,14 5,14 5,13 3,13 3,12 2,12 2,11 1,11 1,10 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 1,9 0,-1 2,0 0,1 1,0 0,1 1,0 0,1 1,0 0,1 -2,0 0,-1 -1,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f2"><g transform="translate(1,-1)"><g transform="translate(0,-1031.3622)"><g><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,30,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,1032.3622)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,35,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g></g><g class="pt-nc-frame pt-nc-f3"><g transform="translate(1,1)"><g><path d="m 6,20 0,-4 4,0 0,3 -1,0 0,1 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,17 2,0 0,2 -2,0 z" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,21,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,31,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,36,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 0,14 0,-2 2,0 0,-1 3,0 0,-1 1,0 0,4 -1,0 0,1 -4,0 0,-1 z" style="fill:#000000;stroke:none" /><path d="m 1,14 0,-1 1,0 0,-1 4,0 0,1 -2,0 0,1 z" style="fill:#999999;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f4"><g transform="translate(1,0)"><g transform="translate(0,-1031.3622)"><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,30,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,1)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,35,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(1,0,0,-1,0,1058.3622)"><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f5"><g transform="translate(1,0)"><g transform="translate(0,1)"><path d="m 3,20 0,-3 1,0 0,-1 1,0 0,-1 3,0 0,3 -1,0 0,1 -1,0 0,1 z" style="fill:#000000;stroke:none" /><path d="m 4,19 0,-2 1,0 0,-1 2,0 0,2 -1,0 0,1 z" style="fill:#999999;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,28,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,1)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,33,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,1)"><path d="M -1,11 -1,9 0,9 0,8 4,8 4,9 6,9 6,13 4,13 4,12 1,12 1,11 z" style="fill:#000000;stroke:none" /><path d="m 0,10 0,-1 3,0 0,1 2,0 0,1 1,0 0,1 -1,0 0,-1 -4,0 0,-1 z" style="fill:#999999;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f6"><g transform="translate(1,0)"><g transform="translate(0,1)"><path d="m 3,20 0,-3 1,0 0,-1 1,0 0,-1 3,0 0,3 -1,0 0,1 -1,0 0,1 z" style="fill:#000000;stroke:none" /><path d="m 4,19 0,-2 1,0 0,-1 1,0 0,1 1,0 0,1 -1,0 0,1 z" style="fill:#999999;stroke:none" /></g><g transform="matrix(-1,0,0,1,32,-1031.3622)"><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(3,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(12,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="translate(0,-1033.3622)"><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g></g></svg>
+    </div>
+  </div>
+</div>
+
+
+<style is:global>
+  /* ---- palette: the website's own ----------------------------------- */
+  /* Same tokens as src/styles/global.css (dark default, light override), so
+     the terminal looks like the rest of the site and follows its theme. The
+     --ptn-* names are roles used throughout the rules below:
+       blue = main accent (dirs, headings, prompt), cyan = links,
+       magenta/teal = secondary accent, yellow = bold, orange/red = numbers
+       and errors (the site has no tokens for those two). */
+  :root {
+    --ptn-bg: #0b0e0d;                       /* --bg */
+    --ptn-bg-dark: #090c0b;                  /* --bg-inset: code blocks */
+    --ptn-bg-hl: #161b19;                    /* a step above --bg-card */
+    --ptn-fg: #f8f3ef;                       /* --text */
+    --ptn-fg-dim: rgba(248, 243, 239, 0.66); /* --text-dim */
+    --ptn-comment: rgba(248, 243, 239, 0.42);/* --text-mute */
+    --ptn-red: #ff5c5c;                      /* the site's form-error red */
+    --ptn-orange: #f5b971;
+    --ptn-yellow: #f8f3ef;                   /* bold = bright text, like .prose strong */
+    --ptn-green: #3ecf8e;                    /* --neon */
+    --ptn-teal: #94e6b7;                     /* --neon-2 */
+    --ptn-cyan: #94e6b7;
+    --ptn-blue: #3ecf8e;
+    --ptn-blue0: rgba(62, 207, 142, 0.34);   /* --neon-line */
+    --ptn-magenta: #94e6b7;
+    /* Text size, matching the website's 15px body text. The terminal fills
+       the window and sizes text in px, so browser zoom works like on any
+       page: text grows or shrinks and lines reflow to the new width. The
+       nyan scrollbar and the matrix rain are pinned to the screen in
+       viewport units, the same size at any zoom. */
+    --pt-font: 15px;
+  }
+
+  :root[data-theme='light'] {
+    --ptn-bg: #fbfaf8;
+    --ptn-bg-dark: #f2f0ec;
+    --ptn-bg-hl: #ebe8e2;
+    --ptn-fg: #10201a;
+    --ptn-fg-dim: #4d5a54;
+    --ptn-comment: #7c8781;
+    --ptn-red: #d33a3a;
+    --ptn-orange: #b4691b;
+    --ptn-yellow: #10201a;
+    --ptn-green: #0f8f56;
+    --ptn-teal: #0b6e43;
+    --ptn-cyan: #0f8f56;
+    --ptn-blue: #0f8f56;
+    --ptn-blue0: rgba(15, 143, 86, 0.32);
+    --ptn-magenta: #0b6e43;
+  }
+
+  /* ---- mode switching + smooth toggle -------------------------------- */
+  #pesos-terminal { display: none; }
+  html.mode-dev #pesos-terminal,
+  html.mode-normal #pesos-terminal { display: flex; }
+
+  html.mode-dev,
+  html.mode-dev body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--ptn-bg);
+  }
+  /* the website: every other child of <body>. The fade only exists while
+     switching (html.pt-switching), so the website's own styles are never
+     touched while it's showing. */
+  html.pt-switching body > :not(#pesos-terminal) { transition: opacity 0.3s ease; }
+  html.mode-dev body > :not(#pesos-terminal) { opacity: 0; }
+
+  #pesos-terminal {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--ptn-bg);
+    color: var(--ptn-fg);
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+    font-size: var(--pt-font);
+    line-height: 1.6;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  }
+  html.mode-dev #pesos-terminal {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+
+
+  /* ---- chrome --------------------------------------------------------- */
+  #pesos-terminal .pt-matrix {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+  }
+  #pesos-terminal .pt-matrix.on { opacity: 0.4; }
+
+  #pesos-terminal .pt-window,
+  #pesos-terminal .pt-pager-body {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  #pesos-terminal .pt-window::-webkit-scrollbar,
+  #pesos-terminal .pt-pager-body::-webkit-scrollbar { width: 0; height: 0; }
+
+  #pesos-terminal .pt-window {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25em 3.2em 1.25em 2.85em;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #pesos-terminal .pt-window.pt-smooth,
+  #pesos-terminal .pt-pager-body.pt-smooth { scroll-behavior: smooth; }
+
+  #pesos-terminal .pt-scrollback {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  #pesos-terminal .pt-line { margin: 1px 0; }
+  /* boot / mode-switch reveal: lines fade up one after another, the logo
+     scans in top to bottom, and a screen being replaced fades out */
+  #pesos-terminal .pt-enter { animation: pt-enter 0.45s ease both; }
+  @keyframes pt-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  #pesos-terminal .pt-scan pre { animation: pt-scan 0.9s ease-out both; }
+  @keyframes pt-scan { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+  #pesos-terminal .pt-scrollback { transition: opacity 0.2s ease; }
+  #pesos-terminal .pt-scrollback.pt-fading { opacity: 0; }
+  #pesos-terminal .pt-err { color: var(--ptn-red); }
+  #pesos-terminal .pt-ok { color: var(--ptn-green); }
+  #pesos-terminal .pt-dir { color: var(--ptn-blue); font-weight: 700; }
+  #pesos-terminal .pt-file { color: var(--ptn-fg); }
+  #pesos-terminal .pt-muted { color: var(--ptn-comment); }
+  #pesos-terminal .pt-doc-head { color: var(--ptn-green); }
+
+  #pesos-terminal .pt-ico {
+    display: inline-block;
+    width: 1.9em;
+  }
+  #pesos-terminal .pt-ico svg {
+    display: inline-block; /* global.css sets svg { display: block } */
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.14em;
+  }
+  #pesos-terminal .pt-ico-dir { color: var(--ptn-blue); }
+  #pesos-terminal .pt-ico-file { color: var(--ptn-comment); }
+
+  /* files and folders aren't clickable (like a real terminal): open them by
+     typing. Only external URLs in page content can be clicked. */
+  #pesos-terminal [data-href],
+  #pesos-terminal [data-mode] { cursor: pointer; }
+  #pesos-terminal [data-href]:hover,
+  #pesos-terminal [data-mode]:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    filter: brightness(1.15);
+  }
+
+  #pesos-terminal .pt-echo { color: var(--ptn-fg-dim); margin-top: 0.5em; }
+  #pesos-terminal .pt-prompt-echo { color: var(--ptn-green); }
+
+  /* ---- rendered markdown --------------------------------------------- */
+  #pesos-terminal .pt-doc { margin: 4px 0 8px; }
+  #pesos-terminal .pt-h1,
+  #pesos-terminal .pt-h2,
+  #pesos-terminal .pt-h3,
+  #pesos-terminal .pt-h4,
+  #pesos-terminal .pt-h5,
+  #pesos-terminal .pt-h6 {
+    display: block;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 1.5em 0 0.55em;
+  }
+  #pesos-terminal .pt-h1 {
+    color: var(--ptn-fg);
+    font-size: 1.14em;
+    border-bottom: 1px solid var(--ptn-blue0);
+    padding-bottom: 0.16em;
+  }
+  #pesos-terminal .pt-h2 { color: var(--ptn-blue); font-size: 1.05em; }
+  #pesos-terminal .pt-h3,
+  #pesos-terminal .pt-h4,
+  #pesos-terminal .pt-h5,
+  #pesos-terminal .pt-h6 { color: var(--ptn-teal); }
+  #pesos-terminal .pt-doc > .pt-h1:first-child,
+  #pesos-terminal .pt-doc > .pt-h2:first-child { margin-top: 0.1em; }
+
+  #pesos-terminal .pt-b { color: var(--ptn-yellow); font-weight: 700; }
+  #pesos-terminal .pt-bullet { color: var(--ptn-magenta); }
+  #pesos-terminal .pt-arrow { color: var(--ptn-magenta); }
+  #pesos-terminal .pt-inline,
+  #pesos-terminal .pt-code {
+    background: var(--ptn-bg-hl);
+    color: var(--ptn-teal);
+    border-radius: 4px;
+    padding: 0.03em 0.4em;
+  }
+  #pesos-terminal .pt-fence { color: var(--ptn-comment); }
+  #pesos-terminal .pt-quote {
+    color: var(--ptn-fg-dim);
+    border-left: 2px solid var(--ptn-blue0);
+    padding-left: 0.8em;
+  }
+  #pesos-terminal .pt-link {
+    color: var(--ptn-cyan);
+    text-decoration: underline;
+    text-decoration-color: var(--ptn-blue0);
+    text-underline-offset: 3px;
+  }
+  #pesos-terminal .pt-url { color: var(--ptn-comment); }
+  #pesos-terminal .pt-badge {
+    font-weight: 700;
+    font-size: 0.8em;
+    border-radius: 3px;
+    padding: 0.05em 0.6ch;
+    margin-right: 0.6ch;
+    color: var(--ptn-bg);
+    background: var(--ptn-blue);
+  }
+  #pesos-terminal .pt-badge-tip { background: var(--ptn-green); }
+  #pesos-terminal .pt-badge-warning,
+  #pesos-terminal .pt-badge-caution,
+  #pesos-terminal .pt-badge-important { background: var(--ptn-orange); }
+
+  #pesos-terminal .pt-doc-title {
+    display: inline-block;
+    color: var(--ptn-magenta);
+    font-weight: 700;
+    font-size: 1.08em;
+  }
+
+  /* ---- code blocks -------------------------------------------------------- */
+  #pesos-terminal .pt-codeblock {
+    margin: 0.7em 0;
+    border: 1px solid var(--ptn-bg-hl);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  #pesos-terminal .pt-code-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--ptn-bg-dark);
+    padding: 0.2em 0.9ch;
+    font-size: 0.78em;
+  }
+  #pesos-terminal .pt-code-lang { color: var(--ptn-comment); }
+  #pesos-terminal .pt-copy {
+    font: inherit;
+    color: var(--ptn-blue);
+    background: none;
+    border: 1px solid var(--ptn-blue0);
+    border-radius: 4px;
+    padding: 0.05em 0.8ch;
+    cursor: pointer;
+  }
+  #pesos-terminal .pt-copy:hover { background: var(--ptn-bg-hl); }
+  #pesos-terminal .pt-code-pre {
+    margin: 0;
+    padding: 0.55em 1ch;
+    overflow-x: auto;
+    white-space: pre;
+    background: var(--ptn-bg-dark);
+    color: var(--ptn-fg-dim);
+    font-size: 0.94em;
+  }
+  #pesos-terminal .pt-tok-kw { color: var(--ptn-magenta); }
+  #pesos-terminal .pt-tok-str { color: var(--ptn-green); }
+  #pesos-terminal .pt-tok-num { color: var(--ptn-orange); }
+  #pesos-terminal .pt-tok-comment { color: var(--ptn-comment); font-style: italic; }
+
+  /* ---- search matches -------------------------------------------------- */
+  #pesos-terminal .pt-match,
+  #pesos-terminal .pt-find {
+    background: var(--ptn-yellow);
+    color: var(--ptn-bg);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* ---- home hero + neofetch ---------------------------------------------- */
+  #pesos-terminal .pt-hero {
+    margin: 0 0 0.4em;
+    white-space: pre;
+    font-size: 0.6em;
+    line-height: 1.15;
+    overflow-x: auto;
+  }
+  #pesos-terminal .pt-neo {
+    display: flex;
+    gap: 1.8em;
+    align-items: flex-start;
+    margin: 0.3em 0 1em;
+    overflow-x: auto;
+  }
+  #pesos-terminal .pt-neo pre {
+    margin: 0;
+    white-space: pre;
+    font-size: 0.6em;
+    line-height: 1.15;
+  }
+  #pesos-terminal .pt-neo-info { white-space: pre; font-size: 0.92em; }
+  #pesos-terminal .pt-neo-info .k { color: var(--ptn-magenta); font-weight: 700; }
+  #pesos-terminal .pt-neo-title { color: var(--ptn-yellow); font-weight: 700; }
+  #pesos-terminal .pt-neo-rule { color: var(--ptn-comment); }
+  #pesos-terminal .pt-swatch { display: inline-flex; margin-top: 0.5em; }
+  #pesos-terminal .pt-swatch i { width: 2.4ch; height: 1.05em; display: inline-block; }
+  /* the logo: green, with the O in the text colour (like the site's wordmark) */
+  #pesos-terminal .pt-logo-g { color: var(--ptn-green); }
+  #pesos-terminal .pt-logo-w { color: var(--ptn-fg); }
+  #pesos-terminal .pt-c-muted { color: var(--ptn-comment); }
+
+  /* ---- input line + riced prompt ----------------------------------- */
+  #pesos-terminal.pt-raining .pt-input-line { visibility: hidden; }
+  #pesos-terminal .pt-input-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0.6em;
+  }
+  #pesos-terminal .pt-prompt {
+    display: inline-flex;
+    align-items: center;
+    white-space: pre;
+    margin-right: 0.7ch;
+  }
+  #pesos-terminal .pt-seg {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.05em 0.75ch;
+  }
+  #pesos-terminal .pt-seg-user {
+    background: var(--ptn-blue);
+    color: var(--ptn-bg);
+    font-weight: 700;
+    border-radius: 5px 0 0 5px;
+  }
+  #pesos-terminal .pt-seg-branch { background: var(--ptn-blue0); color: var(--ptn-fg); }
+  #pesos-terminal .pt-seg-path {
+    background: var(--ptn-bg-hl);
+    color: var(--ptn-cyan);
+    border-radius: 0 5px 5px 0;
+  }
+  #pesos-terminal .pt-seg-mode {
+    background: var(--ptn-magenta);
+    color: var(--ptn-bg);
+    font-weight: 700;
+    border-radius: 5px;
+  }
+  #pesos-terminal .pt-seg-caret { color: var(--ptn-green); font-weight: 700; margin-left: 0.7ch; }
+  #pesos-terminal .pt-typed { white-space: pre; color: var(--ptn-fg); }
+  #pesos-terminal .pt-cursor {
+    display: inline-block;
+    width: 0.5ch;
+    height: 1.15em;
+    background: var(--ptn-green);
+    translate: 0 0.18em;
+    animation: pt-blink 1.1s step-end infinite;
+  }
+  #pesos-terminal .pt-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    border: 0;
+    padding: 0;
+  }
+  @keyframes pt-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ---- pager (man / less) ------------------------------------------- */
+  #pesos-terminal .pt-pager {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    background: var(--ptn-bg);
+  }
+  #pesos-terminal .pt-pager[hidden] { display: none; }
+  #pesos-terminal .pt-pager-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.1em 3.2em 2.5em 2.7em;
+    white-space: pre-wrap;
+    word-break: break-word;
+    outline: none;
+  }
+  #pesos-terminal .pt-pager-status {
+    flex: none;
+    background: var(--ptn-fg-dim);
+    color: var(--ptn-bg);
+    font-weight: 700;
+    padding: 0.35em 1ch;
+    font-size: 0.82em;
+    white-space: pre-wrap;
+    cursor: pointer;
+  }
+
+  /* ---- nyan cat scrollbar ----------------------------------------------- */
+  /* Sized in vmin, so browser zoom never moves or resizes it. The cat runs
+     head-first down the bar (turned 90deg), trailing the rainbow from the
+     top. Proportions follow the source art: the rainbow is 74% of the cat's
+     width, in 30-unit pieces with every other piece nudged sideways. */
+  #pesos-terminal .pt-nyan {
+    --nc-w: 3vmin;                          /* cat width (its height is 34/21 of this) */
+    --nc-h: calc(var(--nc-w) * 34 / 21);
+    /* 1 unit of the source art = cat width / 73 */
+    --nc-rain-w: calc(var(--nc-w) * 58 / 73);
+    position: fixed;
+    top: 1.25vmin;
+    right: 0.9vmin;
+    bottom: 1.25vmin;
+    width: 2.5vmin;
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  #pesos-terminal .pt-nyan-rain {
+    position: absolute;
+    top: 0;
+    /* the main band lines up with the cat's back; offset pieces poke out */
+    left: calc(-0.25vmin + var(--nc-w) - var(--nc-w) * 54 / 73);
+    width: var(--nc-rain-w);
+    min-height: 0.5vmin;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 60' preserveAspectRatio='none'><rect x='0' y='0' width='9.2' height='30' fill='%236D3FFC'/><rect x='9' y='0' width='9.2' height='30' fill='%23008AFC'/><rect x='18' y='0' width='9.2' height='30' fill='%2320DB01'/><rect x='27' y='0' width='9.2' height='30' fill='%23FDEF01'/><rect x='36' y='0' width='9.2' height='30' fill='%23FD9B01'/><rect x='45' y='0' width='9.2' height='30' fill='%23FD1B00'/><rect x='4' y='30' width='9.2' height='30' fill='%236D3FFC'/><rect x='13' y='30' width='9.2' height='30' fill='%23008AFC'/><rect x='22' y='30' width='9.2' height='30' fill='%2320DB01'/><rect x='31' y='30' width='9.2' height='30' fill='%23FDEF01'/><rect x='40' y='30' width='9.2' height='30' fill='%23FD9B01'/><rect x='49' y='30' width='9.2' height='30' fill='%23FD1B00'/></svg>");
+    background-size: 100% calc(var(--nc-w) * 60 / 73);
+    background-repeat: repeat-y;
+    animation: pt-nc-wave 0.42s linear infinite;
+  }
+  #pesos-terminal .pt-nyan-cat {
+    position: absolute;
+    left: -0.25vmin;
+    top: 0;
+    will-change: transform;
+  }
+  #pesos-terminal .pt-nc {
+    display: block;
+    width: var(--nc-w);
+    height: var(--nc-h);
+    image-rendering: pixelated;
+  }
+  #pesos-terminal .pt-nc-frame { opacity: 0; animation: pt-nc-run 0.42s linear infinite; }
+  #pesos-terminal .pt-nc-f2 { animation-delay: 0.07s; }
+  #pesos-terminal .pt-nc-f3 { animation-delay: 0.14s; }
+  #pesos-terminal .pt-nc-f4 { animation-delay: 0.21s; }
+  #pesos-terminal .pt-nc-f5 { animation-delay: 0.28s; }
+  #pesos-terminal .pt-nc-f6 { animation-delay: 0.35s; }
+  /* each frame is visible for 1/6 of the cycle */
+  @keyframes pt-nc-run {
+    0%, 16.66% { opacity: 1; }
+    16.67%, 100% { opacity: 0; }
+  }
+  /* the rainbow's pieces swap sides twice per cycle, as in the source */
+  @keyframes pt-nc-wave {
+    0%, 49.99% { background-position: 0 0; }
+    50%, 100% { background-position: 0 calc(var(--nc-w) * 30 / 73); }
+  }
+
+  /* ---- destructive-command easter egg ------------------------------- */
+  #pesos-fire {
+    position: fixed;
+    inset: auto 0 0 0;
+    height: 55%;
+    z-index: 2147483001;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(100%);
+    background: linear-gradient(to top, #ff2a00, #ff8a00, transparent);
+    mix-blend-mode: screen;
+    transition: transform 0.45s ease-out, opacity 0.45s ease-out;
+  }
+  #pesos-fire.on {
+    opacity: 0.85;
+    transform: translateY(0);
+    animation: pt-flicker 0.1s infinite alternate;
+  }
+  @keyframes pt-flicker { from { opacity: 0.6; } to { opacity: 0.95; } }
+
+  @media (max-width: 700px) {
+    #pesos-terminal .pt-neo { flex-direction: column; gap: 8px; }
+    #pesos-terminal .pt-seg { padding: 0.05em 0.55ch; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #pesos-terminal .pt-enter,
+    #pesos-terminal .pt-scan pre { animation: none; }
+    #pesos-terminal,
+    html.pt-switching body > :not(#pesos-terminal) { transition: none; }
+    #pesos-terminal .pt-cursor,
+    #pesos-terminal .pt-nc-frame,
+    #pesos-terminal .pt-nyan-rain,
+    #pesos-fire.on { animation: none; }
+    #pesos-terminal .pt-nc-f1 { opacity: 1; }
+  }
+</style>
+
+<script>
+  const MODE_KEY = 'pesosMode';
+  const BOOT_KEY = 'pesosBooted';
+  const BASE = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+  const DESTRUCTIVE = ['rm -rf /', 'rm -rf ~', 'sudo rm', 'mkfs', ':(){:|:&};:', ':(){ :|:& };:', 'dd if='];
+
+  const DIR_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>';
+  const FILE_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/></svg>';
+
+  // Home-screen / neofetch art: a broken circuit ring around the omega, with
+  // a PESOS wordmark under it.
+  // The PESOS logo, traced from the club's logo image into braille (2×4
+  // dots per character). Each row is [text, colours]: one letter per
+  // character, g = logo green, w = white (the O in PESOS).
+  const HERO = [
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣄⠀⢰⣶⠒⠒⠚⠛⠋⠉⠙⠛⠒⠒⠲⠤⢤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠴⠚⠉⣋⣀⣀⡤⠤⠶⠒⠒⠒⠒⠒⠒⠲⠦⠤⢄⣀⡀⠉⠙⠲⣴⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡠⠞⠉⠀⢾⣆⡀⠛⠃⢀⣀⣠⠤⠤⠤⠶⠶⠤⠤⠤⢤⣀⣀⠀⠉⠑⠲⢤⣈⠁⠀⣶⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠔⠋⢀⣶⡆⠀⣠⡀⠙⠒⠋⠉⢠⣄⠀⠀⠀⣶⡄⠀⣠⣄⣀⡀⠈⠉⠓⠢⢤⡀⠈⠑⠦⡀⠈⠓⢄⡀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⢀⠞⠁⢀⡴⠋⢀⣤⡖⠛⠃⣀⡤⠖⠋⠉⠋⢀⣠⠊⠀⣤⡞⠁⢀⣀⠈⠉⠓⠦⣄⡀⠈⢓⣦⡀⠈⠳⣄⠀⢙⣆⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⢠⣴⠃⢀⡴⠋⢠⣤⠈⠉⣠⠴⠋⠁⣀⡤⠖⠚⠉⣉⣀⡠⠤⠩⠥⣀⣈⡛⠙⠒⠦⣄⡀⠉⠋⠉⣀⠉⠢⣄⠈⠉⠉⠉⠳⡄⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠰⡿⠉⣠⠏⠀⣠⠋⠉⣠⠞⠁⢀⠴⠊⢁⡤⡒⢛⡥⠬⠴⠒⠒⠒⠒⠢⠤⠌⣉⠒⢤⠄⠉⠲⢄⡈⠛⢧⡀⠈⠣⡀⠸⢿⡀⠘⢦⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⢀⡰⠃⢀⡜⠁⢠⠞⠁⢠⠞⠁⡠⠊⣥⠀⣙⠢⠔⢒⡈⠉⢩⡍⢉⣉⡐⠒⠤⣈⠒⠤⡛⠢⡀⠙⢦⣀⣙⣦⠀⠙⣄⠀⠳⡄⠈⢧⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⢠⠖⠋⣽⣁⣤⠎⠀⣰⠋⠀⡴⢁⡠⠊⡴⢊⠰⠎⡩⠔⢊⡩⠥⠔⠁⠶⠁⠴⢌⣉⠒⠤⠭⠦⣈⠢⠬⠦⡀⠁⠀⠈⢳⡀⠈⢦⠀⠹⡄⠈⢧⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⡞⠀⣰⠋⠀⠀⠀⣰⠃⢀⡞⠀⠾⢡⠊⡠⢋⡴⢋⡤⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠢⣜⠳⡌⠣⡐⢶⠙⡄⠺⣷⠀⢳⡀⠺⠟⠀⢱⡀⠘⡆⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⢸⠁⢀⡇⠀⡴⠒⠋⠁⠀⡞⠀⡤⣲⣃⠜⢠⠊⡰⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠚⢢⠘⣄⢣⠘⡆⠘⡆⠀⢳⠀⠀⣶⣆⣇⠀⢹⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⡏⠀⣸⡀⢠⠇⢠⣤⠀⣸⠁⡸⢠⠃⣀⠤⠃⡜⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⡄⢣⠙⣀⢧⠸⡀⢹⡀⠘⡆⠀⣀⡈⢻⡀⠘⡇', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⢠⡇⠈⠛⠁⢸⠀⢸⡏⠀⡏⢀⠇⣼⢰⠡⡤⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢱⠈⡆⣩⠙⡀⡇⠈⡇⠀⣷⠀⢻⡃⠈⡇⠀⣧', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠙⠋⢰⣶⠀⣿⠀⢸⠀⠀⡇⠸⠦⡤⢸⢰⠇⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠷⢸⠀⡇⢸⠀⣇⠀⠿⠇⢸⡇⠀⡇⠀⢿', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⣠⣄⠀⡇⠀⢿⠀⢸⠀⠀⡇⢰⠆⡇⢸⠘⡇⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠷⠀⢸⠀⡇⣸⠀⣏⣤⠀⠀⢸⡇⠀⡇⠀⣾', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠙⡏⢀⠇⠀⢸⠀⠘⡇⠀⣧⠀⡟⢁⠜⡄⣧⠸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀⢀⡜⢰⠁⡇⢀⡏⠋⠀⠀⢸⠀⢠⡇⠀⡏', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⣷⠋⠀⢀⠞⡇⠀⣧⡀⢸⡀⢱⠀⣤⢳⠈⣰⢡⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⢁⡎⣭⢀⡎⣸⠁⣼⠀⠀⠀⠀⡟⠀⣸⠁⢠⡇', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⢸⡄⠀⠉⠀⢻⡀⠛⠋⠀⡷⠀⢣⡘⣄⠳⡈⢆⠑⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠜⢡⠎⡰⢃⡜⢠⠃⢰⠃⢀⡤⠴⠚⠁⢀⡏⠀⣼⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⢷⠀⢰⣦⠀⢧⠀⠀⡞⠀⣴⡆⢀⡌⢦⡙⢄⠑⢄⡑⠦⣀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡠⠖⠷⠔⢁⠞⠁⢸⠘⠋⣰⠋⠀⡼⠁⢴⡶⠀⡼⠀⢰⠇⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠈⢧⠀⠹⡄⠈⢧⠀⠙⣆⠈⠱⣄⠙⢦⡙⢒⡟⠦⣉⠒⠤⡍⠀⠀⠀⠀⠀⠀⢉⣵⢀⡶⢀⠞⣥⢸⡇⠛⢀⡴⠁⢀⡞⠁⢠⠏⠀⡼⠁⢀⡏⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠸⠿⠀⠹⣄⠀⠳⡀⠈⢳⡀⠈⠳⣄⠙⠢⠭⠶⠤⣉⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⡡⠜⢊⡡⠊⢀⡴⠋⠀⡠⠋⠀⡰⠋⠀⡼⠁⠀⠈⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠸⢿⡀⠘⢦⠀⠙⢦⠀⠙⠂⠀⠈⠓⠦⣀⠘⠓⠤⠁⠀⠀⠀⠀⠀⠀⠀⠀⠘⠱⠔⠊⢁⡠⠖⠋⠀⠀⠈⠁⠀⠚⠁⠀⠀⠁⣸⠿⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠱⣄⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠈⠙⠒⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠔⠚⠉⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⢀⡔⠁⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggggggggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠈⠳⢄⠀⠀⠀⠀⣿⠛⠻⢶⣦⠀⢀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⠀⣠⡶⠾⠛⠋⠀⠀⠀⢀⠴⠋⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggggwwwwggggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣤⣄⣠⣿⢁⣿⠉⠉⠛⠛⢰⡿⠛⠛⠛⠃⢰⣿⠛⠛⠛⢻⣇⠹⣧⣴⠶⢶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggwwwwwwwgggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⠃⠀⠉⠉⠁⢸⣟⠛⠛⠻⠆⠘⠿⠶⠶⢶⣄⢸⣿⠀⠀⠀⢸⣿⠀⣀⣤⣤⠾⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'gggggggggggggggggggggggggggggggwwgggwwgggggggggggggggggg'],
+    ['⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠿⠶⠶⠆⢰⣶⣶⣶⣾⠟⠀⠿⠷⠶⠿⠟⠃⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀', 'ggggggggggggggggggggggggggggggggwwwwwwgggggggggggggggggg'],
+  ];
+
+  const reducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setMode(mode) {
+    const el = document.documentElement;
+    const dev = mode !== 'normal';
+    el.classList.add('pt-switching');
+    clearTimeout(setMode.done);
+    setMode.done = setTimeout(() => el.classList.remove('pt-switching'), 400);
+    el.classList.remove('mode-dev', 'mode-normal');
+    el.classList.add(dev ? 'mode-dev' : 'mode-normal');
+    try {
+      document.querySelectorAll('body > :not(#pesos-terminal):not(script)').forEach((w) => { w.inert = dev; });
+    } catch (e) {}
+    try { sessionStorage.setItem(MODE_KEY, dev ? 'dev' : 'normal'); } catch (e) {}
+  }
+
+  function normalizePath(pathname) {
+    let p = pathname || '/';
+    if (BASE && p.startsWith(BASE)) p = p.slice(BASE.length) || '/';
+    p = p.replace(/\/index\.html?$/i, '').replace(/\.html?$/i, '').replace(/\/+$/, '');
+    return p || '/';
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+  function unesc(s) {
+    return String(s)
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&');
+  }
+  function reQuote(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // real-site path -> terminal path (populated from the manifest)
+  let SITEMAP = {};
+  let ENTRYSET = new Set();
+  function resolveInternal(href) {
+    if (!href) return null;
+    let h = unesc(String(href).trim());
+    if (/^(mailto:|tel:)/i.test(h)) return null;
+    h = h.replace(/^https?:\/\/(www\.)?pesos\.github\.io/i, '');
+    if (/^[a-z]+:\/\//i.test(h)) return null; // other external
+    h = h.replace(/[?#].*$/, '').replace(/^\.\//, '/');
+    h = h.replace(/\/index\.html?$/i, '').replace(/\.html?$/i, '');
+    if (!h.startsWith('/')) h = '/' + h;
+    h = h.replace(/\/+$/, '') || '/';
+    if (ENTRYSET.has(h)) return h;
+    if (SITEMAP[h]) return SITEMAP[h];
+    return null;
+  }
+
+  // one code line (already HTML-escaped) -> tokens wrapped in spans
+  const CODE_KW = /^(def|class|import|from|as|return|pass|break|continue|if|elif|else|for|while|do|in|is|not|and|or|None|True|False|lambda|try|except|finally|raise|with|yield|async|await|fn|let|mut|const|var|func|package|type|struct|enum|impl|trait|pub|use|mod|match|move|ref|self|this|super|new|null|nil|undefined|true|false|void|int|float|str|string|bool|char|echo|export|local|source|sudo|print|println|require|module|end)$/;
+  function hlCodeLine(s) {
+    let i = 0;
+    let out = '';
+    while (i < s.length) {
+      const c = s[i];
+      if (c === '#' || (c === '/' && s[i + 1] === '/' && s[i - 1] !== ':')) {
+        out += '<span class="pt-tok-comment">' + s.slice(i) + '</span>';
+        break;
+      }
+      if (c === '"' || c === "'" || c === '`') {
+        let j = i + 1;
+        while (j < s.length && s[j] !== c) { if (s[j] === '\\') j++; j++; }
+        out += '<span class="pt-tok-str">' + s.slice(i, j + 1) + '</span>';
+        i = j + 1;
+        continue;
+      }
+      if (/[0-9]/.test(c) && !/[A-Za-z0-9_]/.test(s[i - 1] || '')) {
+        let j = i;
+        while (j < s.length && /[0-9a-fxA-FX._]/.test(s[j])) j++;
+        out += '<span class="pt-tok-num">' + s.slice(i, j) + '</span>';
+        i = j;
+        continue;
+      }
+      if (/[A-Za-z_]/.test(c)) {
+        let j = i;
+        while (j < s.length && /[A-Za-z0-9_]/.test(s[j])) j++;
+        const w = s.slice(i, j);
+        out += CODE_KW.test(w) ? '<span class="pt-tok-kw">' + w + '</span>' : w;
+        i = j;
+        continue;
+      }
+      out += c;
+      i++;
+    }
+    return out;
+  }
+
+  const HERO_CLASS = { g: 'pt-logo-g', w: 'pt-logo-w' };
+  // one span per run of same-coloured characters
+  // Braille comes from whatever fallback font has it, often wider than the
+  // terminal font, which stretches the logo sideways. Squeeze it back so a
+  // character (2 dots wide) is half a line (4 dots) tall: round, not oval.
+  function fitLogo(pre) {
+    if (!pre) return;
+    const probe = document.createElement('span');
+    probe.textContent = '\u28ff'.repeat(10);
+    pre.appendChild(probe);
+    const w = probe.getBoundingClientRect().width / 10;
+    probe.remove();
+    const lh = parseFloat(getComputedStyle(pre).lineHeight);
+    const k = lh / 2 / w;
+    if (!w || !lh || k >= 1) return;
+    pre.style.transformOrigin = 'left top';
+    pre.style.transform = 'scaleX(' + k + ')';
+    // the transform doesn't shrink the layout box; give the space back
+    pre.style.marginRight = -pre.getBoundingClientRect().width * (1 - k) / k + 'px';
+  }
+  function heroHtml() {
+    return HERO.map(([line, colours]) =>
+      [...line].reduce((out, ch, i) => {
+        const c = colours[i];
+        if (c !== colours[i - 1]) out += (i ? '</span>' : '') + '<span class="' + HERO_CLASS[c] + '">';
+        return out + ch + (i === line.length - 1 ? '</span>' : '');
+      }, '')
+    ).join('\n');
+  }
+
+  // Minimal markdown -> terminal HTML. Input is escaped first, so the spans
+  // we add are the only markup that survives.
+  function renderMarkdown(md) {
+    const lines = esc(md)
+      .replace(/^(.+)\n=+[ \t]*$/gm, '# $1') // setext H1 -> ATX
+      .split('\n');
+    const out = [];
+    let fenceBuf = null;
+    let fenceLang = '';
+    for (let line of lines) {
+      const fen = line.match(/^\s*```\s*(\S*)/);
+      if (fen) {
+        if (fenceBuf === null) {
+          fenceBuf = [];
+          fenceLang = fen[1] || '';
+        } else {
+          const raw = fenceBuf.join('\n');
+          const hl = fenceBuf.map((l) => hlCodeLine(l) || ' ').join('\n');
+          out.push(
+            '<div class="pt-codeblock" data-code="' + raw.replace(/"/g, '&quot;') + '">' +
+              '<div class="pt-code-bar">' +
+                '<span class="pt-code-lang">' + esc(fenceLang || 'code') + '</span>' +
+                '<button class="pt-copy" type="button">copy</button>' +
+              '</div>' +
+              '<pre class="pt-code-pre">' + hl + '</pre>' +
+            '</div>'
+          );
+          fenceBuf = null;
+          fenceLang = '';
+        }
+        continue;
+      }
+      if (fenceBuf !== null) {
+        fenceBuf.push(line);
+        continue;
+      }
+      const h = line.match(/^\s{0,3}(#{1,6})\s+(.*)$/);
+      if (h) {
+        out.push('<span class="pt-h' + h[1].length + '">' + h[2].replace(/\s*#+\s*$/, '') + '</span>');
+        continue;
+      }
+      if (/^\s*&gt;\s?/.test(line)) {
+        out.push('<span class="pt-quote">' + line.replace(/^\s*&gt;\s?/, '  ') + '</span>');
+        continue;
+      }
+      line = line.replace(
+        /\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g,
+        (_m, text, href) => {
+          const tp = resolveInternal(href);
+          if (tp) return '<span class="pt-link" data-path="' + tp + '">' + text + '</span>';
+          return '<span class="pt-link" data-href="' + href + '">' + text + '</span>' +
+            ' <span class="pt-url">(' + href + ')</span>';
+        }
+      );
+      line = line.replace(
+        /^(\s*)(NOTE|TIP|WARNING|IMPORTANT|CAUTION):/i,
+        (_m, pre, w) =>
+          pre + '<span class="pt-badge pt-badge-' + w.toLowerCase() + '">' + w.toUpperCase() + '</span>'
+      );
+      line = line.replace(/\*\*([^*]+)\*\*/g, '<span class="pt-b">$1</span>');
+      line = line.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<span class="pt-b">$2</span>');
+      line = line.replace(/`([^`]+)`/g, '<span class="pt-inline">$1</span>');
+      line = line.replace(/(^|\s)-&gt;(\s|$)/g, '$1<span class="pt-arrow">→</span>$2');
+      line = line.replace(/^(\s*)[-*]\s+/, '$1<span class="pt-bullet">•</span> ');
+      out.push(line.length ? line : ' ');
+    }
+    if (fenceBuf !== null) {
+      out.push('<pre class="pt-code-pre">' + fenceBuf.map((l) => hlCodeLine(l) || ' ').join('\n') + '</pre>');
+    }
+    return out.join('\n');
+  }
+
+  function resolvePath(cwd, arg) {
+    if (!arg || arg === '~') return '/';
+    const start = arg.startsWith('/') ? '' : cwd;
+    const parts = (start + '/' + arg).split('/').filter(Boolean);
+    const stack = [];
+    for (const part of parts) {
+      if (part === '.') continue;
+      if (part === '..') stack.pop();
+      else stack.push(part);
+    }
+    return '/' + stack.join('/');
+  }
+
+  /* ---- nyan cat scrollbar ------------------------------------------------ */
+  class Nyan {
+    constructor(el, getScroller) {
+      this.el = el;
+      this.rain = el.querySelector('.pt-nyan-rain');
+      this.cat = el.querySelector('.pt-nyan-cat');
+      this.getScroller = getScroller;
+      this.drag = false;
+      const jump = (e) => {
+        const sc = this.getScroller();
+        if (!sc) return;
+        const r = this.el.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+        sc.scrollTop = p * (sc.scrollHeight - sc.clientHeight);
+      };
+      el.addEventListener('pointerdown', (e) => {
+        this.drag = true;
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        jump(e);
+      });
+      el.addEventListener('pointermove', (e) => { if (this.drag) jump(e); });
+      el.addEventListener('pointerup', () => { this.drag = false; });
+      el.addEventListener('pointercancel', () => { this.drag = false; });
+    }
+    sync() {
+      const sc = this.getScroller();
+      const hide = () => { this.el.style.opacity = '0'; this.el.style.pointerEvents = 'none'; };
+      if (!sc) return hide();
+      const max = sc.scrollHeight - sc.clientHeight;
+      if (max <= 8) return hide();
+      this.el.style.opacity = '1';
+      this.el.style.pointerEvents = 'auto';
+      const p = Math.min(1, Math.max(0, sc.scrollTop / max));
+      const h = this.el.clientHeight;
+      const catH = this.cat.offsetHeight;
+      const y = p * (h - catH);
+      this.cat.style.transform = 'translateY(' + y.toFixed(1) + 'px)';
+      this.rain.style.height = (y + catH * 0.27).toFixed(1) + 'px';
+    }
+  }
+
+  class PesosTerminal {
+    constructor(root) {
+      this.root = root;
+      this.scrollback = root.querySelector('.pt-scrollback');
+      this.win = root.querySelector('.pt-window');
+      this.input = root.querySelector('.pt-input');
+      this.typed = root.querySelector('.pt-typed');
+      this.promptEl = root.querySelector('.pt-prompt');
+      this.canvas = root.querySelector('.pt-matrix');
+      this.pager = root.querySelector('.pt-pager');
+      this.pagerBody = root.querySelector('.pt-pager-body');
+      this.pagerStatus = root.querySelector('.pt-pager-status');
+      this.cwd = '/';
+      this.history = [];
+      this.histIdx = 0;
+      this.entries = {};
+      this.dirs = {};
+      this.dirIndex = {};
+      this.meta = {};
+      this.paths = [];
+      this.booting = false;
+      this.animating = false;
+      this.awaitingMode = false;
+      this.paging = false;
+      this.pagerTitle = '';
+      this.currentDoc = null;
+      this.loadedHref = location.href;
+      this.loadedTitle = document.title;
+      this.moved = false; // navigated away from the loaded page's content
+      this.asking = null; // pending question from `send`
+      this.started = false;
+      this.promptPlain = 'guest@pesos:/$';
+      this.nyan = new Nyan(root.querySelector('.pt-nyan'), () => this.activeScroller());
+    }
+
+    activeScroller() { return this.paging ? this.pagerBody : this.win; }
+
+    async start({ boot, rain: rainFirst = false }) {
+      if (this.started) return;
+      this.started = true;
+      this.bindInput();
+      this.bindPager();
+      this.installFire();
+      const onClick = (e) => {
+        const cp = e.target.closest('.pt-copy');
+        if (cp) {
+          const box = cp.closest('.pt-codeblock');
+          const txt = unesc((box && box.getAttribute('data-code')) || '');
+          try { navigator.clipboard.writeText(txt); cp.textContent = 'copied'; }
+          catch (err) { cp.textContent = 'copy failed'; }
+          setTimeout(() => { cp.textContent = 'copy'; }, 1200);
+          return;
+        }
+        // files and folders aren't clickable: you `cd` / `cat` them, as in
+        // a real terminal. External URLs still open in a new tab.
+        const t = e.target.closest('[data-href],[data-mode]');
+        if (!t) { if (!this.paging) this.focus(); return; }
+        if (t.dataset.mode) { this.pickMode(t.dataset.mode); return; }
+        window.open(t.dataset.href, '_blank', 'noopener');
+      };
+      this.win.addEventListener('click', onClick);
+      this.pagerBody.addEventListener('click', onClick);
+      this.pagerStatus.addEventListener('click', () => this.closePager());
+      this.win.addEventListener('scroll', () => this.nyan.sync(), { passive: true });
+      this.pagerBody.addEventListener('scroll', () => {
+        this.nyan.sync();
+        this.updatePagerStatus();
+      }, { passive: true });
+      window.addEventListener('resize', () => { this.nyan.sync(); this.updatePagerStatus(); });
+      // the rain starts right away; the content downloads underneath it. The
+      // prompt (and its blinking cursor) stays hidden until the rain is gone.
+      const raining = (boot || rainFirst) && !reducedMotion();
+      if (raining) this.root.classList.add('pt-raining');
+      const rain = raining ? this.matrix() : null;
+      await this.loadManifest();
+      if (boot) {
+        await this.runBoot(rain);
+      } else {
+        if (rain) await rain;
+        this.root.classList.remove('pt-raining');
+        this.setPrompt();
+        this.openForLocation();
+        this.enableSmooth();
+      }
+      this.focus();
+    }
+
+    async loadManifest() {
+      try {
+        const res = await fetch(BASE + '/terminal-content.json', { cache: 'no-cache' });
+        const data = await res.json();
+        this.entries = data.entries || {};
+        this.dirs = data.dirs || {};
+        this.meta = data.meta || {};
+        SITEMAP = data.siteMap || {};
+      } catch (e) {
+        this.entries = {}; this.dirs = {}; this.meta = {};
+      }
+      this.paths = Object.keys(this.entries).sort();
+      ENTRYSET = new Set(this.paths.concat(Object.keys(this.dirs)));
+      this.dirIndex = {};
+      Object.keys(this.dirs).forEach((k, i) => { this.dirIndex[k] = i; });
+    }
+
+    enableSmooth() {
+      this.win.classList.add('pt-smooth');
+      this.pagerBody.classList.add('pt-smooth');
+    }
+
+    bindInput() {
+      this.input.addEventListener('input', () => {
+        this.typed.textContent = this.input.value;
+      });
+      this.input.addEventListener('keydown', (e) => {
+        if (this.booting || this.animating || this.paging) { e.preventDefault(); return; }
+        if (e.key === 'Enter') {
+          const v = this.input.value;
+          this.input.value = '';
+          this.typed.textContent = '';
+          this.run(v);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (this.histIdx > 0) {
+            this.histIdx--;
+            this.input.value = this.history[this.histIdx] || '';
+            this.typed.textContent = this.input.value;
+          }
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (this.histIdx < this.history.length) {
+            this.histIdx++;
+            this.input.value = this.history[this.histIdx] || '';
+            this.typed.textContent = this.input.value;
+          }
+        } else if (e.key === 'c' && e.ctrlKey && this.asking) {
+          e.preventDefault();
+          this.input.value = '';
+          this.typed.textContent = '';
+          this.cancelAsk();
+        } else if (e.key === 'l' && e.ctrlKey) {
+          e.preventDefault();
+          this.clear();
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          this.complete();
+        }
+      });
+    }
+
+    complete() {
+      const val = this.input.value;
+      const secondTab = this.lastTabVal === val;
+      this.lastTabVal = val;
+      const CMDS = ['ls', 'cd', 'cat', 'less', 'man', 'tree', 'grep', 'search',
+        'neofetch', 'pwd', 'clear', 'whoami', 'date', 'help', 'mode', 'send', 'exit'];
+      let candidates, prefix, head, isPath;
+      if (!val.includes(' ')) {
+        isPath = false;
+        prefix = val.trim();
+        head = '';
+        candidates = CMDS.filter((c) => c.startsWith(prefix));
+      } else {
+        isPath = true;
+        const sp = val.lastIndexOf(' ');
+        head = val.slice(0, sp + 1);
+        const frag = val.slice(sp + 1);
+        const slash = frag.lastIndexOf('/');
+        const dirPart = slash >= 0 ? frag.slice(0, slash + 1) : '';
+        const seg = slash >= 0 ? frag.slice(slash + 1) : frag;
+        const baseDir = resolvePath(this.cwd, dirPart || '.');
+        candidates = this.childrenOf(baseDir)
+          .filter((k) => k.seg.startsWith(seg))
+          .map((k) => dirPart + k.seg + (k.isDir ? '/' : ''));
+        prefix = dirPart + seg;
+      }
+      if (!candidates.length) return;
+      if (candidates.length === 1) {
+        this.input.value = head + candidates[0] + (isPath ? '' : ' ');
+        this.lastTabVal = this.input.value;
+      } else {
+        const lcp = candidates.reduce((a, b) => {
+          let i = 0;
+          while (i < a.length && a[i] === b[i]) i++;
+          return a.slice(0, i);
+        });
+        if (lcp.length > prefix.length) {
+          this.input.value = head + lcp;
+          this.lastTabVal = this.input.value;
+        } else if (secondTab) {
+          this.print(candidates.map((c) => '<span class="pt-file">' + esc(c) + '</span>').join('   '));
+        }
+      }
+      this.typed.textContent = this.input.value;
+    }
+
+    focus() {
+      if (this.paging) { try { this.pagerBody.focus({ preventScroll: true }); } catch (e) {} return; }
+      if (document.documentElement.classList.contains('mode-dev')) {
+        try { this.input.focus({ preventScroll: true }); } catch (e) { this.input.focus(); }
+      }
+    }
+
+    setPrompt(mode) {
+      if (mode) {
+        this.promptPlain = mode + '>';
+        this.promptEl.innerHTML =
+          '<span class="pt-seg pt-seg-mode">' + esc(mode) + '</span>' +
+          '<span class="pt-seg-caret">❯</span>';
+        return;
+      }
+      const path = this.cwd === '/' ? '~' : '~' + this.cwd;
+      this.promptPlain = 'guest@pesos:' + this.cwd + '$';
+      this.promptEl.innerHTML =
+        '<span class="pt-seg pt-seg-user">guest</span>' +
+        '<span class="pt-seg pt-seg-branch">main</span>' +
+        '<span class="pt-seg pt-seg-path">' + esc(path) + '</span>' +
+        '<span class="pt-seg-caret">❯</span>';
+    }
+
+    /* ---- output ------------------------------------------------------- */
+    print(html, cls) {
+      const div = document.createElement('div');
+      div.className = 'pt-line' + (cls ? ' ' + cls : '');
+      div.innerHTML = html;
+      if (this.reveal != null && !reducedMotion()) {
+        // fade in one after another; long pages stop staggering after a few
+        div.classList.add('pt-enter');
+        div.style.animationDelay = Math.min(this.reveal++, 14) * 60 + 'ms';
+      }
+      this.scrollback.appendChild(div);
+      this.scrollBottom();
+      return div;
+    }
+    println(text, cls, path) {
+      const div = this.print(esc(text), cls);
+      if (path) div.dataset.path = path;
+      return div;
+    }
+    echo(line) {
+      this.print(
+        '<span class="pt-prompt-echo">' + esc(this.promptPlain) + '</span> ' + esc(line),
+        'pt-echo'
+      );
+    }
+    clear() { this.scrollback.innerHTML = ''; }
+    // fade the screen out, clear it, then run `then` (which paints the next one)
+    fadeOut(then) {
+      if (reducedMotion()) { this.clear(); return then(); }
+      this.scrollback.classList.add('pt-fading');
+      setTimeout(() => {
+        this.clear();
+        this.scrollback.classList.remove('pt-fading');
+        then();
+      }, 220);
+    }
+    scrollBottom() {
+      const w = this.win;
+      if (!w) return;
+      if (this.booting) w.scrollTop = w.scrollHeight;
+      else {
+        try { w.scrollTo({ top: w.scrollHeight, behavior: 'smooth' }); }
+        catch (e) { w.scrollTop = w.scrollHeight; }
+      }
+      if (this.nyan) this.nyan.sync();
+    }
+    sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+    /* ---- command loop ----------------------------------------------- */
+    run(raw) {
+      const line = raw.trim();
+      this.echo(raw);
+      if (this.asking) return this.answer(line);
+      if (!line) return;
+      if (this.history[this.history.length - 1] !== line) this.history.push(line);
+      this.histIdx = this.history.length;
+      if (this.awaitingMode) return this.pickMode(line);
+      this.exec(line);
+    }
+
+    exec(line) {
+      if (DESTRUCTIVE.some((d) => line.replace(/\s+/g, ' ').includes(d))) return this.fire();
+      // "/text" is a shortcut for search, unless it names a real path
+      if (line[0] === '/' && line.length > 1) {
+        const asPath = resolvePath(this.cwd, line.trim());
+        if (!this.entries[asPath] && !this.childrenOf(asPath).length) return this.grep(line.slice(1));
+      }
+      const parts = line.trim().split(/\s+/);
+      const cmd = (parts.shift() || '').toLowerCase();
+      const arg = parts[0];
+      switch (cmd) {
+        case 'help': case '?': return this.help();
+        case 'ls': case 'dir': return this.ls(arg);
+        case 'tree': return this.tree('/', '');
+        case 'cd': return this.cd(arg);
+        case 'cat': case 'open': case 'less': case 'more':
+        case 'man': case 'view': case 'read': case 'page': return this.cat(arg);
+        case 'grep': case 'search': case 'find': case 'rg': return this.grep(parts.join(' '));
+        case 'pwd': return this.println(this.cwd);
+        case 'clear': case 'cls': return this.clear();
+        case 'neofetch': case 'fetch': return this.renderNeofetch();
+        case 'whoami': return this.println('guest — browsing PES Open Source in developer mode');
+        case 'date': return this.println(new Date().toString());
+        case 'echo': return this.println(parts.join(' '));
+        case 'mode': return arg ? this.pickMode(arg) : this.modeHelp();
+        case 'send': case 'mail': case 'message': return this.send();
+        case 'exit': case 'quit': case ':q': return leaveDevMode();
+        case 'sudo': return this.println('nice try. there is no root here.', 'pt-err');
+        case '': return;
+        default: return this.bare(cmd);
+      }
+    }
+
+    bare(token) {
+      const target = resolvePath(this.cwd, token);
+      if (this.entries[target]) return this.cat(token);
+      if (this.childrenOf(target).length) return this.cd(token);
+      this.println('command not found: ' + token + "  (try 'help')", 'pt-err');
+    }
+
+    /* ---- filesystem ------------------------------------------------- */
+    childrenOf(dir) {
+      const prefix = dir === '/' ? '/' : dir + '/';
+      const map = new Map();
+      for (const p of this.paths) {
+        if (p === dir || !p.startsWith(prefix)) continue;
+        const rest = p.slice(prefix.length);
+        const seg = rest.split('/')[0];
+        const childPath = prefix + seg;
+        const deeper = rest.includes('/');
+        if (!map.has(seg)) {
+          map.set(seg, {
+            seg,
+            path: childPath,
+            isDir: deeper || !this.entries[childPath],
+            isFile: !!this.entries[childPath],
+          });
+        } else if (deeper) {
+          map.get(seg).isDir = true;
+        }
+      }
+      const rank = (n) =>
+        n.isDir
+          ? (this.dirIndex[n.path] != null ? this.dirIndex[n.path] : 500)
+          : (this.entries[n.path] && this.entries[n.path].order != null
+              ? this.entries[n.path].order
+              : 900);
+      return [...map.values()].sort((a, b) => {
+        if (a.isDir !== b.isDir) return a.isDir ? -1 : 1;
+        const d = rank(a) - rank(b);
+        return d !== 0 ? d : a.seg.localeCompare(b.seg);
+      });
+    }
+
+    dirHeader(dir) {
+      const meta = this.dirs[dir];
+      if (!meta) return;
+      this.print('<span class="pt-dir">' + esc(meta.title) + '</span>');
+      if (meta.blurb) this.println(meta.blurb, 'pt-muted');
+      this.println('');
+    }
+
+    ls(arg) {
+      const dir = arg ? resolvePath(this.cwd, arg) : this.cwd;
+      const kids = this.childrenOf(dir);
+      if (!kids.length) {
+        if (this.entries[dir]) return this.println(this.entries[dir].title, 'pt-file', dir);
+        return this.println("ls: cannot access '" + (arg || dir) + "': no such directory", 'pt-err');
+      }
+      this.dirHeader(dir);
+      for (const k of kids) {
+        const name = k.isDir ? k.seg + '/' : k.seg;
+        const e = !k.isDir ? this.entries[k.path] : null;
+        const date = e && e.date ? e.date + '  ' : '';
+        const title = e ? e.title : '';
+        const div = this.print(
+          '<span class="pt-ico ' + (k.isDir ? 'pt-ico-dir' : 'pt-ico-file') + '">' +
+            (k.isDir ? DIR_ICON : FILE_ICON) + '</span>' +
+          '<span class="' + (k.isDir ? 'pt-dir' : 'pt-file') + '">' + esc(name.padEnd(22)) + '</span>' +
+          (date ? '<span class="pt-muted">' + esc(date) + '</span>' : '') +
+          (title ? '<span class="pt-muted">' + esc(title) + '</span>' : '')
+        );
+        div.dataset.path = k.path;
+      }
+    }
+
+    tree(dir, prefix) {
+      if (dir === '/') this.println('/');
+      const kids = this.childrenOf(dir);
+      kids.forEach((k, i) => {
+        const last = i === kids.length - 1;
+        const div = this.print(
+          '<span class="pt-muted">' + esc(prefix + (last ? '└─ ' : '├─ ')) + '</span>' +
+          '<span class="pt-ico ' + (k.isDir ? 'pt-ico-dir' : 'pt-ico-file') + '">' +
+            (k.isDir ? DIR_ICON : FILE_ICON) + '</span>' +
+          '<span class="' + (k.isDir ? 'pt-dir' : 'pt-file') + '">' +
+            esc(k.isDir ? k.seg + '/' : k.seg) + '</span>'
+        );
+        div.dataset.path = k.path;
+        if (k.isDir) this.tree(k.path, prefix + (last ? '   ' : '│  '));
+      });
+    }
+
+    cd(arg) {
+      if (!arg || arg === '/' || arg === '~') {
+        this.cwd = '/';
+        this.setPrompt();
+        this.syncUrl('/');
+        return this.ls();
+      }
+      if (arg === '-' && this.currentDoc) arg = this.currentDoc;
+      const target = resolvePath(this.cwd, arg);
+      if (target === '/' || this.childrenOf(target).length) {
+        this.cwd = target;
+        this.setPrompt();
+        this.syncUrl(this.dirRoute(target));
+        this.ls();
+      } else if (this.entries[target]) {
+        this.println('cd: not a directory: ' + arg + "  (try 'cat " + arg + "')", 'pt-err');
+      } else {
+        this.println('cd: no such directory: ' + arg, 'pt-err');
+      }
+    }
+
+    cat(arg) {
+      if (!arg) return this.println('usage: cat <path>', 'pt-err');
+      const target = resolvePath(this.cwd, arg);
+      const entry = this.entries[target];
+      if (!entry) {
+        if (this.childrenOf(target).length)
+          return this.println('cat: ' + arg + ": is a directory (try 'ls " + arg + "')", 'pt-err');
+        return this.println('cat: ' + arg + ': no such file', 'pt-err');
+      }
+      this.openPager(target);
+    }
+
+    /* ---- send: the contact form, as prompts --------------------------- */
+    ask(label) {
+      return new Promise((resolve, reject) => {
+        this.asking = { resolve, reject };
+        this.setPrompt(label);
+        this.focus();
+      });
+    }
+    answer(v) {
+      const a = this.asking;
+      this.asking = null;
+      a.resolve(v);
+    }
+    cancelAsk() {
+      const a = this.asking;
+      if (!a) return;
+      this.asking = null;
+      this.println('^C', 'pt-muted');
+      a.reject(new Error('cancelled'));
+    }
+
+    // Same fields, checks and endpoint as the form on /contact/ (main.ts initForms).
+    async send() {
+      const url = this.meta.formspree;
+      const subjects = this.meta.subjects || [];
+      if (!url) return this.println('send: the contact form is unavailable right now', 'pt-err');
+      this.println('send a message to PES Open Source   (Ctrl+C to cancel)', 'pt-doc-head');
+      try {
+        let name, email, subject, message;
+        while (!(name = await this.ask('name?'))) this.println('Please enter your name.', 'pt-err');
+        while (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((email = await this.ask('email?'))))
+          this.println('Please enter a valid email.', 'pt-err');
+        subjects.forEach((sub, i) =>
+          this.print('  <span class="pt-file">[' + (i + 1) + ']</span> ' + esc(sub))
+        );
+        for (;;) {
+          const v = await this.ask('subject?');
+          subject = subjects[parseInt(v, 10) - 1] || subjects.find((x) => x.toLowerCase() === v.toLowerCase());
+          if (subject) break;
+          this.println('Please pick a subject (1–' + subjects.length + ').', 'pt-err');
+        }
+        for (;;) {
+          message = await this.ask('message?');
+          if (!message) this.println('Please write a message.', 'pt-err');
+          else if (message.length > 1000) this.println('Max 1000 characters (that was ' + message.length + ').', 'pt-err');
+          else break;
+        }
+        const ok = await this.ask('send? [y/N]');
+        if (!/^y(es)?$/i.test(ok)) return this.println('not sent.', 'pt-muted');
+        this.println('sending …', 'pt-muted');
+        const fd = new FormData();
+        fd.append('name', name);
+        fd.append('email', email);
+        fd.append('subject', subject);
+        fd.append('message', message);
+        const res = await fetch(url, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error('bad status');
+        this.println("✓ Thanks — your message is on its way. We'll be in touch soon.", 'pt-ok');
+      } catch (err) {
+        if (err && err.message === 'cancelled') this.println('cancelled.', 'pt-muted');
+        else this.println('Something went wrong sending that — please try again, or reach us on Slack instead.', 'pt-err');
+      } finally {
+        this.asking = null;
+        this.setPrompt();
+      }
+    }
+
+    /* ---- pager (man / less) --------------------------------------------- */
+    bindPager() {
+      this.pagerBody.tabIndex = 0;
+      document.addEventListener('keydown', (e) => { if (this.paging) this.pagerKey(e); });
+    }
+
+    openPager(path, find) {
+      const e = this.entries[path];
+      if (!e) return this.println('cat: ' + path + ': no such file', 'pt-err');
+      this.currentDoc = path;
+      this.pagerTitle = e.title;
+      const meta = [
+        e.type,
+        e.date,
+        e.tags && e.tags.length ? '#' + e.tags.join(' #') : '',
+        e.author,
+      ].filter(Boolean).join('   ·   ');
+      this.pagerBody.innerHTML =
+        '<div class="pt-doc">' +
+          '<span class="pt-doc-title">' + esc(e.title) + '</span>\n' +
+          (meta ? '<span class="pt-muted">' + esc(meta) + '</span>\n' : '') +
+          '<span class="pt-muted">' + esc(path) + '</span>\n\n' +
+          renderMarkdown(e.body) +
+        '</div>';
+      this.pager.hidden = false;
+      this.paging = true;
+      if (find) this.highlightIn(this.pagerBody, find);
+      this.pagerBody.scrollTop = 0;
+      if (find) {
+        const first = this.pagerBody.querySelector('.pt-find');
+        if (first) first.scrollIntoView({ block: 'center' });
+      }
+      this.cwd = path.replace(/\/[^/]*$/, '') || '/';
+      this.setPrompt();
+      this.updatePagerStatus();
+      this.nyan.sync();
+      this.syncUrl(e.route, e.title);
+      try { this.pagerBody.focus({ preventScroll: true }); } catch (err) {}
+    }
+
+    highlightIn(container, term) {
+      let rx;
+      try { rx = new RegExp(reQuote(term), 'i'); } catch (e) { return; }
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+      const targets = [];
+      let n;
+      while ((n = walker.nextNode())) {
+        if (n.parentNode && n.parentNode.closest('.pt-code-pre')) continue;
+        if (rx.test(n.nodeValue)) targets.push(n);
+      }
+      for (const node of targets) {
+        const s = node.nodeValue;
+        const g = new RegExp(reQuote(term), 'ig');
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        let m;
+        while ((m = g.exec(s))) {
+          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+          const mk = document.createElement('mark');
+          mk.className = 'pt-find';
+          mk.textContent = m[0];
+          frag.appendChild(mk);
+          last = m.index + m[0].length;
+          if (m[0].length === 0) g.lastIndex++;
+        }
+        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      }
+    }
+
+    grep(term) {
+      term = (term || '').trim();
+      if (!term) return this.println('usage: grep <text>   (or  /text )', 'pt-err');
+      let rx;
+      try { rx = new RegExp(reQuote(term), 'i'); } catch (e) { return this.println('bad pattern', 'pt-err'); }
+      const paths = Object.keys(this.entries).filter((p) => this.entries[p].body);
+      this.println('searching ' + paths.length + ' pages for "' + term + '" …', 'pt-muted');
+      let files = 0;
+      let hits = 0;
+      for (const p of paths) {
+        const e = this.entries[p];
+        const lines = e.body.split('\n');
+        const matched = [];
+        for (let i = 0; i < lines.length && matched.length < 4; i++) {
+          if (rx.test(lines[i])) matched.push([i + 1, lines[i]]);
+        }
+        if (!matched.length) continue;
+        files++;
+        hits += matched.length;
+        const head = this.print(
+          '<span class="pt-ico pt-ico-file">' + FILE_ICON + '</span>' +
+          '<span class="pt-file">' + esc(p) + '</span>  <span class="pt-muted">' + esc(e.title) + '</span>'
+        );
+        head.dataset.path = p;
+        head.dataset.find = term;
+        for (const [ln, text] of matched) {
+          let snip = text.trim();
+          if (snip.length > 120) {
+            const at = Math.max(0, snip.search(rx));
+            snip = (at > 40 ? '…' : '') + snip.slice(Math.max(0, at - 40), at + 80) + '…';
+          }
+          const html = esc(snip).replace(new RegExp('(' + reQuote(term) + ')', 'ig'), '<span class="pt-match">$1</span>');
+          const row = this.print('<span class="pt-muted">  ' + String(ln).padStart(4) + ' │ </span>' + html);
+          row.dataset.path = p;
+          row.dataset.find = term;
+        }
+      }
+      if (!files) this.println('no matches.', 'pt-err');
+      else this.println(hits + ' match' + (hits === 1 ? '' : 'es') + ' in ' + files + ' file' + (files === 1 ? '' : 's') + '  ·  click a result to open it', 'pt-ok');
+    }
+
+    closePager() {
+      if (!this.paging) return;
+      this.paging = false;
+      this.pager.hidden = true;
+      this.pagerBody.innerHTML = '';
+      this.nyan.sync();
+      this.focus();
+    }
+
+    updatePagerStatus() {
+      if (!this.paging) return;
+      const sc = this.pagerBody;
+      const lh = parseFloat(getComputedStyle(sc).lineHeight) || 20;
+      const total = Math.max(1, Math.round(sc.scrollHeight / lh));
+      const atTop = sc.scrollTop <= 1;
+      const atEnd = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1;
+      const cur = Math.min(total, Math.round(sc.scrollTop / lh) + 1);
+      const where = atEnd ? '(END)' : atTop ? 'line 1' : 'line ' + cur;
+      const coarse = window.matchMedia('(pointer: coarse)').matches;
+      const hint = coarse
+        ? 'tap this bar to quit'
+        : 'j/k ↑↓ scroll · space/b page · g/G ends · q quit';
+      this.pagerStatus.textContent =
+        this.pagerTitle + '  ' + where + '/' + total + '   ·   ' + hint;
+    }
+
+    pagerKey(e) {
+      if (!this.paging) return;
+      const sc = this.pagerBody;
+      const page = Math.max(40, sc.clientHeight - 40);
+      const lh = parseFloat(getComputedStyle(sc).lineHeight) || 20;
+      const k = e.key;
+      let handled = true;
+      if (k === 'q' || k === 'Escape') { e.preventDefault(); this.closePager(); return; }
+      else if (k === 'j' || k === 'ArrowDown') sc.scrollTop += lh * 2;
+      else if (k === 'k' || k === 'ArrowUp') sc.scrollTop -= lh * 2;
+      else if (k === ' ' || k === 'PageDown' || k === 'f') sc.scrollTop += page;
+      else if (k === 'b' || k === 'PageUp') sc.scrollTop -= page;
+      else if (k === 'd') sc.scrollTop += page / 2;
+      else if (k === 'u') sc.scrollTop -= page / 2;
+      else if (k === 'g' || k === 'Home') sc.scrollTop = 0;
+      else if (k === 'G' || k === 'End') sc.scrollTop = sc.scrollHeight;
+      else handled = false;
+      if (handled) { e.preventDefault(); this.updatePagerStatus(); this.nyan.sync(); }
+    }
+
+    // website route of a terminal directory (nearest ancestor with one)
+    dirRoute(dir) {
+      for (let d = dir; d; d = d.replace(/\/[^/]*$/, '')) {
+        if (this.dirs[d] && this.dirs[d].route) return this.dirs[d].route;
+      }
+      return '/';
+    }
+
+    // Keep the address bar on the website route of the last page opened
+    // (cat) or section entered (cd). Quitting the pager doesn't move it, so
+    // "read about, q, `" lands on /about/.
+    syncUrl(route, title) {
+      if (this.restoring) return;
+      this.moved = true;
+      this.route = route;
+      try { history.replaceState({}, '', BASE + route); } catch (err) {}
+      document.title = title ? title + ' · PESOS' : this.loadedTitle;
+    }
+
+    openForLocation() {
+      this.restoring = true;
+      fitLogo(this.print('<pre class="pt-hero">' + heroHtml() + '</pre>').querySelector('pre'));
+      if (this.entries['/']) this.print(renderMarkdown(this.entries['/'].body), 'pt-doc');
+      this.println('');
+      this.ls('/');
+      // the page we're on (or a legacy #path link) -> its terminal path
+      const hash = (location.hash || '').replace(/^#\/?/, '/');
+      const here = this.entries[hash] && hash !== '/' ? hash : SITEMAP[normalizePath(location.pathname)];
+      if (here && here !== '/') {
+        if (this.entries[here]) this.openPager(here);
+        else this.cd(here);
+      }
+      this.restoring = false;
+      this.moved = false;
+    }
+
+    /* ---- boot + neofetch --------------------------------------------- */
+    renderNeofetch() {
+      const m = this.meta || {};
+      const logo = heroHtml();
+      const rows = [
+        ['OS', 'PES Open Source'],
+        ['Host', 'pes.community'],
+        ['Kernel', 'astro · static site'],
+        ['Uptime', 'since ' + (m.founded || 2012)],
+        ['Shell', 'pesh 1.0'],
+        ['Theme', 'PESOS (matches the site)'],
+        ['Sections', Object.keys(this.dirs).length + ' · run tree'],
+        ['Pages', String(m.pages != null ? m.pages : this.paths.length)],
+        ['Posts', String(m.posts != null ? m.posts : '')],
+        ['Toggle', 'Ctrl+T  or  `'],
+      ];
+      const info = [
+        '<span class="pt-neo-title">guest@pesos</span>',
+        '<span class="pt-neo-rule">' + '─'.repeat(11) + '</span>',
+        ...rows.map(([k, v]) => '<span class="k">' + esc((k + ':').padEnd(10)) + '</span>' + esc(v)),
+      ].join('\n');
+      const swatch = [
+        '--ptn-bg-hl', '--ptn-red', '--ptn-orange', '--ptn-green',
+        '--ptn-teal', '--ptn-comment', '--ptn-fg-dim', '--ptn-fg',
+      ].map((c) => '<i style="background:var(' + c + ')"></i>').join('');
+      fitLogo(this.print(
+        '<div class="pt-neo pt-scan">' +
+          '<pre>' + logo + '</pre>' +
+          '<div class="pt-neo-info">' + info + '\n\n<span class="pt-swatch">' + swatch + '</span></div>' +
+        '</div>'
+      ).querySelector('pre'));
+    }
+
+    async runBoot(rain) {
+      this.booting = true;
+      this.input.disabled = true;
+      if (rain) await rain;
+      this.root.classList.remove('pt-raining');
+      this.clear();
+      this.reveal = 0;
+      this.renderNeofetch();
+      this.println('');
+      this.println('select mode:  (type 1 / 2, or tap)', 'pt-doc-head');
+      this.print('  <span class="pt-file" data-mode="1">[1] developer</span>  <span class="pt-muted">browse the whole site in this terminal</span>');
+      this.print('  <span class="pt-file" data-mode="2">[2] normal</span>     <span class="pt-muted">the regular website</span>');
+      this.println('');
+      this.reveal = null;
+      this.booting = false;
+      this.input.disabled = false;
+      this.awaitingMode = true;
+      this.setPrompt('mode?');
+      this.focus();
+    }
+
+    pickMode(v) {
+      const s = String(v).trim().toLowerCase();
+      if (['1', 'd', 'dev', 'developer'].includes(s)) {
+        this.awaitingMode = false;
+        try { sessionStorage.setItem(BOOT_KEY, '1'); } catch (e) {}
+        setMode('dev');
+        this.fadeOut(() => {
+          this.reveal = 0;
+          this.println('developer mode. "help" for commands, "exit" for the normal site.', 'pt-ok');
+          this.println('');
+          this.setPrompt();
+          this.openForLocation();
+          this.reveal = null;
+          this.enableSmooth();
+          this.focus();
+        });
+      } else if (['2', 'n', 'no', 'normal', 'non-dev', 'nondev'].includes(s)) {
+        this.awaitingMode = false;
+        try { sessionStorage.setItem(BOOT_KEY, '1'); } catch (e) {}
+        leaveDevMode();
+      } else {
+        this.println('pick 1 or 2', 'pt-err');
+      }
+    }
+
+    modeHelp() {
+      this.println('mode 1  developer terminal (this)');
+      this.println('mode 2  normal website');
+    }
+
+    help() {
+      const rows = [
+        ['ls [path]', 'list a section  (auto-runs when you cd)'],
+        ['cd <dir>', 'enter a section, e.g. about/   ("cd /" = home)'],
+        ['cat <file>', 'read a page in the pager  (q to quit)'],
+        ['grep <text>', 'search every page  (shortcut:  /text )'],
+        ['tree', 'show the whole site'],
+        ['neofetch', 'the splash panel again'],
+        ['pwd', 'where am I'],
+        ['clear', 'clear the screen  (Ctrl+L)'],
+        ['send', 'send us a message  (the contact form)'],
+        ['mode [1|2]', '1 = this terminal, 2 = normal website'],
+        ['exit', 'leave developer mode'],
+      ];
+      this.println('commands', 'pt-doc-head');
+      for (const [c, d] of rows) this.print('  <span class="pt-file">' + esc(c.padEnd(14)) + '</span><span class="pt-muted">' + esc(d) + '</span>');
+      this.println('');
+      this.println('getting around', 'pt-doc-head');
+      this.println('  type a name directly — e.g. "about", "blogs", "showcase"');
+      this.println('  Tab completes commands and paths; Tab twice lists options');
+      this.println('  click any highlighted path or link');
+      this.println('  `   (backtick)  toggle the normal website from anywhere');
+    }
+
+    /* ---- effects ---------------------------------------------------- */
+    // Switching back in from the website: matrix rain first, then the page.
+    async reenter() {
+      if (!reducedMotion()) {
+        this.root.classList.add('pt-raining');
+        this.input.disabled = true;
+        await this.matrix();
+        this.input.disabled = false;
+        this.root.classList.remove('pt-raining');
+      }
+      this.setPrompt();
+      this.openForLocation();
+      this.enableSmooth();
+      this.focus();
+    }
+
+    // Matrix rain over the whole terminal. Columns fall from above the top
+    // and start again when they pass the bottom; once the screen has been
+    // covered, the rain fades out while still falling, and the promise
+    // resolves early in that fade so the next screen fades in underneath.
+    matrix() {
+      return new Promise((resolve) => {
+        const c = this.canvas;
+        const ctx = c && c.getContext('2d');
+        if (!ctx) return resolve();
+        const dpr = window.devicePixelRatio || 1;
+        const w = c.clientWidth || window.innerWidth;
+        const h = c.clientHeight || window.innerHeight;
+        c.width = w * dpr;
+        c.height = h * dpr;
+        ctx.scale(dpr, dpr);
+        c.classList.add('on');
+        const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>[]{}/\\$#@=+*';
+        const size = 16;
+        const rows = Math.ceil(h / size);
+        const SPEED = 1.6; // average rows per tick
+        const cols = Array.from({ length: Math.ceil(w / size) }, () => ({
+          y: -Math.random() * rows * 0.5,
+          v: SPEED * (0.6 + Math.random() * 0.8),
+        }));
+        // long enough for the average column to reach the bottom
+        const runMs = Math.min(2400, Math.max(1000, (rows * 1.5 / SPEED) * 33));
+        ctx.font = size + 'px "JetBrains Mono", monospace';
+        // the palette (and so the current site theme) decides the colours
+        const pal = getComputedStyle(document.documentElement);
+        const bg = pal.getPropertyValue('--ptn-bg').trim();
+        const trail = pal.getPropertyValue('--ptn-green').trim();
+        const head = pal.getPropertyValue('--ptn-fg').trim();
+        const tick = () => {
+          ctx.globalAlpha = 0.14;
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, w, h);
+          ctx.globalAlpha = 1;
+          cols.forEach((col, i) => {
+            const from = Math.floor(col.y);
+            col.y += col.v;
+            const to = Math.floor(col.y);
+            // every row passed this tick gets a glyph (no gaps in fast
+            // columns): the accent for the trail, a bright head
+            for (let r = Math.max(from + 1, 1); r <= to; r++) {
+              ctx.fillStyle = r === to ? head : trail;
+              ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, r * size);
+            }
+            if (col.y > rows + 6) col.y = -Math.random() * 8;
+          });
+        };
+        const iv = setInterval(tick, 33);
+        setTimeout(() => {
+          c.classList.remove('on'); // CSS fades the canvas out over 0.8s
+          setTimeout(resolve, 250);
+          setTimeout(() => { clearInterval(iv); ctx.clearRect(0, 0, w, h); }, 900);
+        }, runMs);
+      });
+    }
+
+    installFire() {
+      if (document.getElementById('pesos-fire')) return;
+      this.fireEl = document.createElement('div');
+      this.fireEl.id = 'pesos-fire';
+      this.root.appendChild(this.fireEl);
+    }
+    fire() {
+      this.animating = true;
+      this.input.disabled = true;
+      this.fireEl.classList.add('on');
+      setTimeout(() => {
+        this.fireEl.classList.remove('on');
+        this.println('');
+        this.println("\u{1F525} and that is why we don't run that command.", 'pt-err');
+        this.animating = false;
+        this.input.disabled = false;
+        this.focus();
+      }, 1800);
+    }
+  }
+
+  /* ---- module-level wiring ------------------------------------------- */
+  let term = null;
+  const root = document.getElementById('pesos-terminal');
+
+  function ensureTerm(opts) {
+    if (!root) return;
+    if (!term) term = new PesosTerminal(root);
+    term.start(opts || { boot: false });
+  }
+
+  // website -> terminal: always starts with the matrix rain
+  function enterDevMode() {
+    setMode('dev');
+    if (!term) ensureTerm({ boot: false, rain: true });
+    else term.reenter();
+    if (term) term.focus();
+  }
+
+  // terminal -> website: always the home page. If the page under the
+  // terminal already is home, just swap back; otherwise load home. Only the
+  // stored mode flips first, so the terminal stays up until home paints.
+  function leaveDevMode() {
+    const loaded = term && term.loadedHref ? new URL(term.loadedHref).pathname : location.pathname;
+    if (normalizePath(loaded) !== '/') {
+      try { sessionStorage.setItem(MODE_KEY, 'normal'); } catch (e) {}
+      location.assign(BASE + '/');
+      return;
+    }
+    if (term && term.paging) { term.restoring = true; term.closePager(); term.restoring = false; }
+    setMode('normal');
+    try {
+      if (term && term.loadedHref && location.href !== term.loadedHref) {
+        history.replaceState({}, '', term.loadedHref);
+      }
+      if (term) { document.title = term.loadedTitle; term.moved = false; }
+    } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  window.__pesosLeaveDevMode = leaveDevMode;
+
+  function onKey(e) {
+    const t = e.target;
+    const typing =
+      t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    const ctrlT =
+      e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 't' || e.key === 'T');
+    const tick =
+      e.key === '`' && !e.ctrlKey && !e.metaKey && !e.altKey;
+    if (!ctrlT && !tick) return;
+    // backtick stays a normal key while the pager is open (q quits there)
+    if (tick && term && term.paging) return;
+    if (tick && typing && !(term && t === term.input)) return;
+    e.preventDefault();
+    if (document.documentElement.classList.contains('mode-dev')) leaveDevMode();
+    else enterDevMode();
+  }
+
+  document.addEventListener('keydown', onKey, true);
+
+  // the nav's ">_ Terminal" links (the nav itself isn't changed for this)
+  const toggles = [
+    ...document.querySelectorAll('.term-btn'),
+    ...[...document.querySelectorAll('.nav__drawer a[href="#"]')].filter((a) => /terminal/i.test(a.textContent || '')),
+  ];
+  toggles.forEach((el) =>
+    el.addEventListener('click', (e) => { e.preventDefault(); enterDevMode(); })
+  );
+
+  // a page load in terminal mode (reload, or a page loaded from the terminal)
+  // carries straight on: no rain, no boot screen
+  if (document.documentElement.classList.contains('mode-dev')) {
+    ensureTerm({ boot: false });
+  }
+</script>

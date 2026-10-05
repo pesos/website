@@ -54,7 +54,7 @@ build: { format: 'directory' },      // /about/ → dist/about/index.html
 
 ## The filter engine
 
-`initFilters` is the most reused piece of logic. It drives `/showcase/projects/`, `/showcase/archive/`, `/blogs/resources/`, `/blogs/`, `/about/events/` and `/about/perks/`.
+`initFilters` is the most reused piece of logic. It drives `/showcase/projects/`, `/showcase/archive/`, `/blogs/resources/`, `/blogs/`, `/events/` and `/about/perks/`.
 
 - Each filterable card carries `data-item` plus a `data-<key>` attribute for each field it can be filtered on (`data-cat`, `data-status`, `data-year`, …).
 - Chips (`[data-filter][data-filter-key]`) and selects (`[data-filter-select="<key>"]`) write their value into `state[key]`.

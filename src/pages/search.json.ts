@@ -16,7 +16,7 @@ const PAGE_DESC: Record<string, string> = {
   '/getting-started/': 'Why you, as a college student, should care about open source.',
   '/getting-started/101/': "Open source, a beginner's guide: what it means and how to start contributing.",
   '/getting-started/why-our-club/': 'Who we are, what we do, and the club in numbers.',
-  '/about/events/': 'Meetups, hackathons, Hacktoberfest, CTFs, fireside talks and contribution sprees.',
+  '/events/': 'Meetups, hackathons, Hacktoberfest, CTFs, fireside talks and contribution sprees.',
   '/about/goals/': 'Our mission statement and what the club works towards.',
   '/about/how-to-join/': 'Joining PESOS is a single pull request to the members list.',
   '/about/perks/': 'Tools, cloud credits and learning material for active members.',
@@ -57,7 +57,7 @@ export async function GET() {
     entries.push({ t: g.title, d: g.blurb, s: 'Getting Started', u: '/getting-started/' });
   }
   for (const a of ACTIVITIES) {
-    entries.push({ t: a.title, d: a.blurb, s: 'Upcoming Events', u: '/about/events/' });
+    entries.push({ t: a.title, d: a.blurb, s: 'Upcoming Events', u: '/events/' });
   }
   for (const j of JOIN_STEPS) {
     entries.push({ t: j.title, d: j.desc, s: 'How to Join', u: '/about/how-to-join/' });

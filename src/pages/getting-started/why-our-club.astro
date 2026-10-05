@@ -18,7 +18,7 @@ const activities = [
   { t: 'Workshops', d: 'Hands-on sessions on the open-source movement, tools and technologies, from industry guests and community members alike.' },
   { t: 'Talks and Firesides', d: 'Presentations from prominent open-source contributors around Bangalore, giving members a glimpse into real-world programming.' },
   { t: 'Community projects', d: 'Collaborative work on projects hosted under github.com/pesos, reviewed and selected based on community interest.' },
-  { t: 'A Hacktoberfest-style PR challenge', d: 'Members hunt for help-wanted and low-hanging-fruit issues, with a dedicated event to hit a weekly pull-request target.' },
+  { t: 'Events', d: 'Come join us at our events where we have competitions, CTFs, Contribution sprees and much more' },
   { t: 'General meet-ups', d: 'Once-weekly, casual sessions for coding, lightning talks, code review, elections and planning. Our most important activity.' },
 ];
 
@@ -41,61 +41,69 @@ const stats = [
 <BaseLayout title="Why our club" description="PES Open Source is a student-run open-source community from PES University, Bangalore.">
   <GuideDoc
     title="Why our club"
-    subtitle={`PES Open Source is a student-run Open Source community from PES University, Bangalore. We aim to create a thriving culture based around Open Source in our campus.`}
+    subtitle={`PES Open Source is a student-run Open Source community from PES University, Bangalore.`}
   >
-    <DocSection n={1} title="What we do">
-      <ul class="check-list">
-        {activities.map((a) => <li><span><strong>{a.t}.</strong> {a.d}</span></li>)}
-      </ul>
-    </DocSection>
+    <div class="no-nums">
+      <DocSection n={1} title="What we do">
+        <ul class="check-list">
+          {activities.map((a) => <li><span><strong>{a.t}.</strong> {a.d}</span></li>)}
+        </ul>
+      </DocSection>
 
-    <DocSection n={2} title="PESOS in numbers">
-      <div class="stat-grid">
-        {stats.map((s) => (
-          <div class="stat-card">
-            <div class="stat-card__num" data-count={s.num}>{s.num}</div>
-            <div class="stat-card__label">{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </DocSection>
+      <DocSection n={2} title="PESOS in numbers">
+        <div class="stat-grid">
+          {stats.map((s) => (
+            <div class="stat-card">
+              <div class="stat-card__num" data-count={s.num}>{s.num}</div>
+              <div class="stat-card__label">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </DocSection>
 
-    <!--
-    <section class="wrap section">
-      <SectionHeader num="01" title="Our Standards" center />
-      <div class="grid-2">
-        {standards.map((v, i) => (
-          <div class="card card--spotlight reveal" style={`--d:${i * 60}ms`}>
-            <span class="mono" style="color:var(--neon);font-size:.85rem">{v.n}</span>
-            <h3 class="h3" style="margin:8px 0 6px">{v.t}</h3>
-            <p class="muted" style="font-size:.92rem">{v.d}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+      <!--
+      <section class="wrap section">
+        <SectionHeader num="01" title="Our Standards" center />
+        <div class="grid-2">
+          {standards.map((v, i) => (
+            <div class="card card--spotlight reveal" style={`--d:${i * 60}ms`}>
+              <span class="mono" style="color:var(--neon);font-size:.85rem">{v.n}</span>
+              <h3 class="h3" style="margin:8px 0 6px">{v.t}</h3>
+              <p class="muted" style="font-size:.92rem">{v.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-    <section class="wrap section">
-      <SectionHeader num="02" title="How we're organised" center />
-      <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
-        The Core Committee is elected by the community every year by instant-runoff vote. No
-        committee member serves indefinitely.
-      </p>
-      <div class="grid-2">
-        {roles.map((m) => (
-          <div class="card reveal">
-            <div class="h3" style="margin-bottom:6px">{m.r}</div>
-            <p class="muted" style="font-size:.9rem">{m.d}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-    -->
+      <section class="wrap section">
+        <SectionHeader num="02" title="How we're organised" center />
+        <p class="muted" style="text-align:center;margin:-24px auto 32px;max-width:64ch">
+          The Core Committee is elected by the community every year by instant-runoff vote. No
+          committee member serves indefinitely.
+        </p>
+        <div class="grid-2">
+          {roles.map((m) => (
+            <div class="card reveal">
+              <div class="h3" style="margin-bottom:6px">{m.r}</div>
+              <p class="muted" style="font-size:.9rem">{m.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      -->
 
-    <DocSection n={3} title="Come build with us">
-      <p class="muted">Open to every branch and every skill level.</p>
-      <div class="note" style="align-items:center">
-        Ready to join? <a class="link-arrow" href="/about/how-to-join/" style="margin-left:auto">How to join →</a>
-      </div>
-    </DocSection>
+      <DocSection n={3} title="Come build with us">
+        <p class="muted">Open to every branch and every skill level.</p>
+        <div class="note" style="align-items:center">
+          <a class="link-arrow" href="/about/how-to-join/" style="margin-left:auto">Find out how to join →</a>
+        </div>
+      </DocSection>
+    </div>
   </GuideDoc>
 </BaseLayout>
+
+<style>
+  .no-nums :global(.doc__sec-n) {
+    display: none;
+  }
+</style>

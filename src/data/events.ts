@@ -3,13 +3,14 @@
 // calendar. `cadence` is only set where the schedule is actually fixed.
 export type ActivityItem = {
   title: string;
-  type: 'Meetup' | 'Hackathon' | 'Hacktoberfest' | 'CTF' | 'Fireside Talk' | 'Contribution Spree';
+  type: 'Meetup' | 'Hackathon' | 'Hacktoberfest' | 'CTF' | 'Fireside Talk' | 'Contribution Spree' | 'Linux Installation Fest' | 'Club Collaboration'|'GitGud Workshop';
   blurb: string;
   cadence?: string;
   featured?: boolean;
 };
 
 export const ACTIVITIES: ActivityItem[] = [
+
   {
     title: 'Meetups',
     type: 'Meetup',
@@ -40,7 +41,7 @@ export const ACTIVITIES: ActivityItem[] = [
     title: 'Fireside Talks',
     type: 'Fireside Talk',
     blurb:
-      'Informal conversations with open-source contributors and developers from around Bangalore about their work, their projects and how they got started.',
+      'Informal conversations with open-source contributors and developers within college about their work, their projects and how they got started.',
   },
   {
     title: 'Contribution Sprees',
@@ -48,6 +49,24 @@ export const ACTIVITIES: ActivityItem[] = [
     blurb:
       'The community sets a pull-request target and works together to hit it within a week, hunting for help-wanted and good-first issues across open-source projects.',
   },
+    {
+    title: 'Club Collaborations',
+    type: 'Club Collaboration',
+    blurb:
+      'We team up with other student clubs to run hackathons, host tech talks, and throw cool events. Come hang out, learn something new, and make some great friends along the way.',
+  },
+  {
+    title: 'Linux Installation Fest',
+    type: 'Linux Installation Fest',
+    blurb:
+      'Curious about Linux but never tried it? Bring your laptop and we’ll help you get started. Install Linux, explore the open-source world, and see what your machine can do with a whole new setup.',
+  },
+  {
+  title: 'GitGud Workshop',
+  type: 'GitGud Workshop',
+  blurb:
+    'A hands-on session to learn Git, get comfortable using it, and get started with contributing to open-source projects.',
+},
 ];
 
 export const ACTIVITY_TYPES = ['All', ...ACTIVITIES.map((a) => a.type)];
