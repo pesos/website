@@ -55,7 +55,6 @@ const tech = [
     <div class="grid-auto">
       {SECTIONS.map((s, i) => (
         <a class="card card--spotlight reveal" href={s.href} style={`--d:${i * 60}ms`}>
-          <span class="eyebrow eyebrow--pill" style="margin-bottom:16px">{s.n} // {s.label}</span>
           <div class="card__body">
             <h3 class="h3">{s.title}</h3>
             <p class="muted" style="font-size:.9rem">{s.desc}</p>
