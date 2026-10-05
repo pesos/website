@@ -6,8 +6,12 @@
 import Crumb from './Crumb.astro';
 import { navSection } from '../data/site';
 
-interface Props { title: string; subtitle?: string; }
-const { title, subtitle } = Astro.props;
+interface Props {
+  title: string;
+  subtitle?: string;
+  cta?: { label: string; href: string };
+}
+const { title, subtitle, cta } = Astro.props;
 
 const sec = navSection('Getting Started');
 const here = Astro.url.pathname.replace(/\/?$/, '/');
@@ -34,9 +38,10 @@ const next = sec.children[i + 1];
 
       <div class="doc__pager">
         {prev ? <a class="btn btn--ghost btn--sm" href={prev.href}>← {prev.label}</a> : <span />}
-        {next && <a class="btn btn--primary btn--sm" href={next.href}>{next.label} →</a>}
+        {next
+          ? <a class="btn btn--primary btn--sm" href={next.href}>{next.label} →</a>
+          : cta && <a class="btn btn--primary btn--sm" href={cta.href}>{cta.label} →</a>}
       </div>
     </div>
   </div>
 </section>
-
