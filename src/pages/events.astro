@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Crumb from '@/components/Crumb.astro';
-import SectionTabs from '@/components/SectionTabs.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
 import ImgPlaceholder from '@/components/ImgPlaceholder.astro';
 import { ACTIVITIES, ACTIVITY_TYPES } from '@/data/events';
@@ -13,14 +12,13 @@ const rest = ACTIVITIES.filter((a) => a !== featured);
 
 <BaseLayout title="Events & Activities" description="What PESOS actually runs, and how often, plus where to find out what's next.">
   <section class="wrap page-head">
-    <Crumb items={[{ label: 'About' }, { label: 'Upcoming Events' }]} />
+    <Crumb items={[{ label: 'Upcoming Events' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Events & Activities</h1>
     <p class="lead">
       We don't keep a public calendar with fixed dates; specific meet-ups, workshops and talks
       are announced on Slack and Discord as they're scheduled. Here's the shape of what we
       actually run, and how often.
     </p>
-    <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
 
   <section class="wrap section" data-filter-root>
