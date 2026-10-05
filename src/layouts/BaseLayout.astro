@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Search from '../components/Search.astro';
+import TerminalMode from '../components/TerminalMode.astro';
 import { SITE } from '../data/site';
 
 interface Props {
@@ -33,6 +34,7 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.full;
     </script>
   </head>
   <body>
+    <TerminalMode />
     <div class="bg-grid" aria-hidden="true"></div>
     <div class="bg-aurora" aria-hidden="true"></div>
     <Nav />
