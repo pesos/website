@@ -24,7 +24,7 @@ The website is then exactly as it would be without the terminal. Nothing else in
 ## How it hooks in without touching the website
 
 - **Hiding the website:** in terminal mode every other child of `<body>` is faded out and made `inert`. No wrapper element is added.
-- **Opening it:** backtick, or the nav's existing `>_ Terminal` button and drawer link, which the terminal finds by their class and text. The nav markup isn't changed. Every switch from the website plays the matrix rain first (skipped with reduced motion).
+- **Opening it:** backtick, or the nav's existing `>_ Terminal` button and drawer link, which the terminal finds by their class and text. The nav markup isn't changed. Every switch from the website starts a fresh session: screen cleared, at the root (`~`, address bar `/`), empty command history, whichever page you were on. The matrix rain plays first (skipped with reduced motion).
 - **Leaving it:** `exit` (or backtick) always lands on the website's home page. If the page under the terminal is already `/` it swaps back instantly; otherwise it loads `/`.
 - **Mode:** a new visit always starts on the normal website. Opening the terminal sets `sessionStorage.pesosMode` to `dev`, so it stays open across page loads for the rest of that session (a reload carries straight on, without the rain); leaving sets it to `normal`.
 - **Clicking:** like a real terminal, files and folders aren't clickable; you open them with `cd`, `ls` and `cat`. Only external URLs in page content open on click.
