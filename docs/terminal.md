@@ -40,4 +40,4 @@ The terminal shows the website's own pages. `terminalContent.ts` renders every p
 
 ## Layout and zoom
 
-The terminal box keeps the size the screen had when it opened, so browser zoom scales it like a picture: zooming out gives a smaller centred copy with the same line breaks, and zooming in fills the screen. The nyan cat scrollbar and the matrix rain are pinned to the screen and don't change with zoom. Touch devices just fill the screen.
+The terminal always fills the window. Text is 15px (the website's body size, `--pt-font` in `TerminalMode.astro`), so browser zoom works like on any page: text gets bigger or smaller and lines reflow to fit. The nyan cat scrollbar and the matrix rain are sized in viewport units, so they stay the same size at any zoom.

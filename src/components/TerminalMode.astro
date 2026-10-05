@@ -112,16 +112,12 @@
     --ptn-blue: #7aa2f7;
     --ptn-blue0: #3d59a1;
     --ptn-magenta: #bb9af7;
-    /* "scaled at 170": 170% of the original 14px design base. Browser zoom
-       scales the whole terminal like a picture: its box keeps the size the
-       screen had when it opened (fitFrame), so zooming out gives a smaller
-       copy, centred, with the
-       same line breaks. The nyan scrollbar and the matrix rain stay pinned
-       to the screen in viewport units, the same size at any zoom. */
-    --pt-scale: 1.7;
-  }
-  @media (pointer: coarse) and (max-width: 820px) {
-    :root { --pt-scale: 1.15; }
+    /* Text size, matching the website's 15px body text. The terminal fills
+       the window and sizes text in px, so browser zoom works like on any
+       page: text grows or shrinks and lines reflow to the new width. The
+       nyan scrollbar and the matrix rain are pinned to the screen in
+       viewport units, the same size at any zoom. */
+    --pt-font: 15px;
   }
 
   /* ---- mode switching + smooth toggle -------------------------------- */
@@ -151,18 +147,13 @@
     color: var(--ptn-fg);
     font-family: 'Source Code Pro', ui-monospace, 'JetBrains Mono',
       'Courier New', Courier, monospace;
-    font-size: calc(14px * var(--pt-scale));
+    font-size: var(--pt-font);
     line-height: 1.6;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transform: translateY(6px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-  }
-  #pesos-terminal {
-    width: min(var(--pt-w, 100vw), 100vw);
-    height: min(var(--pt-h, 100vh), 100vh);
-    margin: auto;
   }
   html.mode-dev #pesos-terminal {
     opacity: 1;
@@ -1751,32 +1742,6 @@
   /* ---- module-level wiring ------------------------------------------- */
   let term = null;
   const root = document.getElementById('pesos-terminal');
-
-  // Keep the terminal box at the size the screen had when it opened, in CSS
-  // px. Browser zoom changes how big a CSS px is, so zooming out turns the
-  // box into a smaller copy (centred by CSS) with the same line breaks, and
-  // zooming in fills the screen. Zoom changes the window's size in CSS px
-  // but not in physical pixels; a real resize changes both, and is the only
-  // thing that re-measures. The baseline is kept per session, so a reload
-  // while zoomed keeps it. Touch devices (pinch zoom doesn't reflow) just
-  // fill the screen.
-  const FRAME_KEY = 'pesosFrame';
-  function fitFrame() {
-    if (!root || window.matchMedia('(pointer: coarse)').matches) return;
-    const dpr = window.devicePixelRatio || 1;
-    const physW = Math.round(window.innerWidth * dpr);
-    const physH = Math.round(window.innerHeight * dpr);
-    let base = null;
-    try { base = JSON.parse(sessionStorage.getItem(FRAME_KEY) || 'null'); } catch (e) {}
-    if (!base || Math.abs(base.physW - physW) > 3 || Math.abs(base.physH - physH) > 3) {
-      base = { physW, physH, w: window.innerWidth, h: window.innerHeight };
-      try { sessionStorage.setItem(FRAME_KEY, JSON.stringify(base)); } catch (e) {}
-    }
-    root.style.setProperty('--pt-w', base.w + 'px');
-    root.style.setProperty('--pt-h', base.h + 'px');
-  }
-  fitFrame();
-  window.addEventListener('resize', fitFrame);
 
   function ensureTerm(opts) {
     if (!root) return;
