@@ -102,7 +102,7 @@ All in `src/data/site.ts`:
 - `LINKS`: GitHub, members repo, Slack invite, Instagram, Twitter, Formspree endpoint.
 - `SITE.tagline`: shown in the home hero and the footer.
 
-The nav highlights a section on every page under its `base`, so Showcase and Engagement stays highlighted on `/showcase/projects/grofer/`. Dropdown and drawer links are highlighted only on an exact match.
+The nav highlights a section on every page under its `base`, so Projects and Archive stays highlighted on `/showcase/projects/grofer/`. Dropdown and drawer links are highlighted only on an exact match.
 
 To add a page to a section: create it under that section's folder in `src/pages/`, add it to the section's `children` in `NAV`, put `<SectionTabs section="…" />` in its header, and add a one-line description to `PAGE_DESC` in `src/pages/search.json.ts`. Link only to pages in the same section.
 
@@ -167,6 +167,6 @@ Without an http(s) `action`, the form only validates and shows `.form-success`. 
 
 ## Common problems
 
-- **Build error `Cannot read properties of undefined` on `/showcase/projects/`, `/about/events/` or `/about/perks/`**: no entry has `featured: true`.
+- **Build error `Cannot read properties of undefined` on `/showcase/projects/` or `/about/perks/`**: no entry has `featured: true`.
 - **A new card doesn't show up under a filter**: its `data-<key>` value doesn't match the chip or option value, or the new value is missing from the `*_FILTERS` / `*_YEARS` array.
 - **A new page isn't reachable**: add it to its section's `children` in `NAV`.

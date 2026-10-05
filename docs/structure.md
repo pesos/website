@@ -35,8 +35,8 @@ pesos-web/
     │   │   ├── index.astro          # Main Hub
     │   │   ├── 101.astro
     │   │   └── why-our-club.astro
+    │   ├── events.astro
     │   ├── about/
-    │   │   ├── events.astro
     │   │   ├── goals.astro
     │   │   ├── how-to-join.astro
     │   │   └── perks.astro
@@ -81,21 +81,21 @@ The file name is the URL (`build.format: 'directory'` means every route ends in 
 | Getting Started | `/getting-started/` | `getting-started/index.astro` | Main Hub: `GUIDE_SECTIONS` |
 | | `/getting-started/101/` | `getting-started/101.astro` | Long-form guide written in the page |
 | | `/getting-started/why-our-club/` | `getting-started/why-our-club.astro` | Inline `activities`, stats |
-| About | `/about/events/` | `about/events.astro` | `ACTIVITIES`, `ACTIVITY_TYPES` |
-| | `/about/goals/` | `about/goals.astro` | Mission statement + inline `goals` |
+| Upcoming Events | `/events/` | `events.astro` | `ACTIVITIES` (no child pages) |
+| About | `/about/goals/` | `about/goals.astro` | Mission statement + inline `goals` |
 | | `/about/how-to-join/` | `about/how-to-join.astro` | `JOIN_STEPS`, `LINKS` |
 | | `/about/perks/` | `about/perks.astro` | `PERKS`, `PERK_CATEGORIES`, `PERK_STEPS` |
 | Blogs and Resources | `/blogs/` | `blogs/index.astro` | `getAllPosts()`: every markdown post in `/blogs` |
 | | `/blogs/<slug>/` | `blogs/[slug].astro` | One page per `/blogs/<slug>.md`, styled by `.prose` |
 | | `/blogs/resources/` | `blogs/resources.astro` | `RESOURCES`, `RESOURCE_FILTERS` |
 | Contact Us | `/contact/` | `contact.astro` | Inline `socials`, `stats`, `faqs`; Formspree form |
-| Showcase and Engagement | `/showcase/archive/` | `showcase/archive.astro` | `ARCHIVE_ENTRIES`, `ARCHIVE_STATS`, … |
+| Projects and Archive | `/showcase/archive/` | `showcase/archive.astro` | `ARCHIVE_ENTRIES`, `ARCHIVE_STATS`, … |
 | | `/showcase/projects/` | `showcase/projects/index.astro` | `PROJECTS`, `OTHER_PROJECTS`, `PROJECT_STATS`, `PROJECT_FILTERS` |
 | | `/showcase/projects/<slug>/` | `showcase/projects/[slug].astro` | One page per `PROJECTS` entry |
 | (search) | `/search.json` | `search.json.ts` | Index of every `NAV` page plus projects, posts, resources, archive, guide, events, join steps, perks |
 | (errors) | 404 / 500 / `/error/?code=NNN` | `404.astro`, `500.astro`, `error.astro` | `ERRORS` via `ErrorPage` |
 
-`/about/` and `/showcase/` have no page of their own; `astro.config.mjs` redirects them to the section's first child. The same `redirects` block keeps the old flat URLs (`/pesos-101/`, `/how-to-join/`, `/events/`, `/perks/`, `/resources/`, `/archive/`, `/projects/…`) working.
+`/about/` and `/showcase/` have no page of their own (`/about/` opens Goals); `astro.config.mjs` redirects them to the section's first child. The same `redirects` block keeps the old flat URLs (`/pesos-101/`, `/how-to-join/`, `/about/events/`, `/perks/`, `/resources/`, `/archive/`, `/projects/…`) working.
 
 Pages in one section don't link to pages in another section. Getting Started pages all use `GuideDoc` (sidebar navigation); the other sections' pages use `SectionTabs`. Both list only their own section's pages.
 
