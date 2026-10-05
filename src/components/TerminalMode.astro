@@ -969,10 +969,11 @@
       if (boot) {
         await this.runBoot(rain);
       } else {
+        if (rainFirst) this.resetSession();
         if (rain) await rain;
         this.root.classList.remove('pt-raining');
         this.setPrompt();
-        this.openForLocation();
+        this.openForLocation({ atRoot: rainFirst });
         this.enableSmooth();
       }
       this.focus();
@@ -1569,7 +1570,28 @@
       document.title = title ? title + ' · PESOS' : this.loadedTitle;
     }
 
-    openForLocation() {
+    // A brand-new session: nothing on screen, at the root, no history.
+    // Used whenever the terminal is entered from the website.
+    resetSession() {
+      if (this.paging) { this.restoring = true; this.closePager(); this.restoring = false; }
+      this.clear();
+      this.cwd = '/';
+      this.history = [];
+      this.histIdx = 0;
+      this.asking = null;
+      this.input.value = '';
+      this.typed.textContent = '';
+      this.route = '/';
+      this.moved = false;
+      try { history.replaceState({}, '', BASE + '/'); } catch (err) {}
+      const home = this.entries['/'];
+      if (home && home.title) document.title = home.title;
+    }
+
+    // atRoot: stay at the root instead of jumping to the page the address
+    // bar is on (a page load in terminal mode resumes there; entering from
+    // the website always starts fresh at the root)
+    openForLocation({ atRoot = false } = {}) {
       this.restoring = true;
       fitLogo(this.print('<pre class="pt-hero">' + heroHtml() + '</pre>').querySelector('pre'));
       if (this.entries['/']) this.print(renderMarkdown(this.entries['/'].body), 'pt-doc');
@@ -1577,7 +1599,7 @@
       this.ls('/');
       // the page we're on (or a legacy #path link) -> its terminal path
       const hash = (location.hash || '').replace(/^#\/?/, '/');
-      const here = this.entries[hash] && hash !== '/' ? hash : SITEMAP[normalizePath(location.pathname)];
+      const here = atRoot ? '/' : this.entries[hash] && hash !== '/' ? hash : SITEMAP[normalizePath(location.pathname)];
       if (here && here !== '/') {
         if (this.entries[here]) this.openPager(here);
         else this.cd(here);
@@ -1695,8 +1717,10 @@
     }
 
     /* ---- effects ---------------------------------------------------- */
-    // Switching back in from the website: matrix rain first, then the page.
+    // Switching back in from the website: a fresh session at the root, with
+    // the matrix rain first.
     async reenter() {
+      this.resetSession();
       if (!reducedMotion()) {
         this.root.classList.add('pt-raining');
         this.input.disabled = true;
@@ -1705,7 +1729,7 @@
         this.root.classList.remove('pt-raining');
       }
       this.setPrompt();
-      this.openForLocation();
+      this.openForLocation({ atRoot: true });
       this.enableSmooth();
       this.focus();
     }
