@@ -19,7 +19,8 @@
 //
 // Reading a file (`cat`) opens a man/less-style pager: top of file, arrow
 // keys / j k / space / g G to move, q to quit. Content comes from
-// /terminal-content.json (see src/lib/terminalContent.ts). Theme: Tokyo Night.
+// /terminal-content.json (see src/lib/terminalContent.ts). Colours: the website's own palette,
+// dark or light to match the site's theme.
 ---
 
 <!-- pick the mode before the website paints (this is the first thing in <body>).
@@ -80,29 +81,53 @@
 
 
 <style is:global>
-  /* ---- Tokyo Night palette --------------------------------------------- */
+  /* ---- palette: the website's own ----------------------------------- */
+  /* Same tokens as src/styles/global.css (dark default, light override), so
+     the terminal looks like the rest of the site and follows its theme. The
+     --ptn-* names are roles used throughout the rules below:
+       blue = main accent (dirs, headings, prompt), cyan = links,
+       magenta/teal = secondary accent, yellow = bold, orange/red = numbers
+       and errors (the site has no tokens for those two). */
   :root {
-    --ptn-bg: #1a1b26;
-    --ptn-bg-dark: #16161e;
-    --ptn-bg-hl: #292e42;
-    --ptn-fg: #c0caf5;
-    --ptn-fg-dim: #a9b1d6;
-    --ptn-comment: #737aa2;
-    --ptn-red: #f7768e;
-    --ptn-orange: #ff9e64;
-    --ptn-yellow: #e0af68;
-    --ptn-green: #9ece6a;
-    --ptn-teal: #73daca;
-    --ptn-cyan: #7dcfff;
-    --ptn-blue: #7aa2f7;
-    --ptn-blue0: #3d59a1;
-    --ptn-magenta: #bb9af7;
+    --ptn-bg: #0b0e0d;                       /* --bg */
+    --ptn-bg-dark: #090c0b;                  /* --bg-inset: code blocks */
+    --ptn-bg-hl: #161b19;                    /* a step above --bg-card */
+    --ptn-fg: #f8f3ef;                       /* --text */
+    --ptn-fg-dim: rgba(248, 243, 239, 0.66); /* --text-dim */
+    --ptn-comment: rgba(248, 243, 239, 0.42);/* --text-mute */
+    --ptn-red: #ff5c5c;                      /* the site's form-error red */
+    --ptn-orange: #f5b971;
+    --ptn-yellow: #f8f3ef;                   /* bold = bright text, like .prose strong */
+    --ptn-green: #3ecf8e;                    /* --neon */
+    --ptn-teal: #94e6b7;                     /* --neon-2 */
+    --ptn-cyan: #94e6b7;
+    --ptn-blue: #3ecf8e;
+    --ptn-blue0: rgba(62, 207, 142, 0.34);   /* --neon-line */
+    --ptn-magenta: #94e6b7;
     /* Text size, matching the website's 15px body text. The terminal fills
        the window and sizes text in px, so browser zoom works like on any
        page: text grows or shrinks and lines reflow to the new width. The
        nyan scrollbar and the matrix rain are pinned to the screen in
        viewport units, the same size at any zoom. */
     --pt-font: 15px;
+  }
+
+  :root[data-theme='light'] {
+    --ptn-bg: #fbfaf8;
+    --ptn-bg-dark: #f2f0ec;
+    --ptn-bg-hl: #ebe8e2;
+    --ptn-fg: #10201a;
+    --ptn-fg-dim: #4d5a54;
+    --ptn-comment: #7c8781;
+    --ptn-red: #d33a3a;
+    --ptn-orange: #b4691b;
+    --ptn-yellow: #10201a;
+    --ptn-green: #0f8f56;
+    --ptn-teal: #0b6e43;
+    --ptn-cyan: #0f8f56;
+    --ptn-blue: #0f8f56;
+    --ptn-blue0: rgba(15, 143, 86, 0.32);
+    --ptn-magenta: #0b6e43;
   }
 
   /* ---- mode switching + smooth toggle -------------------------------- */
@@ -130,8 +155,7 @@
     overflow: hidden;
     background: var(--ptn-bg);
     color: var(--ptn-fg);
-    font-family: 'Source Code Pro', ui-monospace, 'JetBrains Mono',
-      'Courier New', Courier, monospace;
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
     font-size: var(--pt-font);
     line-height: 1.6;
     opacity: 0;
@@ -243,7 +267,7 @@
     margin: 1.5em 0 0.55em;
   }
   #pesos-terminal .pt-h1 {
-    color: #dbe1ff;
+    color: var(--ptn-fg);
     font-size: 1.14em;
     border-bottom: 1px solid var(--ptn-blue0);
     padding-bottom: 0.16em;
@@ -376,9 +400,9 @@
   #pesos-terminal .pt-neo-rule { color: var(--ptn-comment); }
   #pesos-terminal .pt-swatch { display: inline-flex; margin-top: 0.5em; }
   #pesos-terminal .pt-swatch i { width: 2.4ch; height: 1.05em; display: inline-block; }
-  /* the logo's own colours (sampled from the PESOS logo image) */
-  #pesos-terminal .pt-logo-g { color: #3cd198; }
-  #pesos-terminal .pt-logo-w { color: #e6e6e6; }
+  /* the logo: green, with the O in the text colour (like the site's wordmark) */
+  #pesos-terminal .pt-logo-g { color: var(--ptn-green); }
+  #pesos-terminal .pt-logo-w { color: var(--ptn-fg); }
   #pesos-terminal .pt-c-muted { color: var(--ptn-comment); }
 
   /* ---- input line + riced prompt ----------------------------------- */
@@ -406,7 +430,7 @@
     font-weight: 700;
     border-radius: 5px 0 0 5px;
   }
-  #pesos-terminal .pt-seg-branch { background: var(--ptn-blue0); color: #d7e0ff; }
+  #pesos-terminal .pt-seg-branch { background: var(--ptn-blue0); color: var(--ptn-fg); }
   #pesos-terminal .pt-seg-path {
     background: var(--ptn-bg-hl);
     color: var(--ptn-cyan);
@@ -1572,7 +1596,7 @@
         ['Kernel', 'astro · static site'],
         ['Uptime', 'since ' + (m.founded || 2012)],
         ['Shell', 'pesh 1.0'],
-        ['Theme', 'Tokyo Night'],
+        ['Theme', 'PESOS (matches the site)'],
         ['Sections', Object.keys(this.dirs).length + ' · run tree'],
         ['Pages', String(m.pages != null ? m.pages : this.paths.length)],
         ['Posts', String(m.posts != null ? m.posts : '')],
@@ -1584,8 +1608,8 @@
         ...rows.map(([k, v]) => '<span class="k">' + esc((k + ':').padEnd(10)) + '</span>' + esc(v)),
       ].join('\n');
       const swatch = [
-        '--ptn-bg-hl', '--ptn-red', '--ptn-green', '--ptn-yellow',
-        '--ptn-blue', '--ptn-magenta', '--ptn-teal', '--ptn-fg',
+        '--ptn-bg-hl', '--ptn-red', '--ptn-orange', '--ptn-green',
+        '--ptn-teal', '--ptn-comment', '--ptn-fg-dim', '--ptn-fg',
       ].map((c) => '<i style="background:var(' + c + ')"></i>').join('');
       fitLogo(this.print(
         '<div class="pt-neo pt-scan">' +
@@ -1697,18 +1721,25 @@
         }));
         // long enough for the average column to reach the bottom
         const runMs = Math.min(2400, Math.max(1000, (rows * 1.5 / SPEED) * 33));
-        ctx.font = size + 'px "Source Code Pro", monospace';
+        ctx.font = size + 'px "JetBrains Mono", monospace';
+        // the palette (and so the current site theme) decides the colours
+        const pal = getComputedStyle(document.documentElement);
+        const bg = pal.getPropertyValue('--ptn-bg').trim();
+        const trail = pal.getPropertyValue('--ptn-green').trim();
+        const head = pal.getPropertyValue('--ptn-fg').trim();
         const tick = () => {
-          ctx.fillStyle = 'rgba(26,27,38,0.14)';
+          ctx.globalAlpha = 0.14;
+          ctx.fillStyle = bg;
           ctx.fillRect(0, 0, w, h);
+          ctx.globalAlpha = 1;
           cols.forEach((col, i) => {
             const from = Math.floor(col.y);
             col.y += col.v;
             const to = Math.floor(col.y);
             // every row passed this tick gets a glyph (no gaps in fast
-            // columns): the theme's blue for the trail, a bright head
+            // columns): the accent for the trail, a bright head
             for (let r = Math.max(from + 1, 1); r <= to; r++) {
-              ctx.fillStyle = r === to ? '#c0caf5' : '#7aa2f7';
+              ctx.fillStyle = r === to ? head : trail;
               ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, r * size);
             }
             if (col.y > rows + 6) col.y = -Math.random() * 8;

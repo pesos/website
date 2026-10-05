@@ -1,6 +1,6 @@
 # Terminal UI
 
-A second way to browse the site: a terminal (Tokyo Night theme) that shows every page as markdown. It's an add-on. The main website doesn't depend on it and isn't changed by it.
+A second way to browse the site: a terminal, styled with the website's own colours and font (and following its dark/light theme), that shows every page as markdown. It's an add-on. The main website doesn't depend on it and isn't changed by it.
 
 ## Files
 
