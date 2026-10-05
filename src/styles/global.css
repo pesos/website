@@ -382,6 +382,17 @@ textarea {
   border-color: var(--neon-line);
   box-shadow: var(--shadow-glow);
 }
+.perk-featured {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 28px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .perk-featured {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ---------- badges / chips / tags ---------- */
 .tag {

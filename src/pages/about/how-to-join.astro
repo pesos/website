@@ -3,199 +3,112 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Crumb from '@/components/Crumb.astro';
 import SectionTabs from '@/components/SectionTabs.astro';
 import SectionHeader from '@/components/SectionHeader.astro';
+import { LINKS } from '@/data/site';
 
 const FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSeNcexCvYqQkwotRZGJqjoBx8e9ca69QnJMiMBIZ4eE54taPQ/viewform';
-
 const steps = [
-  {
-    n: '01',
-    title: 'Fill the Form',
-    desc: 'Tell us a bit about yourself, what technologies or areas you want to explore, and any past work if you have it.',
-    cta: 'Apply Now',
-    href: FORM_LINK,
-  },
-  {
-    n: '02',
-    title: 'Review & Shortlist',
-    desc: 'The team reviews applications on a rolling basis. Shortlisted candidates will be contacted via email with next steps.',
-  },
-  {
-    n: '03',
-    title: 'Join and Contribute',
-    desc: 'Selected candidates join the team and start contributing to active projects.',
-  },
-];
-
-const include = [
-  'A short intro about you',
-  'Areas or technologies you want to explore',
-  'Past work or projects (optional)',
+  { id: 'orientation', n: '01', title: 'Start where you are', desc: 'Open source means software people can use, study and improve together. You do not need experience or a perfect idea before you begin.', links: [{ label: 'Open source basics', href: '/getting-started/101/' }, { label: 'Why contribute?', href: '/getting-started/' }] },
+  { id: 'setup', n: '02', title: 'Set up your tools', desc: 'Git tracks changes on your computer. GitHub hosts projects and lets you share changes. You will also need a code editor; follow the official guides to install and learn each tool.', links: [{ label: 'Install Git', href: 'https://git-scm.com/book/en/v2/Getting-Started-Installing-Git' }, { label: 'GitHub Hello World', href: 'https://docs.github.com/en/get-started/start-your-journey/hello-world' }, { label: 'Fork a repository', href: 'https://docs.github.com/en/get-started/quickstart/fork-a-repo' }] },
+  { id: 'contribute', n: '03', title: 'Make a first contribution', desc: 'Choose a small issue tagged “good first issue.” Read the project’s README and contribution guide, ask before taking on larger work, then make a branch, commit your change and open a pull request. Review feedback is part of the process; keep the conversation going.', links: [{ label: 'Browse PESOS projects', href: '/showcase/projects/' }, { label: 'Practice with First Contributions', href: 'https://github.com/firstcontributions/first-contributions' }, { label: 'Pull request guide', href: 'https://docs.github.com/en/pull-requests/collaborating-with-pull-requests' }] },
+  { id: 'community', n: '04', title: 'Join the PESOS community', desc: 'Say hello, ask questions and find people to work with. PESOS meetups happen during the semester; dates and contribution sessions are announced in our community channels.', links: [{ label: 'WhatsApp', href: LINKS.whatsapp }, { label: 'Discord', href: LINKS.discord }, { label: 'Events & activities', href: '/about/events/' }] },
 ];
 ---
 
-<BaseLayout
-  title="How to Join"
-  description="Official recruitment process to join PES Open Source (PESOS)."
->
+<BaseLayout title="How to Join" description="A guided path from your first open-source questions to your first contribution with PESOS.">
   <section class="wrap page-head">
     <Crumb items={[{ label: 'About' }, { label: 'How to Join' }]} />
-    <h1 class="h1 title">How to Join PESOS</h1>
-    <p class="lead">Fill one form. We'll take it from there.</p>
+    <h1 class="h1 title">Your first open-source contribution starts here</h1>
+    <p class="lead">New to all of this? Already contributed? Pick up at the step that fits you. You can learn as you go.</p>
     <div class="tabs"><SectionTabs section="About" /></div>
   </section>
 
-  <section class="wrap section--tight process">
-    <SectionHeader num="01" title="The Process" />
+  <section class="wrap section--tight journey">
+    <div class="path-picker card reveal" aria-labelledby="path-title">
+      <div><span class="eyebrow">A path for every starting point</span><h2 id="path-title" class="h3">Where are you starting?</h2></div>
+      <div class="path-actions">
+        <a class="btn btn--ghost" href="#orientation">I'm completely new <span aria-hidden="true">↓</span></a>
+        <a class="btn btn--ghost" href="#contribute">I've contributed before <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
 
+    <SectionHeader num="01" title="Your first contribution, step by step" />
     <ol class="steps">
-      {steps.map((s, i) => (
-        <li class="card step reveal" style={`--d:${i * 50}ms`}>
-          <span class="step-num">{s.n}</span>
-          <h3 class="h3 step-title">{s.title}</h3>
-          <p class="step-desc">{s.desc}</p>
-          {s.cta && (
-            <a class="btn cta" href={s.href} target="_blank" rel="noopener noreferrer">
-              <span>{s.cta}</span>
-              <span class="arr" aria-hidden="true">&rarr;</span>
-            </a>
-          )}
+      {steps.map((step, i) => (
+        <li class="card step reveal" id={step.id} style={`--d:${i * 50}ms`}>
+          <div class="step-top"><span class="step-num">{step.n}</span><label class="check"><input type="checkbox" data-progress={step.id} /><span>Done</span></label></div>
+          <h3 class="h3 step-title">{step.title}</h3>
+          <p class="step-desc">{step.desc}</p>
+          <ul class="link-list">{step.links.map((link) => <li><a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}>{link.label}<span aria-hidden="true"> ↗</span></a></li>)}</ul>
         </li>
       ))}
     </ol>
 
-    <div class="card prep reveal">
-      <h3 class="h3 prep-title">What to include</h3>
-      <ul class="prep-list">
-        {include.map((item) => <li>{item}</li>)}
-      </ul>
-    </div>
+    <div class="progress" aria-live="polite"><span class="progress-label">Your progress</span><progress id="journey-progress" max="4" value="0">0 of 4</progress><span id="progress-copy">0 of 4 steps complete</span><button class="reset" type="button" id="reset-progress">Reset</button><span class="save-note">Saved only in this browser. No account needed.</span></div>
 
-    <p class="mono note reveal">&gt; Open year-round &middot; Any PES University student can apply</p>
+    <section class="join-card reveal" aria-labelledby="join-title">
+      <div><span class="eyebrow">Want to become a member?</span><h2 class="h2" id="join-title">Apply to join PESOS</h2><p>Making a contribution and joining the club are related, but separate. Any PES University student can apply through our form; tell us what you’re curious about. Past experience is optional.</p></div>
+      <a class="btn btn--primary" href={FORM_LINK} target="_blank" rel="noopener noreferrer">Open membership form <span aria-hidden="true">→</span></a>
+    </section>
   </section>
 </BaseLayout>
 
+<script>
+  const key = 'pesos-join-journey-v1';
+  const checks = Array.from(document.querySelectorAll<HTMLInputElement>('[data-progress]'));
+  const progress = document.querySelector<HTMLProgressElement>('#journey-progress');
+  const copy = document.querySelector<HTMLElement>('#progress-copy');
+  const save = () => {
+    const done = checks.filter((check) => check.checked).length;
+    if (progress) progress.value = done;
+    if (copy) copy.textContent = `${done} of ${checks.length} steps complete`;
+    try {
+      localStorage.setItem(key, JSON.stringify(checks.filter((check) => check.checked).map((check) => check.dataset.progress)));
+    } catch {
+      if (copy) copy.textContent = `${done} of ${checks.length} steps complete. Progress could not be saved in this browser.`;
+    }
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    checks.forEach((check) => { check.checked = saved.includes(check.dataset.progress); });
+  } catch { checks.forEach((check) => { check.checked = false; }); }
+  save();
+  checks.forEach((check) => check.addEventListener('change', save));
+  document.querySelector('#reset-progress')?.addEventListener('click', () => {
+    checks.forEach((check) => { check.checked = false; });
+    save();
+  });
+</script>
+
 <style>
-  .title { margin: 14px 0 10px; font-size: clamp(1.65rem, 5vw, 2.4rem); }
+  .title { margin: 14px 0 10px; font-size: clamp(1.65rem, 5vw, 2.4rem); max-width: 850px; }
   .tabs { margin-top: 22px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .process { padding-top: 28px; }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
-  }
-
-  .steps {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .step {
-    position: relative;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Connector line between cards (desktop only) */
-  .step:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 36px;
-    right: -20px;
-    width: 20px;
-    height: 1px;
-    background: var(--border-strong);
-  }
-
-  .step-num {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--neon);
-  }
-
-  .step-title { margin: 14px 0 6px; }
-
-  .step-desc {
-    font-size: 0.9rem;
-    line-height: 1.55;
-    margin: 0;
-    color: var(--text-dim);
-  }
-
-  /* What to include */
-  .prep { margin-top: 20px; padding: 20px 24px; }
-  .prep-title { margin: 0 0 10px; }
-  .prep-list {
-    margin: 0;
-    padding-left: 1.1rem;
-    display: grid;
-    gap: 6px;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--text-dim);
-  }
-  .prep-list li::marker { color: var(--neon); }
-
-  .note { font-size: 0.8rem; color: var(--text-mute); margin: 28px 0 0; }
-
-  /* Button (inside step 01), pinned to card bottom */
-  .btn.cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    min-height: 44px;
-    margin-top: auto;
-    padding: 10px 20px;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    background: var(--bg-inset);
-    border: 1px solid var(--border-strong);
-    color: var(--text);
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-  }
-  /* spacing above button without breaking margin-top:auto pinning */
-  .step-desc + .btn.cta { margin-top: auto; }
-  .step:has(.btn.cta) .step-desc { margin-bottom: 18px; }
-
-  .btn.cta:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
-  .btn.cta:active { background: var(--neon-soft); border-color: var(--neon); color: var(--neon); }
-
-  .arr { transition: transform 0.15s ease; }
-
-  @media (hover: hover) {
-    .btn.cta:hover { background: var(--neon-soft); border-color: var(--neon); color: var(--neon); }
-    .btn.cta:hover .arr { transform: translateX(3px); }
-    .step:hover { border-color: var(--neon-line); transform: translateY(-2px); }
-  }
-
-  @media (max-width: 992px) {
-    .steps { gap: 14px; }
-    .step { padding: 20px; }
-    .step:not(:last-child)::after { display: none; }
-  }
-
-  @media (max-width: 720px) {
-    .steps { grid-template-columns: 1fr; gap: 14px; }
-    .step { padding: 18px 18px 18px 20px; }
-    .prep { padding: 18px; }
-  }
-
-  @media (max-width: 380px) {
-    .step { padding: 16px; }
-    .step-desc, .prep-list { font-size: 0.86rem; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .card, .arr, .btn.cta { transition: none; }
-    .step:hover { transform: none; }
-  }
+  .journey { padding-top: 28px; }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); }
+  .path-picker { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:22px 24px; margin-bottom:44px; }
+  .path-picker h2 { margin:6px 0 0; }
+  .path-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .eyebrow,.progress-label { font-family:var(--font-mono); color:var(--neon); font-size:.76rem; letter-spacing:.04em; text-transform:uppercase; }
+  .steps { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+  .step { scroll-margin-top:100px; padding:22px; display:flex; flex-direction:column; }
+  .step-top { display:flex; justify-content:space-between; align-items:center; }
+  .step-num { font-family:var(--font-mono); font-size:.85rem; font-weight:700; color:var(--neon); }
+  .check { display:inline-flex; align-items:center; gap:7px; color:var(--text-mute); font-size:.78rem; cursor:pointer; }
+  .check input { accent-color:var(--neon); width:16px; height:16px; }
+  .step-title { margin:14px 0 6px; }
+  .step-desc { font-size:.9rem; line-height:1.6; margin:0; color:var(--text-dim); }
+  .link-list { display:flex; flex-wrap:wrap; gap:8px 16px; list-style:none; padding:0; margin:18px 0 0; }
+  .link-list a { font-size:.82rem; color:var(--neon); text-underline-offset:3px; }
+  .link-list a:hover { text-decoration-thickness:2px; }
+  .progress { display:grid; grid-template-columns:auto minmax(100px,1fr) auto auto; align-items:center; gap:10px 14px; margin:20px 0 48px; padding:14px 18px; border:1px solid var(--border); border-radius:var(--r); color:var(--text-dim); font-size:.8rem; }
+  progress { width:100%; height:8px; accent-color:var(--neon); }
+  .reset { color:var(--text-dim); background:none; border:0; text-decoration:underline; cursor:pointer; font:inherit; }
+  .save-note { grid-column:1/-1; color:var(--text-mute); font-size:.74rem; }
+  .join-card { display:flex; align-items:center; justify-content:space-between; gap:28px; padding:26px; border:1px solid var(--neon-line); border-radius:var(--r); background:var(--bg-card); }
+  .join-card h2 { margin:6px 0; }
+  .join-card p { margin:0; max-width:680px; color:var(--text-dim); line-height:1.6; font-size:.9rem; }
+  .join-card .btn { flex:0 0 auto; }
+  @media (hover:hover) { .step { transition:border-color .2s ease,transform .2s ease; } .step:hover { border-color:var(--neon-line); transform:translateY(-2px); } }
+  @media (max-width:760px) { .path-picker,.join-card { align-items:flex-start; flex-direction:column; } .steps { grid-template-columns:1fr; } .path-picker { margin-bottom:32px; } .progress { grid-template-columns:auto 1fr; } .save-note { grid-column:1/-1; } }
+  @media (max-width:420px) { .path-actions { flex-direction:column; width:100%; } .step { padding:18px; } .progress { gap:8px; } }
+  @media (prefers-reduced-motion:reduce) { .step { transition:none; } .step:hover { transform:none; } }
 </style>

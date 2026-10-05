@@ -14,8 +14,8 @@ const rest = PERKS.filter((p) => !p.featured);
     <Crumb items={[{ label: 'About' }, { label: 'Perks' }]} />
     <h1 class="h1" style="margin:14px 0 10px">Member Perks</h1>
     <p class="lead">
-      Active members and contributors unlock a curated set of tools, server credits, developer
-      packs and learning materials. Perks unlock dynamically based on project participation.
+      A guide to student and open-source programs from other providers. Each provider sets its own
+      eligibility and offer terms; PESOS does not issue these benefits.
     </p>
     <div style="margin-top:22px"><SectionTabs section="About" /></div>
   </section>
@@ -27,18 +27,18 @@ const rest = PERKS.filter((p) => !p.featured);
       ))}
     </div>
 
-    <div class="panel panel--accent reveal" style="display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;margin-bottom:56px">
+    <article class="panel panel--accent perk-featured reveal" data-item data-cat={featured.category} style="margin-bottom:56px">
       <div class="img-ph" style="min-height:150px">Perk logo</div>
       <div>
-        <span class="tag tag--neon">Featured Perk</span>
+        <span class="tag tag--neon">Featured Program</span>
         <h2 class="h2" style="margin:8px 0">{featured.title}</h2>
         <p class="muted" style="margin-bottom:16px">{featured.blurb}</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn btn--primary btn--sm" href="#">Claim perk</a>
-          <a class="btn btn--ghost btn--sm" href="#">Learn more</a>
+          <a class="btn btn--primary btn--sm" href={featured.applyUrl} target="_blank" rel="noopener noreferrer">{featured.applyLabel}</a>
+          <a class="btn btn--ghost btn--sm" href={featured.detailsUrl} target="_blank" rel="noopener noreferrer">Program details</a>
         </div>
       </div>
-    </div>
+    </article>
 
     <SectionHeader num="01" title="All Perks" center />
     <div class="grid-3">
@@ -50,7 +50,10 @@ const rest = PERKS.filter((p) => !p.featured);
           </div>
           <h3 class="h3">{p.title}</h3>
           <p class="muted" style="font-size:.9rem;margin:6px 0 14px">{p.blurb}</p>
-          <a class="btn btn--ghost btn--sm" href="#">Claim</a>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn btn--primary btn--sm" href={p.applyUrl} target="_blank" rel="noopener noreferrer">{p.applyLabel}</a>
+            <a class="btn btn--ghost btn--sm" href={p.detailsUrl} target="_blank" rel="noopener noreferrer">Details</a>
+          </div>
         </article>
       ))}
     </div>
