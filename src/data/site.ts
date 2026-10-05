@@ -84,9 +84,10 @@ export const LINKS = {
 export const SECTIONS = [
   { n: '01', label: 'Start', title: 'Getting Started', desc: 'Learn why open source matters and how to make your first contribution.', href: '/getting-started/', cta: 'Explore' },
   { n: '02', label: 'About', title: 'About', desc: 'Our goals, how to join and member perks.', href: '/about/goals/', cta: 'Learn more' },
-  { n: '03', label: 'Blogs', title: 'Blogs and Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
-  { n: '04', label: 'Contact', title: 'Contact Us', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
-  { n: '05', label: 'Showcase', title: 'Projects and Archive', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
+  { n: '03', label: 'Upcoming Events', title: 'Upcoming Events', desc: 'Hosted events, activities and talks', href: '/events/', cta: 'View events' },
+  { n: '04', label: 'Blogs', title: 'Blogs and Resources', desc: 'Articles, tutorials, curated tools and repositories from our members.', href: '/blogs/', cta: 'Read more' },
+  { n: '05', label: 'Contact', title: 'Contact Us', desc: 'Reach out, propose a project, or just come say hello in our community.', href: '/contact/', cta: 'Get in touch' },
+  { n: '06', label: 'Showcase', title: 'Projects and Archive', desc: 'Our project archive and the open-source projects we build.', href: '/showcase/archive/', cta: 'Explore' },
 ];
 
 export const FOOTER = {
