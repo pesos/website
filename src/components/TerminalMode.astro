@@ -19,7 +19,8 @@
 //
 // Reading a file (`cat`) opens a man/less-style pager: top of file, arrow
 // keys / j k / space / g G to move, q to quit. Content comes from
-// /terminal-content.json (see src/lib/terminalContent.ts). Theme: Tokyo Night.
+// /terminal-content.json (see src/lib/terminalContent.ts). Colours: the website's own palette,
+// dark or light to match the site's theme.
 ---
 
 <!-- pick the mode before the website paints (this is the first thing in <body>).
@@ -72,56 +73,61 @@
   <div class="pt-nyan" aria-hidden="true">
     <div class="pt-nyan-rain"></div>
     <div class="pt-nyan-cat">
-      <svg viewBox="0 0 40 24" width="38" height="22" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="5" width="20" height="14" rx="2.5" fill="#ffb3d1" stroke="#3b2230" stroke-width="1.6"/>
-        <rect x="7" y="8" width="14" height="8" rx="1" fill="#ff5aa6" opacity="0.55"/>
-        <circle cx="10" cy="10" r="1" fill="#3b2230"/>
-        <circle cx="15" cy="13" r="1" fill="#3b2230"/>
-        <circle cx="18" cy="9" r="1" fill="#3b2230"/>
-        <path d="M22 6 l2 -3 l2 3 Z" fill="#c7cad6" stroke="#3b2230" stroke-width="1"/>
-        <path d="M29 6 l2 -3 l2 3 Z" fill="#c7cad6" stroke="#3b2230" stroke-width="1"/>
-        <rect x="21" y="6" width="12" height="11" rx="2.5" fill="#c7cad6" stroke="#3b2230" stroke-width="1.6"/>
-        <circle cx="25" cy="11" r="1.1" fill="#3b2230"/>
-        <circle cx="29" cy="11" r="1.1" fill="#3b2230"/>
-        <path d="M25 14 q2 1.6 4 0" stroke="#3b2230" stroke-width="1" fill="none"/>
-        <circle cx="23" cy="13" r="1" fill="#ff8ab5"/>
-        <circle cx="31" cy="13" r="1" fill="#ff8ab5"/>
-        <rect class="pt-nyan-leg" x="7" y="18" width="3" height="4" fill="#c7cad6" stroke="#3b2230" stroke-width="1"/>
-        <rect class="pt-nyan-leg" x="17" y="18" width="3" height="4" fill="#c7cad6" stroke="#3b2230" stroke-width="1"/>
-      </svg>
+      <!-- pixel cat: frames adapted from github.com/iliana/html5nyancat -->
+      <svg class="pt-nc" viewBox="0 0 21 34" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><g transform="translate(21,0) rotate(90)"><g class="pt-nc-frame pt-nc-f1"><g transform="translate(1,0)" style="display:inline"><g transform="translate(4,-1032.3622)"><path d="m 0,50 0,-3 1,0 0,-1 4,0 0,3 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 1,49 0,-2 3,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(4,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,29,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 24,49 0,-1 4,0 0,1 -1,0 0,1 -2,0 0,-1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 25,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g><path d="M 0,10 0,7 4,7 4,8 5,8 5,9 6,9 6,14 5,14 5,13 3,13 3,12 2,12 2,11 1,11 1,10 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 1,9 0,-1 2,0 0,1 1,0 0,1 1,0 0,1 1,0 0,1 -2,0 0,-1 -1,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f2"><g transform="translate(1,-1)"><g transform="translate(0,-1031.3622)"><g><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,30,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,1032.3622)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,35,0)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g></g><g class="pt-nc-frame pt-nc-f3"><g transform="translate(1,1)"><g><path d="m 6,20 0,-4 4,0 0,3 -1,0 0,1 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,17 2,0 0,2 -2,0 z" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,21,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,31,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1032.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,36,-1032.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g><path d="m 0,14 0,-2 2,0 0,-1 3,0 0,-1 1,0 0,4 -1,0 0,1 -4,0 0,-1 z" style="fill:#000000;stroke:none" /><path d="m 1,14 0,-1 1,0 0,-1 4,0 0,1 -2,0 0,1 z" style="fill:#999999;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f4"><g transform="translate(1,0)"><g transform="translate(0,-1031.3622)"><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,30,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(7,1)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,35,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(1,0,0,-1,0,1058.3622)"><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f5"><g transform="translate(1,0)"><g transform="translate(0,1)"><path d="m 3,20 0,-3 1,0 0,-1 1,0 0,-1 3,0 0,3 -1,0 0,1 -1,0 0,1 z" style="fill:#000000;stroke:none" /><path d="m 4,19 0,-2 1,0 0,-1 2,0 0,2 -1,0 0,1 z" style="fill:#999999;stroke:none" /></g><g transform="matrix(-1,0,0,1,20,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="matrix(-1,0,0,1,28,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,1)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="matrix(-1,0,0,1,33,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,1)"><path d="M -1,11 -1,9 0,9 0,8 4,8 4,9 6,9 6,13 4,13 4,12 1,12 1,11 z" style="fill:#000000;stroke:none" /><path d="m 0,10 0,-1 3,0 0,1 2,0 0,1 1,0 0,1 -1,0 0,-1 -4,0 0,-1 z" style="fill:#999999;stroke:none" /></g></g></g><g class="pt-nc-frame pt-nc-f6"><g transform="translate(1,0)"><g transform="translate(0,1)"><path d="m 3,20 0,-3 1,0 0,-1 1,0 0,-1 3,0 0,3 -1,0 0,1 -1,0 0,1 z" style="fill:#000000;stroke:none" /><path d="m 4,19 0,-2 1,0 0,-1 1,0 0,1 1,0 0,1 -1,0 0,1 z" style="fill:#999999;stroke:none" /></g><g transform="matrix(-1,0,0,1,32,-1031.3622)"><path d="m 5,20 0,-3 1,0 0,-1 3,0 0,3 -1,0 0,1 z" transform="translate(0,1032.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 6,17 2,0 0,2 -2,0 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(3,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(12,-1031.3622)"><path d="m 6,50 0,-2 4,0 0,1 -1,0 0,1 z" transform="translate(0,1002.3622)" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 7,48 2,0 0,1 -2,0 z" transform="translate(0,1002.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g><g transform="translate(0,-1031.3622)"><path d="m 7,1033.3622 19,0 0,16 -19,0 z" style="fill:#ffcc99;fill-opacity:1" /><path d="m 8,1046.3622 0,-10 1,0 0,-1 1,0 0,-1 13,0 0,1 1,0 0,1 1,0 0,10 -1,0 0,1 -1,0 0,1 -13,0 0,-1 -1,0 0,-1 z" style="fill:#ff99ff;fill-opacity:1;stroke:none" /><path d="m 22,1037.3622 1,0 0,1 -1,0 z m -4,-2 1,0 0,1 -1,0 z m -3,0 1,0 0,1 -1,0 z m -1,4 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m -2,3 1,0 0,1 -1,0 z m -2,-4 1,0 0,1 -1,0 z m -2,2 1,0 0,1 -1,0 z m 1,3 1,0 0,1 -1,0 z m 0,-10 1,0 0,1 -1,0 z" style="fill:#ff3399;fill-opacity:1" /><path d="m 8,1049.3622 17,0 0,1 -17,0 z m 0,-17 17,0 0,1 -17,0 z m 18,16 0,-14 1,0 0,14 z m -20,0 0,-14 1,0 0,14 z m 1,0 1,0 0,1 -1,0 z m 0,-15 1,0 0,1 -1,0 z m 18,0 1,0 0,1 -1,0 z m 0,15 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1" /></g><g transform="translate(6,0)"><g><path d="m 11,15 0,-5 1,0 0,-4 2,0 0,1 1,0 0,1 1,0 0,1 4,0 0,-1 1,0 0,-1 1,0 0,-1 2,0 0,4 1,0 0,5 -1,0 0,1 -1,0 0,1 -10,0 0,-1 -1,0 0,-1 z" style="fill:#999999;fill-opacity:1;stroke:none" /><path d="m 23,16 1,0 0,1 -1,0 z m 1,-1 1,0 0,1 -1,0 z m 1,-5 1,0 0,5 -1,0 z m -1,-4 1,0 0,4 -1,0 z m -2,-1 2,0 0,1 -2,0 z m -6,3 4,0 0,1 -4,0 z m -4,-3 2,0 0,1 -2,0 z m -1,1 1,0 0,4 -1,0 z m -1,4 1,0 0,5 -1,0 z m 11,-4 1,0 0,1 -1,0 z m -1,1 1,0 0,1 -1,0 z m -5,0 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z m -1,11 10,0 0,1 -10,0 z m -1,-1 1,0 0,1 -1,0 z m -1,-1 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 12,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 23,13 2,0 0,2 -2,0 z" style="fill:#ff9999;fill-opacity:1;stroke:none" /><path d="m 15,16 0,-2 1,0 0,1 2,0 0,-1 1,0 0,1 2,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 19,12 1,0 0,1 -1,0 z" style="fill:#000000;fill-opacity:1;stroke:none" /><g><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g><g transform="translate(-7,0)"><path d="m 21,13 0,-1 1,0 0,-1 1,0 0,2 z" style="fill:#000000;fill-opacity:1;stroke:none" /><path d="m 21,11 1,0 0,1 -1,0 z" style="fill:#ffffff;fill-opacity:1;stroke:none" /></g></g></g><g transform="translate(0,-1033.3622)"><path d="m 1,12 -1,0 0,-2 1,0 0,-1 2,0 0,1 1,0 0,1 2,0 0,4 -2,0 0,-1 -2,0 0,-1 -1,0 z" transform="translate(0,1032.3622)" style="fill:#000000;stroke:none" /><path d="m 1,12 0,-2 2,0 0,2 3,0 0,2 -2,0 0,-1 -2,0 0,-1 z" transform="translate(0,1032.3622)" style="fill:#999999;fill-opacity:1;stroke:none" /></g></g></g></g></svg>
     </div>
   </div>
 </div>
 
 
 <style is:global>
-  /* ---- Tokyo Night palette --------------------------------------------- */
+  /* ---- palette: the website's own ----------------------------------- */
+  /* Same tokens as src/styles/global.css (dark default, light override), so
+     the terminal looks like the rest of the site and follows its theme. The
+     --ptn-* names are roles used throughout the rules below:
+       blue = main accent (dirs, headings, prompt), cyan = links,
+       magenta/teal = secondary accent, yellow = bold, orange/red = numbers
+       and errors (the site has no tokens for those two). */
   :root {
-    --ptn-bg: #1a1b26;
-    --ptn-bg-dark: #16161e;
-    --ptn-bg-hl: #292e42;
-    --ptn-fg: #c0caf5;
-    --ptn-fg-dim: #a9b1d6;
-    --ptn-comment: #737aa2;
-    --ptn-red: #f7768e;
-    --ptn-orange: #ff9e64;
-    --ptn-yellow: #e0af68;
-    --ptn-green: #9ece6a;
-    --ptn-teal: #73daca;
-    --ptn-cyan: #7dcfff;
-    --ptn-blue: #7aa2f7;
-    --ptn-blue0: #3d59a1;
-    --ptn-magenta: #bb9af7;
-    /* "scaled at 170": 170% of the original 14px design base. Browser zoom
-       scales the whole terminal like a picture: its box keeps the size the
-       screen had when it opened (fitFrame), so zooming out gives a smaller
-       copy, centred, with the
-       same line breaks. The nyan scrollbar and the matrix rain stay pinned
-       to the screen in viewport units, the same size at any zoom. */
-    --pt-scale: 1.7;
+    --ptn-bg: #0b0e0d;                       /* --bg */
+    --ptn-bg-dark: #090c0b;                  /* --bg-inset: code blocks */
+    --ptn-bg-hl: #161b19;                    /* a step above --bg-card */
+    --ptn-fg: #f8f3ef;                       /* --text */
+    --ptn-fg-dim: rgba(248, 243, 239, 0.66); /* --text-dim */
+    --ptn-comment: rgba(248, 243, 239, 0.42);/* --text-mute */
+    --ptn-red: #ff5c5c;                      /* the site's form-error red */
+    --ptn-orange: #f5b971;
+    --ptn-yellow: #f8f3ef;                   /* bold = bright text, like .prose strong */
+    --ptn-green: #3ecf8e;                    /* --neon */
+    --ptn-teal: #94e6b7;                     /* --neon-2 */
+    --ptn-cyan: #94e6b7;
+    --ptn-blue: #3ecf8e;
+    --ptn-blue0: rgba(62, 207, 142, 0.34);   /* --neon-line */
+    --ptn-magenta: #94e6b7;
+    /* Text size, matching the website's 15px body text. The terminal fills
+       the window and sizes text in px, so browser zoom works like on any
+       page: text grows or shrinks and lines reflow to the new width. The
+       nyan scrollbar and the matrix rain are pinned to the screen in
+       viewport units, the same size at any zoom. */
+    --pt-font: 15px;
   }
-  @media (pointer: coarse) and (max-width: 820px) {
-    :root { --pt-scale: 1.15; }
+
+  :root[data-theme='light'] {
+    --ptn-bg: #fbfaf8;
+    --ptn-bg-dark: #f2f0ec;
+    --ptn-bg-hl: #ebe8e2;
+    --ptn-fg: #10201a;
+    --ptn-fg-dim: #4d5a54;
+    --ptn-comment: #7c8781;
+    --ptn-red: #d33a3a;
+    --ptn-orange: #b4691b;
+    --ptn-yellow: #10201a;
+    --ptn-green: #0f8f56;
+    --ptn-teal: #0b6e43;
+    --ptn-cyan: #0f8f56;
+    --ptn-blue: #0f8f56;
+    --ptn-blue0: rgba(15, 143, 86, 0.32);
+    --ptn-magenta: #0b6e43;
   }
 
   /* ---- mode switching + smooth toggle -------------------------------- */
@@ -149,20 +155,14 @@
     overflow: hidden;
     background: var(--ptn-bg);
     color: var(--ptn-fg);
-    font-family: 'Source Code Pro', ui-monospace, 'JetBrains Mono',
-      'Courier New', Courier, monospace;
-    font-size: calc(14px * var(--pt-scale));
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+    font-size: var(--pt-font);
     line-height: 1.6;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transform: translateY(6px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-  }
-  #pesos-terminal {
-    width: min(var(--pt-w, 100vw), 100vw);
-    height: min(var(--pt-h, 100vh), 100vh);
-    margin: auto;
   }
   html.mode-dev #pesos-terminal {
     opacity: 1;
@@ -239,10 +239,10 @@
   #pesos-terminal .pt-ico-dir { color: var(--ptn-blue); }
   #pesos-terminal .pt-ico-file { color: var(--ptn-comment); }
 
-  #pesos-terminal [data-path],
+  /* files and folders aren't clickable (like a real terminal): open them by
+     typing. Only external URLs in page content can be clicked. */
   #pesos-terminal [data-href],
   #pesos-terminal [data-mode] { cursor: pointer; }
-  #pesos-terminal [data-path]:hover,
   #pesos-terminal [data-href]:hover,
   #pesos-terminal [data-mode]:hover {
     text-decoration: underline;
@@ -267,7 +267,7 @@
     margin: 1.5em 0 0.55em;
   }
   #pesos-terminal .pt-h1 {
-    color: #dbe1ff;
+    color: var(--ptn-fg);
     font-size: 1.14em;
     border-bottom: 1px solid var(--ptn-blue0);
     padding-bottom: 0.16em;
@@ -400,9 +400,9 @@
   #pesos-terminal .pt-neo-rule { color: var(--ptn-comment); }
   #pesos-terminal .pt-swatch { display: inline-flex; margin-top: 0.5em; }
   #pesos-terminal .pt-swatch i { width: 2.4ch; height: 1.05em; display: inline-block; }
-  /* the logo's own colours (sampled from the PESOS logo image) */
-  #pesos-terminal .pt-logo-g { color: #3cd198; }
-  #pesos-terminal .pt-logo-w { color: #e6e6e6; }
+  /* the logo: green, with the O in the text colour (like the site's wordmark) */
+  #pesos-terminal .pt-logo-g { color: var(--ptn-green); }
+  #pesos-terminal .pt-logo-w { color: var(--ptn-fg); }
   #pesos-terminal .pt-c-muted { color: var(--ptn-comment); }
 
   /* ---- input line + riced prompt ----------------------------------- */
@@ -430,7 +430,7 @@
     font-weight: 700;
     border-radius: 5px 0 0 5px;
   }
-  #pesos-terminal .pt-seg-branch { background: var(--ptn-blue0); color: #d7e0ff; }
+  #pesos-terminal .pt-seg-branch { background: var(--ptn-blue0); color: var(--ptn-fg); }
   #pesos-terminal .pt-seg-path {
     background: var(--ptn-bg-hl);
     color: var(--ptn-cyan);
@@ -493,8 +493,15 @@
   }
 
   /* ---- nyan cat scrollbar ----------------------------------------------- */
-  /* sized in vmin, so browser zoom never moves or resizes it */
+  /* Sized in vmin, so browser zoom never moves or resizes it. The cat runs
+     head-first down the bar (turned 90deg), trailing the rainbow from the
+     top. Proportions follow the source art: the rainbow is 74% of the cat's
+     width, in 30-unit pieces with every other piece nudged sideways. */
   #pesos-terminal .pt-nyan {
+    --nc-w: 3vmin;                          /* cat width (its height is 34/21 of this) */
+    --nc-h: calc(var(--nc-w) * 34 / 21);
+    /* 1 unit of the source art = cat width / 73 */
+    --nc-rain-w: calc(var(--nc-w) * 58 / 73);
     position: fixed;
     top: 1.25vmin;
     right: 0.9vmin;
@@ -508,31 +515,43 @@
   #pesos-terminal .pt-nyan-rain {
     position: absolute;
     top: 0;
-    left: 0.25vmin;
-    width: 2vmin;
+    /* the main band lines up with the cat's back; offset pieces poke out */
+    left: calc(-0.25vmin + var(--nc-w) - var(--nc-w) * 54 / 73);
+    width: var(--nc-rain-w);
     min-height: 0.5vmin;
-    border-radius: 0.25vmin;
-    background: linear-gradient(
-      to right,
-      #ff004d 0 16.66%, #ff8c00 0 33.33%, #ffe600 0 50%,
-      #46e63a 0 66.66%, #2aa8ff 0 83.33%, #a35cff 0 100%
-    );
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 60' preserveAspectRatio='none'><rect x='0' y='0' width='9.2' height='30' fill='%236D3FFC'/><rect x='9' y='0' width='9.2' height='30' fill='%23008AFC'/><rect x='18' y='0' width='9.2' height='30' fill='%2320DB01'/><rect x='27' y='0' width='9.2' height='30' fill='%23FDEF01'/><rect x='36' y='0' width='9.2' height='30' fill='%23FD9B01'/><rect x='45' y='0' width='9.2' height='30' fill='%23FD1B00'/><rect x='4' y='30' width='9.2' height='30' fill='%236D3FFC'/><rect x='13' y='30' width='9.2' height='30' fill='%23008AFC'/><rect x='22' y='30' width='9.2' height='30' fill='%2320DB01'/><rect x='31' y='30' width='9.2' height='30' fill='%23FDEF01'/><rect x='40' y='30' width='9.2' height='30' fill='%23FD9B01'/><rect x='49' y='30' width='9.2' height='30' fill='%23FD1B00'/></svg>");
+    background-size: 100% calc(var(--nc-w) * 60 / 73);
+    background-repeat: repeat-y;
+    animation: pt-nc-wave 0.42s linear infinite;
   }
   #pesos-terminal .pt-nyan-cat {
     position: absolute;
-    left: -1.1vmin;
+    left: -0.25vmin;
     top: 0;
     will-change: transform;
   }
-  #pesos-terminal .pt-nyan-cat svg {
+  #pesos-terminal .pt-nc {
     display: block;
-    width: 4.75vmin;
-    height: 2.75vmin;
-    animation: pt-nyan-bob 0.4s steps(2) infinite;
+    width: var(--nc-w);
+    height: var(--nc-h);
+    image-rendering: pixelated;
   }
-  #pesos-terminal .pt-nyan-leg { animation: pt-nyan-leg 0.3s steps(2) infinite; }
-  @keyframes pt-nyan-bob { 50% { transform: translateY(-0.19vmin); } }
-  @keyframes pt-nyan-leg { 50% { transform: translateY(1px); } }
+  #pesos-terminal .pt-nc-frame { opacity: 0; animation: pt-nc-run 0.42s linear infinite; }
+  #pesos-terminal .pt-nc-f2 { animation-delay: 0.07s; }
+  #pesos-terminal .pt-nc-f3 { animation-delay: 0.14s; }
+  #pesos-terminal .pt-nc-f4 { animation-delay: 0.21s; }
+  #pesos-terminal .pt-nc-f5 { animation-delay: 0.28s; }
+  #pesos-terminal .pt-nc-f6 { animation-delay: 0.35s; }
+  /* each frame is visible for 1/6 of the cycle */
+  @keyframes pt-nc-run {
+    0%, 16.66% { opacity: 1; }
+    16.67%, 100% { opacity: 0; }
+  }
+  /* the rainbow's pieces swap sides twice per cycle, as in the source */
+  @keyframes pt-nc-wave {
+    0%, 49.99% { background-position: 0 0; }
+    50%, 100% { background-position: 0 calc(var(--nc-w) * 30 / 73); }
+  }
 
   /* ---- destructive-command easter egg ------------------------------- */
   #pesos-fire {
@@ -565,9 +584,10 @@
     #pesos-terminal,
     html.pt-switching body > :not(#pesos-terminal) { transition: none; }
     #pesos-terminal .pt-cursor,
-    #pesos-terminal .pt-nyan-cat svg,
-    #pesos-terminal .pt-nyan-leg,
+    #pesos-terminal .pt-nc-frame,
+    #pesos-terminal .pt-nyan-rain,
     #pesos-fire.on { animation: none; }
+    #pesos-terminal .pt-nc-f1 { opacity: 1; }
   }
 </style>
 
@@ -867,7 +887,7 @@
       const catH = this.cat.offsetHeight;
       const y = p * (h - catH);
       this.cat.style.transform = 'translateY(' + y.toFixed(1) + 'px)';
-      this.rain.style.height = (y + catH / 2).toFixed(1) + 'px';
+      this.rain.style.height = (y + catH * 0.27).toFixed(1) + 'px';
     }
   }
 
@@ -908,7 +928,7 @@
 
     activeScroller() { return this.paging ? this.pagerBody : this.win; }
 
-    async start({ boot }) {
+    async start({ boot, rain: rainFirst = false }) {
       if (this.started) return;
       this.started = true;
       this.bindInput();
@@ -924,15 +944,12 @@
           setTimeout(() => { cp.textContent = 'copy'; }, 1200);
           return;
         }
-        const t = e.target.closest('[data-path],[data-href],[data-mode]');
+        // files and folders aren't clickable: you `cd` / `cat` them, as in
+        // a real terminal. External URLs still open in a new tab.
+        const t = e.target.closest('[data-href],[data-mode]');
         if (!t) { if (!this.paging) this.focus(); return; }
         if (t.dataset.mode) { this.pickMode(t.dataset.mode); return; }
-        if (t.dataset.href) { window.open(t.dataset.href, '_blank', 'noopener'); return; }
-        const p = t.dataset.path;
-        const find = t.dataset.find || '';
-        if (this.paging) this.closePager();
-        if (this.entries[p]) this.openPager(p, find);
-        else this.exec('ls ' + p);
+        window.open(t.dataset.href, '_blank', 'noopener');
       };
       this.win.addEventListener('click', onClick);
       this.pagerBody.addEventListener('click', onClick);
@@ -945,12 +962,15 @@
       window.addEventListener('resize', () => { this.nyan.sync(); this.updatePagerStatus(); });
       // the rain starts right away; the content downloads underneath it. The
       // prompt (and its blinking cursor) stays hidden until the rain is gone.
-      if (boot) this.root.classList.add('pt-raining');
-      const rain = boot && !reducedMotion() ? this.matrix() : null;
+      const raining = (boot || rainFirst) && !reducedMotion();
+      if (raining) this.root.classList.add('pt-raining');
+      const rain = raining ? this.matrix() : null;
       await this.loadManifest();
       if (boot) {
         await this.runBoot(rain);
       } else {
+        if (rain) await rain;
+        this.root.classList.remove('pt-raining');
         this.setPrompt();
         this.openForLocation();
         this.enableSmooth();
@@ -1576,7 +1596,7 @@
         ['Kernel', 'astro · static site'],
         ['Uptime', 'since ' + (m.founded || 2012)],
         ['Shell', 'pesh 1.0'],
-        ['Theme', 'Tokyo Night'],
+        ['Theme', 'PESOS (matches the site)'],
         ['Sections', Object.keys(this.dirs).length + ' · run tree'],
         ['Pages', String(m.pages != null ? m.pages : this.paths.length)],
         ['Posts', String(m.posts != null ? m.posts : '')],
@@ -1588,8 +1608,8 @@
         ...rows.map(([k, v]) => '<span class="k">' + esc((k + ':').padEnd(10)) + '</span>' + esc(v)),
       ].join('\n');
       const swatch = [
-        '--ptn-bg-hl', '--ptn-red', '--ptn-green', '--ptn-yellow',
-        '--ptn-blue', '--ptn-magenta', '--ptn-teal', '--ptn-fg',
+        '--ptn-bg-hl', '--ptn-red', '--ptn-orange', '--ptn-green',
+        '--ptn-teal', '--ptn-comment', '--ptn-fg-dim', '--ptn-fg',
       ].map((c) => '<i style="background:var(' + c + ')"></i>').join('');
       fitLogo(this.print(
         '<div class="pt-neo pt-scan">' +
@@ -1675,6 +1695,21 @@
     }
 
     /* ---- effects ---------------------------------------------------- */
+    // Switching back in from the website: matrix rain first, then the page.
+    async reenter() {
+      if (!reducedMotion()) {
+        this.root.classList.add('pt-raining');
+        this.input.disabled = true;
+        await this.matrix();
+        this.input.disabled = false;
+        this.root.classList.remove('pt-raining');
+      }
+      this.setPrompt();
+      this.openForLocation();
+      this.enableSmooth();
+      this.focus();
+    }
+
     // Matrix rain over the whole terminal. Columns fall from above the top
     // and start again when they pass the bottom; once the screen has been
     // covered, the rain fades out while still falling, and the promise
@@ -1701,18 +1736,25 @@
         }));
         // long enough for the average column to reach the bottom
         const runMs = Math.min(2400, Math.max(1000, (rows * 1.5 / SPEED) * 33));
-        ctx.font = size + 'px "Source Code Pro", monospace';
+        ctx.font = size + 'px "JetBrains Mono", monospace';
+        // the palette (and so the current site theme) decides the colours
+        const pal = getComputedStyle(document.documentElement);
+        const bg = pal.getPropertyValue('--ptn-bg').trim();
+        const trail = pal.getPropertyValue('--ptn-green').trim();
+        const head = pal.getPropertyValue('--ptn-fg').trim();
         const tick = () => {
-          ctx.fillStyle = 'rgba(26,27,38,0.14)';
+          ctx.globalAlpha = 0.14;
+          ctx.fillStyle = bg;
           ctx.fillRect(0, 0, w, h);
+          ctx.globalAlpha = 1;
           cols.forEach((col, i) => {
             const from = Math.floor(col.y);
             col.y += col.v;
             const to = Math.floor(col.y);
             // every row passed this tick gets a glyph (no gaps in fast
-            // columns): the theme's blue for the trail, a bright head
+            // columns): the accent for the trail, a bright head
             for (let r = Math.max(from + 1, 1); r <= to; r++) {
-              ctx.fillStyle = r === to ? '#c0caf5' : '#7aa2f7';
+              ctx.fillStyle = r === to ? head : trail;
               ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, r * size);
             }
             if (col.y > rows + 6) col.y = -Math.random() * 8;
@@ -1752,52 +1794,28 @@
   let term = null;
   const root = document.getElementById('pesos-terminal');
 
-  // Keep the terminal box at the size the screen had when it opened, in CSS
-  // px. Browser zoom changes how big a CSS px is, so zooming out turns the
-  // box into a smaller copy (centred by CSS) with the same line breaks, and
-  // zooming in fills the screen. Zoom changes the window's size in CSS px
-  // but not in physical pixels; a real resize changes both, and is the only
-  // thing that re-measures. The baseline is kept per session, so a reload
-  // while zoomed keeps it. Touch devices (pinch zoom doesn't reflow) just
-  // fill the screen.
-  const FRAME_KEY = 'pesosFrame';
-  function fitFrame() {
-    if (!root || window.matchMedia('(pointer: coarse)').matches) return;
-    const dpr = window.devicePixelRatio || 1;
-    const physW = Math.round(window.innerWidth * dpr);
-    const physH = Math.round(window.innerHeight * dpr);
-    let base = null;
-    try { base = JSON.parse(sessionStorage.getItem(FRAME_KEY) || 'null'); } catch (e) {}
-    if (!base || Math.abs(base.physW - physW) > 3 || Math.abs(base.physH - physH) > 3) {
-      base = { physW, physH, w: window.innerWidth, h: window.innerHeight };
-      try { sessionStorage.setItem(FRAME_KEY, JSON.stringify(base)); } catch (e) {}
-    }
-    root.style.setProperty('--pt-w', base.w + 'px');
-    root.style.setProperty('--pt-h', base.h + 'px');
-  }
-  fitFrame();
-  window.addEventListener('resize', fitFrame);
-
   function ensureTerm(opts) {
     if (!root) return;
     if (!term) term = new PesosTerminal(root);
     term.start(opts || { boot: false });
   }
 
+  // website -> terminal: always starts with the matrix rain
   function enterDevMode() {
     setMode('dev');
-    if (!term) ensureTerm({ boot: false });
-    else { term.setPrompt(); term.openForLocation(); term.enableSmooth(); }
+    if (!term) ensureTerm({ boot: false, rain: true });
+    else term.reenter();
     if (term) term.focus();
   }
 
+  // terminal -> website: always the home page. If the page under the
+  // terminal already is home, just swap back; otherwise load home. Only the
+  // stored mode flips first, so the terminal stays up until home paints.
   function leaveDevMode() {
-    // the terminal moved on to another page's content: load that page. Only
-    // the stored mode flips here, so the terminal stays up until it paints.
-    const target = term && term.moved ? BASE + term.route : null;
-    if (target && normalizePath(target) !== normalizePath(new URL(term.loadedHref).pathname)) {
+    const loaded = term && term.loadedHref ? new URL(term.loadedHref).pathname : location.pathname;
+    if (normalizePath(loaded) !== '/') {
       try { sessionStorage.setItem(MODE_KEY, 'normal'); } catch (e) {}
-      location.assign(target);
+      location.assign(BASE + '/');
       return;
     }
     if (term && term.paging) { term.restoring = true; term.closePager(); term.restoring = false; }
@@ -1840,9 +1858,9 @@
     el.addEventListener('click', (e) => { e.preventDefault(); enterDevMode(); })
   );
 
-  let firstVisit = false;
-  try { firstVisit = !sessionStorage.getItem(BOOT_KEY); } catch (e) {}
+  // a page load in terminal mode (reload, or a page loaded from the terminal)
+  // carries straight on: no rain, no boot screen
   if (document.documentElement.classList.contains('mode-dev')) {
-    ensureTerm({ boot: firstVisit });
+    ensureTerm({ boot: false });
   }
 </script>

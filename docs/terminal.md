@@ -1,6 +1,6 @@
 # Terminal UI
 
-A second way to browse the site: a terminal (Tokyo Night theme) that shows every page as markdown. It's an add-on. The main website doesn't depend on it and isn't changed by it.
+A second way to browse the site: a terminal, styled with the website's own colours and font (and following its dark/light theme), that shows every page as markdown. It's an add-on. The main website doesn't depend on it and isn't changed by it.
 
 ## Files
 
@@ -24,8 +24,10 @@ The website is then exactly as it would be without the terminal. Nothing else in
 ## How it hooks in without touching the website
 
 - **Hiding the website:** in terminal mode every other child of `<body>` is faded out and made `inert`. No wrapper element is added.
-- **Opening it:** backtick, or the nav's existing `>_ Terminal` button and drawer link, which the terminal finds by their class and text. The nav markup isn't changed.
-- **Mode:** a new visit always starts on the normal website. Opening the terminal sets `sessionStorage.pesosMode` to `dev`, so it stays open across page loads for the rest of that session; `exit` (or backtick) switches back and sets it to `normal`.
+- **Opening it:** backtick, or the nav's existing `>_ Terminal` button and drawer link, which the terminal finds by their class and text. The nav markup isn't changed. Every switch from the website plays the matrix rain first (skipped with reduced motion).
+- **Leaving it:** `exit` (or backtick) always lands on the website's home page. If the page under the terminal is already `/` it swaps back instantly; otherwise it loads `/`.
+- **Mode:** a new visit always starts on the normal website. Opening the terminal sets `sessionStorage.pesosMode` to `dev`, so it stays open across page loads for the rest of that session (a reload carries straight on, without the rain); leaving sets it to `normal`.
+- **Clicking:** like a real terminal, files and folders aren't clickable; you open them with `cd`, `ls` and `cat`. Only external URLs in page content open on click.
 - **Contact form:** the terminal's `send` command reads the subjects and destination from the rendered contact page's form, and posts to the same place.
 
 ## Content
@@ -40,4 +42,4 @@ The terminal shows the website's own pages. `terminalContent.ts` renders every p
 
 ## Layout and zoom
 
-The terminal box keeps the size the screen had when it opened, so browser zoom scales it like a picture: zooming out gives a smaller centred copy with the same line breaks, and zooming in fills the screen. The nyan cat scrollbar and the matrix rain are pinned to the screen and don't change with zoom. Touch devices just fill the screen.
+The terminal always fills the window. Text is 15px (the website's body size, `--pt-font` in `TerminalMode.astro`), so browser zoom works like on any page: text gets bigger or smaller and lines reflow to fit. The nyan cat scrollbar and the matrix rain are sized in viewport units, so they stay the same size at any zoom.
