@@ -239,10 +239,10 @@
   #pesos-terminal .pt-ico-dir { color: var(--ptn-blue); }
   #pesos-terminal .pt-ico-file { color: var(--ptn-comment); }
 
-  #pesos-terminal [data-path],
+  /* files and folders aren't clickable (like a real terminal): open them by
+     typing. Only external URLs in page content can be clicked. */
   #pesos-terminal [data-href],
   #pesos-terminal [data-mode] { cursor: pointer; }
-  #pesos-terminal [data-path]:hover,
   #pesos-terminal [data-href]:hover,
   #pesos-terminal [data-mode]:hover {
     text-decoration: underline;
@@ -928,7 +928,7 @@
 
     activeScroller() { return this.paging ? this.pagerBody : this.win; }
 
-    async start({ boot }) {
+    async start({ boot, rain: rainFirst = false }) {
       if (this.started) return;
       this.started = true;
       this.bindInput();
@@ -944,15 +944,12 @@
           setTimeout(() => { cp.textContent = 'copy'; }, 1200);
           return;
         }
-        const t = e.target.closest('[data-path],[data-href],[data-mode]');
+        // files and folders aren't clickable: you `cd` / `cat` them, as in
+        // a real terminal. External URLs still open in a new tab.
+        const t = e.target.closest('[data-href],[data-mode]');
         if (!t) { if (!this.paging) this.focus(); return; }
         if (t.dataset.mode) { this.pickMode(t.dataset.mode); return; }
-        if (t.dataset.href) { window.open(t.dataset.href, '_blank', 'noopener'); return; }
-        const p = t.dataset.path;
-        const find = t.dataset.find || '';
-        if (this.paging) this.closePager();
-        if (this.entries[p]) this.openPager(p, find);
-        else this.exec('ls ' + p);
+        window.open(t.dataset.href, '_blank', 'noopener');
       };
       this.win.addEventListener('click', onClick);
       this.pagerBody.addEventListener('click', onClick);
@@ -965,12 +962,15 @@
       window.addEventListener('resize', () => { this.nyan.sync(); this.updatePagerStatus(); });
       // the rain starts right away; the content downloads underneath it. The
       // prompt (and its blinking cursor) stays hidden until the rain is gone.
-      if (boot) this.root.classList.add('pt-raining');
-      const rain = boot && !reducedMotion() ? this.matrix() : null;
+      const raining = (boot || rainFirst) && !reducedMotion();
+      if (raining) this.root.classList.add('pt-raining');
+      const rain = raining ? this.matrix() : null;
       await this.loadManifest();
       if (boot) {
         await this.runBoot(rain);
       } else {
+        if (rain) await rain;
+        this.root.classList.remove('pt-raining');
         this.setPrompt();
         this.openForLocation();
         this.enableSmooth();
@@ -1695,6 +1695,21 @@
     }
 
     /* ---- effects ---------------------------------------------------- */
+    // Switching back in from the website: matrix rain first, then the page.
+    async reenter() {
+      if (!reducedMotion()) {
+        this.root.classList.add('pt-raining');
+        this.input.disabled = true;
+        await this.matrix();
+        this.input.disabled = false;
+        this.root.classList.remove('pt-raining');
+      }
+      this.setPrompt();
+      this.openForLocation();
+      this.enableSmooth();
+      this.focus();
+    }
+
     // Matrix rain over the whole terminal. Columns fall from above the top
     // and start again when they pass the bottom; once the screen has been
     // covered, the rain fades out while still falling, and the promise
@@ -1785,20 +1800,22 @@
     term.start(opts || { boot: false });
   }
 
+  // website -> terminal: always starts with the matrix rain
   function enterDevMode() {
     setMode('dev');
-    if (!term) ensureTerm({ boot: false });
-    else { term.setPrompt(); term.openForLocation(); term.enableSmooth(); }
+    if (!term) ensureTerm({ boot: false, rain: true });
+    else term.reenter();
     if (term) term.focus();
   }
 
+  // terminal -> website: always the home page. If the page under the
+  // terminal already is home, just swap back; otherwise load home. Only the
+  // stored mode flips first, so the terminal stays up until home paints.
   function leaveDevMode() {
-    // the terminal moved on to another page's content: load that page. Only
-    // the stored mode flips here, so the terminal stays up until it paints.
-    const target = term && term.moved ? BASE + term.route : null;
-    if (target && normalizePath(target) !== normalizePath(new URL(term.loadedHref).pathname)) {
+    const loaded = term && term.loadedHref ? new URL(term.loadedHref).pathname : location.pathname;
+    if (normalizePath(loaded) !== '/') {
       try { sessionStorage.setItem(MODE_KEY, 'normal'); } catch (e) {}
-      location.assign(target);
+      location.assign(BASE + '/');
       return;
     }
     if (term && term.paging) { term.restoring = true; term.closePager(); term.restoring = false; }
@@ -1841,9 +1858,9 @@
     el.addEventListener('click', (e) => { e.preventDefault(); enterDevMode(); })
   );
 
-  let firstVisit = false;
-  try { firstVisit = !sessionStorage.getItem(BOOT_KEY); } catch (e) {}
+  // a page load in terminal mode (reload, or a page loaded from the terminal)
+  // carries straight on: no rain, no boot screen
   if (document.documentElement.classList.contains('mode-dev')) {
-    ensureTerm({ boot: firstVisit });
+    ensureTerm({ boot: false });
   }
 </script>
