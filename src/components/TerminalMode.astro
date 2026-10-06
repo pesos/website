@@ -10,8 +10,8 @@
 //                        and is made inert; this fills the screen
 //  - html.mode-normal -> this fades out, the normal website shows
 // The normal website loads first. Backtick toggles (Ctrl+T too, where the
-// browser lets it through); the choice is kept per session. The nav's existing ">_ Terminal" links (found
-// by .term-btn / their text, the nav itself is untouched) open it too.
+// browser lets it through); the choice is kept per session. The nav's
+// ">_ Terminal" buttons (found by .term-btn) open it too.
 //
 // The terminal keeps the address bar on the website route of whatever it is
 // showing, so switching back lands on the matching page, and loading any
@@ -1583,9 +1583,17 @@
       this.typed.textContent = '';
       this.route = '/';
       this.moved = false;
-      try { history.replaceState({}, '', BASE + '/'); } catch (err) {}
-      const home = this.entries['/'];
-      if (home && home.title) document.title = home.title;
+      // Back-race guard: enterDevMode pushes its history entry, then start()
+      // awaits loadManifest() before this runs. If Back lands mid-fetch,
+      // leaveDevMode has already flipped us to normal — rewriting the URL and
+      // title here would clobber the GUI page Back restored. syncUrl early-
+      // returns on this.restoring; resetSession bypasses it, so check the mode
+      // the same way.
+      if (document.documentElement.classList.contains('mode-dev')) {
+        try { history.replaceState({}, '', BASE + '/'); } catch (err) {}
+        const home = this.entries['/'];
+        if (home && home.title) document.title = home.title;
+      }
     }
 
     // atRoot: stay at the root instead of jumping to the page the address
@@ -1826,18 +1834,27 @@
 
   // website -> terminal: always starts with the matrix rain
   function enterDevMode() {
+    const wasDev = document.documentElement.classList.contains('mode-dev');
     setMode('dev');
+    // one history entry per entry so Back has somewhere to go; resetSession
+    // rewrites that entry's URL to the terminal root, leaving the GUI page
+    // it was opened from intact underneath
+    if (!wasDev) {
+      try { history.pushState({}, '', location.href); } catch (e) { console.error('pushState failed', e); }
+    }
     if (!term) ensureTerm({ boot: false, rain: true });
     else term.reenter();
     if (term) term.focus();
   }
 
-  // terminal -> website: always the home page. If the page under the
-  // terminal already is home, just swap back; otherwise load home. Only the
-  // stored mode flips first, so the terminal stays up until home paints.
-  function leaveDevMode() {
+  // terminal -> website. `exit` goes home from a non-home page; Back has
+  // already restored the GUI entry it came from, so fromHistory swaps in
+  // place instead of redirecting. Only the stored mode flips first, so the
+  // terminal stays up until the website paints.
+  function leaveDevMode(opts) {
+    const viaExit = !opts?.fromHistory;
     const loaded = term && term.loadedHref ? new URL(term.loadedHref).pathname : location.pathname;
-    if (normalizePath(loaded) !== '/') {
+    if (viaExit && normalizePath(loaded) !== '/') {
       try { sessionStorage.setItem(MODE_KEY, 'normal'); } catch (e) {}
       location.assign(BASE + '/');
       return;
@@ -1845,11 +1862,16 @@
     if (term && term.paging) { term.restoring = true; term.closePager(); term.restoring = false; }
     setMode('normal');
     try {
-      if (term && term.loadedHref && location.href !== term.loadedHref) {
-        history.replaceState({}, '', term.loadedHref);
+      if (term) {
+        // Back has already restored the GUI entry it came from; `exit` from the
+        // home page swaps the URL back to the page the terminal opened from.
+        if (viaExit && term.loadedHref && location.href !== term.loadedHref) {
+          history.replaceState({}, '', term.loadedHref);
+        }
+        document.title = term.loadedTitle;
+        term.moved = false;
       }
-      if (term) { document.title = term.loadedTitle; term.moved = false; }
-    } catch (e) {}
+    } catch (e) { console.error('leaveDevMode history/title failed', e); }
     window.scrollTo(0, 0);
   }
   window.__pesosLeaveDevMode = leaveDevMode;
@@ -1873,13 +1895,31 @@
 
   document.addEventListener('keydown', onKey, true);
 
-  // the nav's ">_ Terminal" links (the nav itself isn't changed for this)
-  const toggles = [
-    ...document.querySelectorAll('.term-btn'),
-    ...[...document.querySelectorAll('.nav__drawer a[href="#"]')].filter((a) => /terminal/i.test(a.textContent || '')),
-  ];
+  // Back out of the terminal entry: the browser has already restored the
+  // GUI page the terminal was opened from, so swap the mode back in place.
+  window.addEventListener('popstate', () => {
+    try {
+      if (document.documentElement.classList.contains('mode-dev')) {
+        leaveDevMode({ fromHistory: true });
+      }
+    } catch (e) { console.error('popstate handler failed', e); }
+  });
+
+  // the nav's ">_ Terminal" buttons
+  const toggles = document.querySelectorAll('.term-btn');
   toggles.forEach((el) =>
-    el.addEventListener('click', (e) => { e.preventDefault(); enterDevMode(); })
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      // main.ts closes the drawer only for <a>; these are <button>s now
+      const drawer = document.querySelector('.nav__drawer.open');
+      if (drawer) {
+        drawer.classList.remove('open');
+        document.body.style.overflow = '';
+        const navToggle = document.querySelector('[data-nav-toggle]');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      }
+      enterDevMode();
+    })
   );
 
   // a page load in terminal mode (reload, or a page loaded from the terminal)
